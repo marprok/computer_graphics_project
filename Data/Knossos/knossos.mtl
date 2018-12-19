@@ -1,0 +1,252 @@
+# 3ds Max Wavefront OBJ Exporter v0.94b - (c)2007 guruware
+# File Created: 31.08.2009 17:29:29
+
+newmtl 01___Default
+	Ns 100.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.08100 0.08100 0.08100
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_col.jpg
+	map_Kd knossos_col.jpg
+	map_bump knossos_col.jpg
+	bump knossos_col.jpg
+
+newmtl Stoa_Floor
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 0.98824 0.98824 0.98824
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_foundation.jpg
+	map_Kd knossos_foundation.jpg
+	map_bump knossos_foundation.jpg
+	bump knossos_foundation.jpg
+
+newmtl dokos
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 0.96863 0.96863 0.96863
+	Ks 0.05400 0.05400 0.05400
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_dokos_yellow.jpg
+	map_Kd knossos_dokos_yellow.jpg
+	map_bump knossos_dokos_yellow.jpg
+	bump knossos_dokos_yellow.jpg
+
+newmtl 08___Default
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 0.99216 0.99216 0.99216
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_wall.jpg
+	map_Kd knossos_wall.jpg
+	map_bump knossos_wall.jpg
+	bump knossos_wall.jpg
+
+newmtl facede01
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_prom_facade.jpg
+	map_Kd knossos_prom_facade.jpg
+	map_bump knossos_prom_facade.jpg
+	bump knossos_prom_facade.jpg
+
+newmtl dokos2
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 0.96863 0.96863 0.96863
+	Ks 0.05400 0.05400 0.05400
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_dokos_plain.jpg
+	map_Kd knossos_dokos_plain.jpg
+	map_bump knossos_dokos_yellow.jpg
+	bump knossos_dokos_yellow.jpg
+
+newmtl parastada_head
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_parastada_head.jpg
+	map_Kd knossos_parastada_head.jpg
+	map_bump knossos_parastada_head.jpg
+	bump knossos_parastada_head.jpg
+
+newmtl parastada
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_wall1.jpg
+	map_Kd knossos_wall1.jpg
+	map_bump knossos_wall1.jpg
+	bump knossos_wall1.jpg
+
+newmtl parastada2
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_wall2.jpg
+	map_Kd knossos_wall2.jpg
+	map_bump knossos_wall2.jpg
+	bump knossos_wall2.jpg
+
+newmtl dokos3
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 0.96863 0.96863 0.96863
+	Ks 0.05400 0.05400 0.05400
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_dokos_orange.jpg
+	map_Kd knossos_dokos_orange.jpg
+	map_bump knossos_dokos_orange.jpg
+	bump knossos_dokos_orange.jpg
+
+newmtl 10___Default
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_gnd.jpg
+	map_Kd knossos_gnd.jpg
+	map_bump knossos_gnd.jpg
+	bump knossos_gnd.jpg
+
+newmtl 16___Default
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.07200 0.07200 0.07200
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_pave2.jpg
+	map_Kd knossos_pave2.jpg
+	map_bump knossos_pave2.jpg
+	bump knossos_pave2.jpg
+
+newmtl wall_blue
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_wall_blue.jpg
+	map_Kd knossos_wall_blue.jpg
+
+newmtl wall_red
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_wall_red.jpg
+	map_Kd knossos_wall_red.jpg
+
+newmtl crack
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_col_break.jpg
+	map_Kd knossos_col_break.jpg
+	map_bump knossos_col_break.jpg
+	bump knossos_col_break.jpg
+
+newmtl 05___Default
+	Ns 10.00000
+	Ni 1.50000
+	d 1.00000
+	Tr 1.00000
+	Tf 1.00000 1.00000 1.00000 
+	illum 2
+	Ka 0.00000 0.00000 0.00000
+	Kd 1.00000 1.00000 1.00000
+	Ks 0.00000 0.00000 0.00000
+	Ke 0.00000 0.00000 0.00000
+	map_Ka knossos_staxi.jpg
+	map_Kd knossos_staxi.jpg

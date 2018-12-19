@@ -1,0 +1,31 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 14.12.2013 11:54:36
+
+newmtl 01___Default
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.1725 0.1725 0.1725
+	Kd 0.1725 0.1725 0.1725
+	Ks 0.1350 0.1350 0.1350
+	Ke 0.0000 0.0000 0.0000
+
+newmtl Skeleton
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.9882 0.9882 0.9882
+	Kd 0.9882 0.9882 0.9882
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka concrete_openfoundation.tga
+	map_Kd concrete_openfoundation.tga
+	map_Ks concrete_openfoundation_s.tga
+	map_bump concrete_openfoundation_n.tga
+	bump concrete_openfoundation_n.tga
