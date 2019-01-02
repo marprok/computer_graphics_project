@@ -27,7 +27,9 @@
     <ClCompile Include="sources\ShaderProgram.cpp" />
     <ClCompile Include="sources\SpotlightNode.cpp" />
     <ClCompile Include="sources\TextureManager.cpp" />
+    <ClCompile Include="sources\Tile.cpp" />
     <ClCompile Include="sources\Tools.cpp" />
+    <ClCompile Include="sources\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\GeometricMesh.h" />
@@ -37,7 +39,9 @@
     <ClInclude Include="headers\ShaderProgram.h" />
     <ClInclude Include="headers\SpotlightNode.h" />
     <ClInclude Include="headers\TextureManager.h" />
+    <ClInclude Include="headers\Tile.h" />
     <ClInclude Include="headers\Tools.h" />
+    <ClInclude Include="headers\Tower.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{419B8370-E5D6-4141-B5CC-0FE5A3543D31}</ProjectGuid>

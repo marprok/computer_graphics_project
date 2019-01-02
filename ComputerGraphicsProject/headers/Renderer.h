@@ -6,6 +6,8 @@
 #include <vector>
 #include "ShaderProgram.h"
 #include "SpotlightNode.h"
+#include "Tower.h"
+#include "Tile.h"
 
 class Renderer
 {
@@ -52,6 +54,12 @@ protected:
 	class GeometryNode*								m_geometric_object3;
 	glm::mat4										m_geometric_object3_transformation_matrix;
 	glm::mat4										m_geometric_object3_transformation_normal_matrix;
+	class GeometryNode*								m_geometric_object4;
+	glm::mat4										m_geometric_object4_transformation_matrix;
+	glm::mat4										m_geometric_object4_transformation_normal_matrix;
+
+	std::vector<Tower>								m_towers;
+	std::vector<Tile>								m_road;
 
 	// Protected Functions
 	bool InitRenderingTechniques();

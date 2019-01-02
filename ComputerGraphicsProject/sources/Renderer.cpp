@@ -15,16 +15,15 @@ Renderer::Renderer()
 	
 	m_geometric_object1 = nullptr;
 	m_geometric_object2 = nullptr;
-	m_geometric_object3 = nullptr;
 
 	m_fbo = 0;
 	m_fbo_texture = 0;
 
-	m_rendering_mode = RENDERING_MODE::TRIANGLES;	
+	m_rendering_mode = RENDERING_MODE::TRIANGLES;
 	m_continous_time = 0.0;
 
 	// initialize the camera parameters
-	m_camera_position = glm::vec3(1, 3, -6);
+	m_camera_position = glm::vec3(1, 12, -6);
 	m_camera_target_position = glm::vec3(0, 0, 0);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 }
@@ -42,6 +41,7 @@ Renderer::~Renderer()
 	delete m_geometric_object1;
 	delete m_geometric_object2;
 	delete m_geometric_object3;
+	delete m_geometric_object4;
 }
 
 bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
@@ -86,7 +86,7 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
-	float movement_speed = 2.0f;
+	float movement_speed = 6.0f;
 	// compute the direction of the camera
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 
@@ -118,17 +118,23 @@ void Renderer::Update(float dt)
 	m_continous_time += dt;
 
 	// update meshes tranformations
-	m_geometric_object1_transformation_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.25f));
+	m_geometric_object1_transformation_matrix = 
+		glm::translate(glm::mat4(1.f), glm::vec3(9, 0, 9)) *
+		glm::scale(glm::mat4(1.f), glm::vec3(10.f));
 	m_geometric_object1_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object1_transformation_matrix))));
 
-	glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
-	glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f*m_continous_time, glm::vec3(0, 1, 0));
-	glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
-	m_geometric_object2_transformation_matrix = glm::translate(glm::mat4(1.0), glm::vec3(-4, 2, -2)) * object_translation * object_rotation * object_scale;
+	m_geometric_object2_transformation_matrix = 
+		glm::translate(glm::mat4(1.0), glm::vec3(10, 0, -21)) *
+		glm::scale(glm::mat4(1.f), glm::vec3(0.1f));
 	m_geometric_object2_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object2_transformation_matrix))));
 
-	m_geometric_object3_transformation_matrix = glm::translate(glm::mat4(1.f), glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1.f), glm::radians(10.f), glm::vec3(0,0,1)) * glm::scale(glm::mat4(1.0), glm::vec3(0.07f));
-	m_geometric_object3_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object3_transformation_matrix))));
+	m_geometric_object4_transformation_matrix = 
+		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
+	m_geometric_object4_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object4_transformation_matrix))));
+
+	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
+	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
+	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
 }
 
 bool Renderer::InitCommonItems()
@@ -278,11 +284,11 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
 	// Initialize the spot light
-	m_spotlight_node.SetPosition(glm::vec3(8, 14, -3));
-	m_spotlight_node.SetTarget(glm::vec3(0, 4, 0));
-	m_spotlight_node.SetColor(40.0f * glm::vec3(255, 255, 251) / 255.f);
-	m_spotlight_node.SetConeSize(50, 70);
-	m_spotlight_node.CastShadow(true);
+	m_spotlight_node.SetPosition(glm::vec3(8, 20, -3));
+	m_spotlight_node.SetTarget(glm::vec3(0, 0, 0));
+	m_spotlight_node.SetColor(80.0f * glm::vec3(255, 255, 251) / 255.f);
+	m_spotlight_node.SetConeSize(180, 180);
+	m_spotlight_node.CastShadow(false);
 
 	return true;
 }
@@ -292,8 +298,8 @@ bool Renderer::InitGeometricMeshes()
 {
 	bool initialized = true;
 	OBJLoader loader;
-	// load geometric object 1
-	auto mesh = loader.load("../Data/Knossos/knossos.obj");
+	// load terrain
+	auto mesh = loader.load("../Assets/Terrain/terrain.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object1 = new GeometryNode();
@@ -302,8 +308,8 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
-	// load geometric object 2
-	mesh = loader.load("../Data/Pirates/weight.obj");
+	// load treasure
+	mesh = loader.load("../Assets/Treasure/treasure_chest.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object2 = new GeometryNode();
@@ -312,12 +318,59 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
-	// load geometric object 3
-	mesh = loader.load("../Data/Pirates/skeleton.obj");
+	// load tower
+	mesh = loader.load("../Assets/MedievalTower/tower.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object3 = new GeometryNode();
+
+		m_towers.emplace_back(glm::vec3(1, 0, 5), m_geometric_object3);
+		m_towers.emplace_back(glm::vec3(2, 0, -5), m_geometric_object3);
+		m_towers.emplace_back(glm::vec3(3, 0, 3), m_geometric_object3);
+		m_towers.emplace_back(glm::vec3(10, 0, -18), m_geometric_object3);
+
 		m_geometric_object3->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	// load tower
+	mesh = loader.load("../Assets/Terrain/road.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object4 = new GeometryNode();
+
+		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 3), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 3), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 4), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 5), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 6), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 7), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 7), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 8), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(3, 0.01, 8), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(4, 0.01, 8), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(5, 0.01, 8), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 8), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 7), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 6), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 6), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 5), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 4), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 3), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 3), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 3), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 2), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 1), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 1), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 1), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 1), m_geometric_object4);
+		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
+
+		m_geometric_object4->Init(mesh);
 	}
 	else
 		initialized = false;
@@ -374,15 +427,15 @@ void Renderer::RenderShadowMaps()
 		glUniformMatrix4fv(m_spot_light_shadow_map_program["uniform_projection_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetProjectionMatrix()));
 		glUniformMatrix4fv(m_spot_light_shadow_map_program["uniform_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetViewMatrix()));
 
-		// draw the first object
+		// draw the terrain object
 		DrawGeometryNodeToShadowMap(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
-
-		// draw the second object
+		
+		// draw the treasure object
 		DrawGeometryNodeToShadowMap(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
 
-		// draw the third object
+		// draw the tower object
 		DrawGeometryNodeToShadowMap(m_geometric_object3, m_geometric_object3_transformation_matrix, m_geometric_object3_transformation_normal_matrix);
-		
+
 		glBindVertexArray(0);
 
 		// Unbind shadow mapping program
@@ -450,14 +503,35 @@ void Renderer::RenderGeometry()
 	glUniform1i(m_geometry_rendering_program["uniform_diffuse_texture"], 0);
 	glActiveTexture(GL_TEXTURE0);
 
-	// draw the first object
+	// draw the terrain object
 	DrawGeometryNode(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
-
-	// draw the second object
+	
+	// draw the treasure object
 	DrawGeometryNode(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
 
-	// draw the third object
-	DrawGeometryNode(m_geometric_object3, m_geometric_object3_transformation_matrix, m_geometric_object3_transformation_normal_matrix);
+	// draw towers
+	for (auto &tower:m_towers)
+	{
+		DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
+	}
+
+	// draw towers
+	for (auto &tile : m_road)
+	{
+		DrawGeometryNode(tile.getGeometricNode(), tile.getGeometricTransformationMatrix(), tile.getGeometricTransformationNormalMatrix());
+	}
+
+	// draw tiles
+	/*for (size_t i = 0; i < DIMENSION; i++)
+	{
+		for (size_t j = 0; j < DIMENSION; j++)
+		{
+			if (m_tiles[i * DIMENSION + j])
+			{
+				DrawGeometryNode(m_road->getGeometricNode(), m_tile->getGeometricTransformationMatrix(), m_tile->getGeometricTransformationNormalMatrix());
+			}
+		}
+	}*/
 
 	glBindVertexArray(0);
 	m_geometry_rendering_program.Unbind();

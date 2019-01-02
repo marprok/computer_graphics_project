@@ -145,4 +145,3 @@ void main(void)
 	
 	out_color = vec4( diffuseReflection + specularReflection, 1.0);	
 }
-

@@ -11,8 +11,8 @@ SDL_Window * window;
 
 //OpenGL context 
 SDL_GLContext gContext;
-const int SCREEN_WIDTH = 1380;	//800;	//640;
-const int SCREEN_HEIGHT = 1024;	//600;	//480;
+const int SCREEN_WIDTH = 1366;	//800;	//640;
+const int SCREEN_HEIGHT = 768;	//600;	//480;
 
 //Event handler
 SDL_Event event;
@@ -42,7 +42,7 @@ bool init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// Create Window
-	window = SDL_CreateWindow("OpenGL Lab 7", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Computer Graphics Project - Tower Defence", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (window == NULL)
 	{
 		printf("Could not create window: %s\n", SDL_GetError());
