@@ -2,7 +2,7 @@
 #define TEXTURE_MANAGER_H
 
 #include "SDL2/SDL.h"
-#include "GLEW\glew.h"
+#include "../GLEW/glew.h"
 #include <string>
 #include <vector>
 

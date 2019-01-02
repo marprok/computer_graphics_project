@@ -1,5 +1,5 @@
 #include "../headers/SpotlightNode.h"
-#include "glm\gtc\matrix_transform.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
 #include "../headers/Tools.h"
 
 // Spot Light

@@ -1,6 +1,6 @@
 #include "../headers/GeometryNode.h"
 #include "../headers/GeometricMesh.h"
-#include <glm/gtc/type_ptr.hpp>
+#include <../glm/gtc/type_ptr.hpp>
 #include "../headers/TextureManager.h"
 
 

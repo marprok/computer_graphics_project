@@ -1,7 +1,7 @@
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
 #include <unordered_map>
-#include "GLEW\glew.h"
+#include "../GLEW/glew.h"
 
 #ifndef SPOTLIGHT_NODE_H
 #define SPOTLIGHT_NODE_H

@@ -2,9 +2,9 @@
 #define GEOMETRY_NODE_H
 
 #include <vector>
-#include "GLEW\glew.h"
+#include "../GLEW/glew.h"
 #include <unordered_map>
-#include "glm\gtx\hash.hpp"
+#include "../glm/gtx/hash.hpp"
 
 class GeometryNode
 {

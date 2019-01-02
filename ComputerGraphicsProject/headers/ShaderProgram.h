@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "GLEW\glew.h"
+#include "../GLEW/glew.h"
 
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H

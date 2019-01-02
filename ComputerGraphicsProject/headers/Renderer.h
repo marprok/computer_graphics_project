@@ -1,8 +1,8 @@
 #ifndef BIM_ENGINE_RENDERER_H
 #define BIM_ENGINE_RENDERER_H
 
-#include "GLEW\glew.h"
-#include "glm\glm.hpp"
+#include "../GLEW/glew.h"
+#include "../glm/glm.hpp"
 #include <vector>
 #include "ShaderProgram.h"
 #include "SpotlightNode.h"

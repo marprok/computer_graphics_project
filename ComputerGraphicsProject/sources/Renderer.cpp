@@ -3,8 +3,8 @@
 #include "../headers/Tools.h"
 #include <algorithm>
 #include "../headers/ShaderProgram.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "../glm/gtc/type_ptr.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
 #include "../headers/OBJLoader.h"
 
 // RENDERER
@@ -160,8 +160,11 @@ bool Renderer::InitRenderingTechniques()
 	bool initialized = true;
 
 	// Geometry Rendering Program
-	std::string vertex_shader_path = "../Data/Shaders/basic_rendering.vert";
-	std::string fragment_shader_path = "../Data/Shaders/basic_rendering.frag";
+    //std::string vertex_shader_path = "../Data/Shaders/basic_rendering.vert";
+    //std::string fragment_shader_path = "../Data/Shaders/basic_rendering.frag";
+    //linux
+    std::string vertex_shader_path = "Data/Shaders/basic_rendering.vert";
+    std::string fragment_shader_path = "Data/Shaders/basic_rendering.frag";
 	m_geometry_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
 	m_geometry_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	initialized = m_geometry_rendering_program.CreateProgram();
@@ -187,8 +190,11 @@ bool Renderer::InitRenderingTechniques()
 	m_geometry_rendering_program.LoadUniform("shadowmap_texture");
 
 	// Post Processing Program
-	vertex_shader_path = "../Data/Shaders/postproc.vert";
-	fragment_shader_path = "../Data/Shaders/postproc.frag";
+    //linux
+    //vertex_shader_path = "../Data/Shaders/postproc.vert";
+    //fragment_shader_path = "../Data/Shaders/postproc.frag";
+    vertex_shader_path = "Data/Shaders/postproc.vert";
+    fragment_shader_path = "Data/Shaders/postproc.frag";
 	m_postprocess_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
 	m_postprocess_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	initialized = initialized && m_postprocess_program.CreateProgram();
@@ -198,8 +204,11 @@ bool Renderer::InitRenderingTechniques()
 	m_postprocess_program.LoadUniform("uniform_projection_inverse_matrix");
 
 	// Shadow mapping Program
-	vertex_shader_path = "../Data/Shaders/shadow_map_rendering.vert";
-	fragment_shader_path = "../Data/Shaders/shadow_map_rendering.frag";
+    //vertex_shader_path = "../Data/Shaders/shadow_map_rendering.vert";
+    //fragment_shader_path = "../Data/Shaders/shadow_map_rendering.frag";
+    //linux
+    vertex_shader_path = "Data/Shaders/shadow_map_rendering.vert";
+    fragment_shader_path = "Data/Shaders/shadow_map_rendering.frag";
 	m_spot_light_shadow_map_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
 	m_spot_light_shadow_map_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	initialized = initialized && m_spot_light_shadow_map_program.CreateProgram();
@@ -293,7 +302,7 @@ bool Renderer::InitGeometricMeshes()
 	bool initialized = true;
 	OBJLoader loader;
 	// load geometric object 1
-	auto mesh = loader.load("../Data/Knossos/knossos.obj");
+    auto mesh = loader.load("Data/Knossos/knossos.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object1 = new GeometryNode();
@@ -303,7 +312,7 @@ bool Renderer::InitGeometricMeshes()
 		initialized = false;
 
 	// load geometric object 2
-	mesh = loader.load("../Data/Pirates/weight.obj");
+    mesh = loader.load("Data/Pirates/weight.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object2 = new GeometryNode();
@@ -313,7 +322,7 @@ bool Renderer::InitGeometricMeshes()
 		initialized = false;
 
 	// load geometric object 3
-	mesh = loader.load("../Data/Pirates/skeleton.obj");
+    mesh = loader.load("Data/Pirates/skeleton.obj");
 	if (mesh != nullptr)
 	{
 		m_geometric_object3 = new GeometryNode();
