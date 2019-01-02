@@ -1,4 +1,4 @@
-#include "../headers/ObjLoader.h"
+#include "../headers/OBJLoader.h"
 #include "../headers/GeometricMesh.h"
 #include <algorithm>
 #include <sstream>
