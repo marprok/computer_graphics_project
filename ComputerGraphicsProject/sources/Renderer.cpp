@@ -142,6 +142,34 @@ void Renderer::Update(float dt)
 		glm::translate(glm::mat4(1.0), m_geometric_object5_position);
 	m_geometric_object5_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object5_transformation_matrix))));
 
+	m_pirate_position.x = m_geometric_object5_position.x;
+	m_pirate_position.y = m_geometric_object5_position.y + 0.1f;
+	m_pirate_position.z = m_geometric_object5_position.z;
+
+	// body
+	m_geometric_object6_transformation_matrix[0] =
+		glm::translate(glm::mat4(1.0), m_pirate_position) *
+		glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+	m_geometric_object6_transformation_normal_matrix[0] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object6_transformation_matrix[0]))));
+
+	// arm
+	m_geometric_object6_transformation_matrix[1] =
+		glm::translate(glm::mat4(1.0), glm::vec3(0.45f, 1.f, -0.2f) + m_pirate_position) *
+		glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+	m_geometric_object6_transformation_normal_matrix[1] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object6_transformation_matrix[1]))));
+
+	// right foot
+	m_geometric_object6_transformation_matrix[2] =
+		glm::translate(glm::mat4(1.0), glm::vec3(-0.3f, 0.f, -0.2f) + m_pirate_position) *
+		glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+	m_geometric_object6_transformation_normal_matrix[2] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object6_transformation_matrix[2]))));
+
+	// left foot
+	m_geometric_object6_transformation_matrix[3] =
+		glm::translate(glm::mat4(1.0), glm::vec3(0.3f, 0.f, -0.2f) + m_pirate_position) *
+		glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+	m_geometric_object6_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object6_transformation_matrix[3]))));
+
 	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
 	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
 	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
@@ -390,6 +418,43 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
+	// load pirate
+	mesh = loader.load("../Assets/Pirate/pirate_body.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[0] = new GeometryNode();
+		m_geometric_object6[0]->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	mesh = loader.load("../Assets/Pirate/pirate_arm.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[1] = new GeometryNode();
+		m_geometric_object6[1]->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	mesh = loader.load("../Assets/Pirate/pirate_left_foot.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[2] = new GeometryNode();
+		m_geometric_object6[2]->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	mesh = loader.load("../Assets/Pirate/pirate_right_foot.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[3] = new GeometryNode();
+		m_geometric_object6[3]->Init(mesh);
+	}
+	else
+		initialized = false;
+
 	return initialized;
 }
 
@@ -540,6 +605,12 @@ void Renderer::RenderGeometry()
 
 	// draw the green tile
 	DrawGeometryNode(m_geometric_object5, m_geometric_object5_transformation_matrix, m_geometric_object5_transformation_normal_matrix);
+
+	// draw the pirate
+	for (size_t i = 0; i < 4; i++)
+	{
+		DrawGeometryNode(m_geometric_object6[i], m_geometric_object6_transformation_matrix[i], m_geometric_object6_transformation_normal_matrix[i]);
+	}
 
 	glBindVertexArray(0);
 	m_geometry_rendering_program.Unbind();
