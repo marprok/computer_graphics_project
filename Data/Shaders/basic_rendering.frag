@@ -7,6 +7,8 @@ uniform float uniform_shininess;
 uniform float uniform_has_texture;
 uniform sampler2D diffuse_texture;
 
+uniform float alpha_value;
+
 // Camera Properties
 uniform vec3 uniform_camera_position;
 
@@ -143,5 +145,5 @@ void main(void)
 	float specularNormalization = (uniform_shininess + 8) / (8 * PI);
 	vec3 specularReflection = (NdotL > 0.0)? irradiance * specularNormalization * uniform_specular * pow( NdotH, uniform_shininess + 0.001) : vec3(0);
 	
-	out_color = vec4( diffuseReflection + specularReflection, 1.0);	
+	out_color = vec4( diffuseReflection + specularReflection, alpha_value);	
 }

@@ -25,6 +25,8 @@ public:
 		GLuint normalMapID;
 	};
 	std::vector<Objects> parts;
+	
+	float alpha;
 
 	GLuint m_vao;
 	GLuint m_vbo_positions;

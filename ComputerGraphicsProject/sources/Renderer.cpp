@@ -6,6 +6,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "../headers/OBJLoader.h"
+#include <iostream>
 
 // RENDERER
 Renderer::Renderer()
@@ -73,6 +74,11 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 	bool lights_sources_initialization = InitLightSources();
 	bool meshes_initialization = InitGeometricMeshes();
 
+	// Set the starting player position to (0, 0.02, 0)
+	m_geometric_object5_position.x = 0.f;
+	m_geometric_object5_position.y = 0.02f;
+	m_geometric_object5_position.z = 0.f;
+
 	//If there was any errors
 	if (Tools::CheckGLError() != GL_NO_ERROR)
 	{
@@ -132,6 +138,10 @@ void Renderer::Update(float dt)
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
 	m_geometric_object4_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object4_transformation_matrix))));
 
+	m_geometric_object5_transformation_matrix =
+		glm::translate(glm::mat4(1.0), m_geometric_object5_position);
+	m_geometric_object5_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object5_transformation_matrix))));
+
 	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
 	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
 	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
@@ -178,6 +188,7 @@ bool Renderer::InitRenderingTechniques()
 	m_geometry_rendering_program.LoadUniform("uniform_diffuse");
 	m_geometry_rendering_program.LoadUniform("uniform_specular");
 	m_geometry_rendering_program.LoadUniform("uniform_shininess");
+	m_geometry_rendering_program.LoadUniform("alpha_value");
 	m_geometry_rendering_program.LoadUniform("uniform_has_texture");
 	m_geometry_rendering_program.LoadUniform("diffuse_texture");
 	m_geometry_rendering_program.LoadUniform("uniform_camera_position");
@@ -323,12 +334,6 @@ bool Renderer::InitGeometricMeshes()
 	if (mesh != nullptr)
 	{
 		m_geometric_object3 = new GeometryNode();
-
-		m_towers.emplace_back(glm::vec3(1, 0, 5), m_geometric_object3);
-		m_towers.emplace_back(glm::vec3(2, 0, -5), m_geometric_object3);
-		m_towers.emplace_back(glm::vec3(3, 0, 3), m_geometric_object3);
-		m_towers.emplace_back(glm::vec3(10, 0, -18), m_geometric_object3);
-
 		m_geometric_object3->Init(mesh);
 	}
 	else
@@ -371,6 +376,16 @@ bool Renderer::InitGeometricMeshes()
 		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
 
 		m_geometric_object4->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	// load green_tile
+	mesh = loader.load("../Assets/Various/plane_green.obj");
+	if (mesh != nullptr)
+	{
+		m_geometric_object5 = new GeometryNode();
+		m_geometric_object5->Init(mesh);
 	}
 	else
 		initialized = false;
@@ -446,7 +461,6 @@ void Renderer::RenderShadowMaps()
 	}
 }
 
-
 void Renderer::RenderGeometry()
 {
 	// Bind the Intermediate framebuffer
@@ -458,6 +472,9 @@ void Renderer::RenderGeometry()
 	// clear color and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	switch (m_rendering_mode)
 	{
@@ -515,23 +532,14 @@ void Renderer::RenderGeometry()
 		DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
 	}
 
-	// draw towers
+	// draw tiles
 	for (auto &tile : m_road)
 	{
 		DrawGeometryNode(tile.getGeometricNode(), tile.getGeometricTransformationMatrix(), tile.getGeometricTransformationNormalMatrix());
 	}
 
-	// draw tiles
-	/*for (size_t i = 0; i < DIMENSION; i++)
-	{
-		for (size_t j = 0; j < DIMENSION; j++)
-		{
-			if (m_tiles[i * DIMENSION + j])
-			{
-				DrawGeometryNode(m_road->getGeometricNode(), m_tile->getGeometricTransformationMatrix(), m_tile->getGeometricTransformationNormalMatrix());
-			}
-		}
-	}*/
+	// draw the green tile
+	DrawGeometryNode(m_geometric_object5, m_geometric_object5_transformation_matrix, m_geometric_object5_transformation_normal_matrix);
 
 	glBindVertexArray(0);
 	m_geometry_rendering_program.Unbind();
@@ -545,6 +553,15 @@ void Renderer::RenderGeometry()
 
 void Renderer::DrawGeometryNode(GeometryNode* node, glm::mat4 model_matrix, glm::mat4 normal_matrix)
 {
+	if (node == m_geometric_object5)
+	{
+		node->alpha = 0.5f;
+	}
+	else
+	{
+		node->alpha = 1.f;
+	}
+
 	glBindVertexArray(node->m_vao);
 	glUniformMatrix4fv(m_geometry_rendering_program["uniform_model_matrix"], 1, GL_FALSE, glm::value_ptr(model_matrix));
 	glUniformMatrix4fv(m_geometry_rendering_program["uniform_normal_matrix"], 1, GL_FALSE, glm::value_ptr(normal_matrix));
@@ -557,6 +574,7 @@ void Renderer::DrawGeometryNode(GeometryNode* node, glm::mat4 model_matrix, glm:
 		glUniform3f(m_geometry_rendering_program["uniform_specular"], specularColor.r, specularColor.g, specularColor.b);
 		glUniform1f(m_geometry_rendering_program["uniform_shininess"], shininess);
 		glUniform1f(m_geometry_rendering_program["uniform_has_texture"], (node->parts[j].textureID > 0) ? 1.0f : 0.0f);
+		glUniform1f(m_geometry_rendering_program["alpha_value"], node->alpha);
 		glBindTexture(GL_TEXTURE_2D, node->parts[j].textureID);
 
 		glDrawArrays(GL_TRIANGLES, node->parts[j].start_offset, node->parts[j].count);
@@ -632,4 +650,41 @@ void Renderer::CameraMoveRight(bool enable)
 void Renderer::CameraLook(glm::vec2 lookDir)
 {
 	m_camera_look_angle_destination = glm::vec2(1, -1) * lookDir;
+}
+
+void Renderer::MovePlayer(int dx, int dz) {
+	if (m_geometric_object5_position.x + dx >= 0 && m_geometric_object5_position.x + dx <= 19)
+	{
+		m_geometric_object5_position.x += dx;
+	}
+	if (m_geometric_object5_position.z + dz >= 0 && m_geometric_object5_position.z + dz <= 19)
+	{
+		m_geometric_object5_position.z += dz;
+	}
+}
+
+void Renderer::PlaceTower() {
+	if (!isValidTowerPos())
+	{
+		m_towers.emplace_back(m_geometric_object5_position, m_geometric_object3);
+		std::cout << "New tower!!!!!! :D" << std::endl;
+	}
+}
+
+bool Renderer::isValidTowerPos() {
+	for (auto &tower : m_towers) {
+		if (m_geometric_object5_position.x == tower.getPosition().x
+			&& m_geometric_object5_position.z == tower.getPosition().z)
+		{
+			return true;
+		}
+	}
+	for (auto &tile : m_road) {
+		if (m_geometric_object5_position.x == tile.getPosition().x
+			&& m_geometric_object5_position.z == tile.getPosition().z)
+		{
+			return true;
+		}
+	}
+	return false;
 }

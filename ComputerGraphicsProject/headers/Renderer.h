@@ -48,15 +48,23 @@ protected:
 	class GeometryNode*								m_geometric_object1;
 	glm::mat4										m_geometric_object1_transformation_matrix;
 	glm::mat4										m_geometric_object1_transformation_normal_matrix;
+	
 	class GeometryNode*								m_geometric_object2;
 	glm::mat4										m_geometric_object2_transformation_matrix;
 	glm::mat4										m_geometric_object2_transformation_normal_matrix;
+	
 	class GeometryNode*								m_geometric_object3;
 	glm::mat4										m_geometric_object3_transformation_matrix;
 	glm::mat4										m_geometric_object3_transformation_normal_matrix;
+	
 	class GeometryNode*								m_geometric_object4;
 	glm::mat4										m_geometric_object4_transformation_matrix;
 	glm::mat4										m_geometric_object4_transformation_normal_matrix;
+	
+	class GeometryNode*								m_geometric_object5;
+	glm::mat4										m_geometric_object5_transformation_matrix;
+	glm::mat4										m_geometric_object5_transformation_normal_matrix;
+	glm::vec3										m_geometric_object5_position;
 
 	std::vector<Tower>								m_towers;
 	std::vector<Tile>								m_road;
@@ -97,7 +105,13 @@ public:
 	void										CameraMoveBackWard(bool enable);
 	void										CameraMoveLeft(bool enable);
 	void										CameraMoveRight(bool enable);
-	void										CameraLook(glm::vec2 lookDir);	
+	void										CameraLook(glm::vec2 lookDir);
+	void MovePlayer(int dx, int dz);
+
+	void PlaceTower();
+
+	bool isValidTowerPos();
+
 };
 
 #endif
