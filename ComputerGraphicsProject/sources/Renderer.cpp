@@ -12,6 +12,7 @@
         #include "glm/gtc/matrix_transform.hpp"
         #include "../headers/OBJLoader.h"
         #include <iostream>
+        #include <fstream>
     #endif
 #elif __APPLE__
     // apple
@@ -20,6 +21,7 @@
     #include "../headers/GeometricMesh.h"
     #include <../glm/gtc/type_ptr.hpp>
     #include "../headers/TextureManager.h"
+    #include <fstream>
 #elif __linux__
     // linux
     #include "../headers/Renderer.h"
@@ -31,6 +33,7 @@
     #include "../glm/gtc/matrix_transform.hpp"
     #include "../headers/OBJLoader.h"
     #include <iostream>
+    #include <fstream>
 #endif
 
 
@@ -473,8 +476,8 @@ bool Renderer::InitGeometricMeshes()
     if (mesh != nullptr)
     {
         m_geometric_object4 = new GeometryNode();
-
-        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
+        readRoad("Data/road.map");
+        /*m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 3), m_geometric_object4);
@@ -503,7 +506,7 @@ bool Renderer::InitGeometricMeshes()
         m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 1), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 1), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
-
+        */
         m_geometric_object4->Init(mesh);
     }
     else
@@ -958,4 +961,22 @@ void Renderer::RemoveSkeleton() {
 			i++;
 		}
 	}
+}
+
+bool Renderer::readRoad(const char *road)
+{
+    std::fstream in(road, std::ios::in);
+    if (!in)
+    {
+        std::cerr << "Error: cannot open file " << road << std::endl;
+        return false;
+    }
+
+    int x, z;
+
+    while (in >> x >> z)
+        m_road.emplace_back(2, 2, glm::vec3(x, 0.01, z), m_geometric_object4);
+    in.close();
+    return true;
+
 }

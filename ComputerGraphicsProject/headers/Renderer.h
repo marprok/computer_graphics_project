@@ -151,6 +151,8 @@ public:
 
 	void RemoveSkeleton();
 
+    bool readRoad(const char *road);
+
 };
 
 #endif
