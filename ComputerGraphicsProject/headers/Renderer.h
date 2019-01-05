@@ -12,6 +12,7 @@
 		#include "SpotlightNode.h"
 		#include "Tower.h"
 		#include "Tile.h"
+		#include "Skeleton.h"
 	#endif
 #elif __APPLE__
 	// apple
@@ -23,6 +24,7 @@
 	#include "SpotlightNode.h"
 	#include "Tower.h"
 	#include "Tile.h"
+	#include "Skeleton.h"
 #elif __linux__
 	// linux
 	#include "../GLEW/glew.h"
@@ -32,6 +34,7 @@
 	#include "SpotlightNode.h"
 	#include "Tower.h"
 	#include "Tile.h"
+	#include "Skeleton.h"
 #endif
 
 class Renderer
@@ -99,6 +102,7 @@ protected:
 
 	std::vector<Tower>								m_towers;
 	std::vector<Tile>								m_road;
+	std::vector<Skeleton>							m_skeletons;
 
 	// Protected Functions
 	bool InitRenderingTechniques();
@@ -142,6 +146,8 @@ public:
 	void PlaceTower();
 
 	bool isValidTowerPos();
+
+	void MoveSkeleton(float dt);
 
 };
 

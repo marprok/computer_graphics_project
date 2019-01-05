@@ -25,6 +25,7 @@
     <ClCompile Include="sources\OBJLoader.cpp" />
     <ClCompile Include="sources\Renderer.cpp" />
     <ClCompile Include="sources\ShaderProgram.cpp" />
+    <ClCompile Include="sources\Skeleton.cpp" />
     <ClCompile Include="sources\SpotlightNode.cpp" />
     <ClCompile Include="sources\TextureManager.cpp" />
     <ClCompile Include="sources\Tile.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="headers\OBJLoader.h" />
     <ClInclude Include="headers\Renderer.h" />
     <ClInclude Include="headers\ShaderProgram.h" />
+    <ClInclude Include="headers\Skeleton.h" />
     <ClInclude Include="headers\SpotlightNode.h" />
     <ClInclude Include="headers\TextureManager.h" />
     <ClInclude Include="headers\Tile.h" />
