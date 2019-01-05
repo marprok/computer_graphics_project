@@ -1,6 +1,23 @@
-#include "../headers/SpotlightNode.h"
-#include "glm\gtc\matrix_transform.hpp"
-#include "../headers/Tools.h"
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "../headers/SpotlightNode.h"
+		#include "glm/gtc/matrix_transform.hpp"
+		#include "../headers/Tools.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "../headers/SpotlightNode.h"
+	#include "../glm/gtc/matrix_transform.hpp"
+	#include "../headers/Tools.h"
+#elif __linux__
+	// linux
+	#include "../headers/SpotlightNode.h"
+	#include "../glm/gtc/matrix_transform.hpp"
+	#include "../headers/Tools.h"
+#endif
 
 // Spot Light
 SpotLightNode::SpotLightNode()

@@ -1,8 +1,26 @@
-#include "../headers/GeometryNode.h"
-#include "../headers/GeometricMesh.h"
-#include <glm/gtc/type_ptr.hpp>
-#include "../headers/TextureManager.h"
-
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "../headers/GeometryNode.h"
+		#include "../headers/GeometricMesh.h"
+		#include <glm/gtc/type_ptr.hpp>
+		#include "../headers/TextureManager.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "../headers/GeometryNode.h"
+	#include "../headers/GeometricMesh.h"
+	#include <../glm/gtc/type_ptr.hpp>
+	#include "../headers/TextureManager.h"
+#elif __linux__
+	// linux
+	#include "../headers/GeometryNode.h"
+	#include "../headers/GeometricMesh.h"
+	#include <../glm/gtc/type_ptr.hpp>
+	#include "../headers/TextureManager.h"
+#endif
 
 GeometryNode::GeometryNode()
 {

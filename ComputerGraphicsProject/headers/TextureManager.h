@@ -1,10 +1,29 @@
 #ifndef TEXTURE_MANAGER_H
 #define TEXTURE_MANAGER_H
 
-#include "SDL2/SDL.h"
-#include "GLEW\glew.h"
-#include <string>
-#include <vector>
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "SDL2/SDL.h"
+		#include "GLEW\glew.h"
+		#include <string>
+		#include <vector>
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "SDL2/SDL.h"
+	#include "../GLEW/glew.h"
+	#include <string>
+	#include <vector>
+#elif __linux__
+	// linux
+	#include "SDL2/SDL.h"
+	#include "../GLEW/glew.h"
+	#include <string>
+	#include <vector>
+#endif
 
 // Singleton Class of Texture Manager
 class TextureManager

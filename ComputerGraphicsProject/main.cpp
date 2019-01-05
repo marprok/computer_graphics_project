@@ -1,8 +1,29 @@
-#include "SDL2/SDL.h"
-#include <iostream>
-#include <chrono>
-#include "GLEW\glew.h"
-#include "headers/Renderer.h"
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "SDL2/SDL.h"
+		#include <iostream>
+		#include <chrono>
+		#include "GLEW/glew.h"
+		#include "headers/Renderer.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "SDL2/SDL.h"
+	#include <iostream>
+	#include <chrono>
+	#include "inc/GLEW/glew.h"
+	#include "inc/headers/Renderer.h"
+#elif __linux__
+	// linux
+	#include "SDL2/SDL.h"
+	#include <iostream>
+	#include <chrono>
+	#include "inc/GLEW/glew.h"
+	#include "inc/headers/Renderer.h"
+#endif
 
 using namespace std;
 
@@ -38,6 +59,7 @@ bool init()
 		cout << "Error: No double buffering" << endl;
 
 	// set OpenGL Version (3.3)
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
@@ -62,6 +84,7 @@ bool init()
 		printf("Warning: Unable to disable VSync! SDL Error: %s\n", SDL_GetError());
 
 	// Initialize GLEW
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{

@@ -1,13 +1,38 @@
 #ifndef BIM_ENGINE_RENDERER_H
 #define BIM_ENGINE_RENDERER_H
 
-#include "GLEW\glew.h"
-#include "glm\glm.hpp"
-#include <vector>
-#include "ShaderProgram.h"
-#include "SpotlightNode.h"
-#include "Tower.h"
-#include "Tile.h"
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "GLEW\glew.h"
+		#include "glm\glm.hpp"
+		#include <vector>
+		#include "ShaderProgram.h"
+		#include "SpotlightNode.h"
+		#include "Tower.h"
+		#include "Tile.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "../GLEW/glew.h"
+	#include "../glm/glm.hpp"
+	#include <vector>
+	#include "ShaderProgram.h"
+	#include "SpotlightNode.h"
+	#include "Tower.h"
+	#include "Tile.h"
+#elif __linux__
+	// linux
+	#include "../GLEW/glew.h"
+	#include "../glm/glm.hpp"
+	#include <vector>
+	#include "ShaderProgram.h"
+	#include "SpotlightNode.h"
+	#include "Tower.h"
+	#include "Tile.h"
+#endif
 
 class Renderer
 {

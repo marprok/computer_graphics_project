@@ -1,10 +1,29 @@
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include "GLEW\glew.h"
-
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
+
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include <string>
+		#include <vector>
+		#include <unordered_map>
+		#include "GLEW\glew.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include <string>
+	#include <vector>
+	#include <unordered_map>
+	#include "../GLEW/glew.h"
+#elif __linux__
+	// linux
+	#include <string>
+	#include <vector>
+	#include <unordered_map>
+	#include "../GLEW/glew.h"
+#endif
 
 class ShaderProgram
 {

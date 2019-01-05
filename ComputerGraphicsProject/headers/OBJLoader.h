@@ -1,10 +1,31 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include <vector>
-#include <unordered_map>
-#include <future>
-#include "GeometricMesh.h"
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include "glm/glm.hpp"
+		#include <vector>
+		#include <unordered_map>
+		#include <future>
+		#include "GeometricMesh.h"
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include "../glm/glm.hpp"
+	#include <vector>
+	#include <unordered_map>
+	#include <future>
+	#include "GeometricMesh.h"
+#elif __linux__
+	// linux
+	#include "../glm/glm.hpp"
+	#include <vector>
+	#include <unordered_map>
+	#include <future>
+	#include "GeometricMesh.h"
+#endif
 
 struct OBJMaterial
 {

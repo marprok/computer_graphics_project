@@ -130,8 +130,8 @@ void Renderer::Update(float dt)
 	m_geometric_object1_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object1_transformation_matrix))));
 
 	m_geometric_object2_transformation_matrix = 
-		glm::translate(glm::mat4(1.0), glm::vec3(10, 0, -21)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(0.1f));
+		glm::translate(glm::mat4(1.0), glm::vec3(12, 0, -1.25)) *
+		glm::scale(glm::mat4(1.f), glm::vec3(0.05f));
 	m_geometric_object2_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object2_transformation_matrix))));
 
 	m_geometric_object4_transformation_matrix = 
@@ -142,9 +142,13 @@ void Renderer::Update(float dt)
 		glm::translate(glm::mat4(1.0), m_geometric_object5_position);
 	m_geometric_object5_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object5_transformation_matrix))));
 
-	m_pirate_position.x = m_geometric_object5_position.x;
+	/*m_pirate_position.x = m_geometric_object5_position.x;
 	m_pirate_position.y = m_geometric_object5_position.y + 0.1f;
-	m_pirate_position.z = m_geometric_object5_position.z;
+	m_pirate_position.z = m_geometric_object5_position.z;*/
+
+	m_pirate_position.x = 0.f;
+	m_pirate_position.y = 0.1f;
+	m_pirate_position.z = 0.f;
 
 	// body
 	m_geometric_object6_transformation_matrix[0] =
@@ -367,7 +371,7 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
-	// load tower
+	// load tile
 	mesh = loader.load("../Assets/Terrain/road.obj");
 	if (mesh != nullptr)
 	{
@@ -592,7 +596,7 @@ void Renderer::RenderGeometry()
 	DrawGeometryNode(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
 
 	// draw towers
-	for (auto &tower:m_towers)
+	for (auto &tower : m_towers)
 	{
 		DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
 	}

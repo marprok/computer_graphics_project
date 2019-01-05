@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "../headers/Tools.h"
+#include <cstring>
 
 using namespace std;
 

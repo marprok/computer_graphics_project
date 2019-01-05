@@ -1,10 +1,29 @@
 #ifndef GEOMETRY_NODE_H
 #define GEOMETRY_NODE_H
 
-#include <vector>
-#include "GLEW\glew.h"
-#include <unordered_map>
-#include "glm\gtx\hash.hpp"
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+	#ifdef _WIN64
+		//define something for Windows (64-bit only)
+		#include <vector>
+		#include "GLEW/glew.h"
+		#include "OBJLoader.h"
+		#include <string>
+	#endif
+#elif __APPLE__
+	// apple
+	#include "TargetConditionals.h"
+	#include <vector>
+	#include "../GLEW/glew.h"
+	#include <unordered_map>
+	#include "../glm/gtx/hash.hpp"
+#elif __linux__
+	// linux
+	#include <vector>
+	#include "../GLEW/glew.h"
+	#include <unordered_map>
+	#include "../glm/gtx/hash.hpp"
+#endif
 
 class GeometryNode
 {
