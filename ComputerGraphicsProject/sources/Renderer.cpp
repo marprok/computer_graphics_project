@@ -1,12 +1,38 @@
-#include "../headers/Renderer.h"
-#include "../headers/GeometryNode.h"
-#include "../headers/Tools.h"
-#include <algorithm>
-#include "../headers/ShaderProgram.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "../headers/OBJLoader.h"
-#include <iostream>
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        //define something for Windows (64-bit only)
+        #include "../headers/Renderer.h"
+        #include "../headers/GeometryNode.h"
+        #include "../headers/Tools.h"
+        #include <algorithm>
+        #include "../headers/ShaderProgram.h"
+        #include "glm/gtc/type_ptr.hpp"
+        #include "glm/gtc/matrix_transform.hpp"
+        #include "../headers/OBJLoader.h"
+        #include <iostream>
+    #endif
+#elif __APPLE__
+    // apple
+    #include "TargetConditionals.h"
+    #include "../headers/GeometryNode.h"
+    #include "../headers/GeometricMesh.h"
+    #include <../glm/gtc/type_ptr.hpp>
+    #include "../headers/TextureManager.h"
+#elif __linux__
+    // linux
+    #include "../headers/Renderer.h"
+    #include "../headers/GeometryNode.h"
+    #include "../headers/Tools.h"
+    #include <algorithm>
+    #include "../headers/ShaderProgram.h"
+    #include "../glm/gtc/type_ptr.hpp"
+    #include "../glm/gtc/matrix_transform.hpp"
+    #include "../headers/OBJLoader.h"
+    #include <iostream>
+#endif
+
 
 // RENDERER
 Renderer::Renderer()
@@ -175,60 +201,107 @@ bool Renderer::InitCommonItems()
 
 bool Renderer::InitRenderingTechniques()
 {
-	bool initialized = true;
+    bool initialized = true;
 
-	// Geometry Rendering Program
-	std::string vertex_shader_path = "../Data/Shaders/basic_rendering.vert";
-	std::string fragment_shader_path = "../Data/Shaders/basic_rendering.frag";
-	m_geometry_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
-	m_geometry_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
-	initialized = m_geometry_rendering_program.CreateProgram();
-	m_geometry_rendering_program.LoadUniform("uniform_projection_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_view_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_model_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_normal_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_diffuse");
-	m_geometry_rendering_program.LoadUniform("uniform_specular");
-	m_geometry_rendering_program.LoadUniform("uniform_shininess");
-	m_geometry_rendering_program.LoadUniform("alpha_value");
-	m_geometry_rendering_program.LoadUniform("uniform_has_texture");
-	m_geometry_rendering_program.LoadUniform("diffuse_texture");
-	m_geometry_rendering_program.LoadUniform("uniform_camera_position");
-	// Light Source Uniforms
-	m_geometry_rendering_program.LoadUniform("uniform_light_projection_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_light_view_matrix");
-	m_geometry_rendering_program.LoadUniform("uniform_light_position");
-	m_geometry_rendering_program.LoadUniform("uniform_light_direction");
-	m_geometry_rendering_program.LoadUniform("uniform_light_color");
-	m_geometry_rendering_program.LoadUniform("uniform_light_umbra");
-	m_geometry_rendering_program.LoadUniform("uniform_light_penumbra");
-	m_geometry_rendering_program.LoadUniform("uniform_cast_shadows");
-	m_geometry_rendering_program.LoadUniform("shadowmap_texture");
+    // Geometry Rendering Program
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        std::string vertex_shader_path = "../Data/Shaders/basic_rendering.vert";
+        std::string fragment_shader_path = "../Data/Shaders/basic_rendering.frag";
+    #endif
+#elif __APPLE__
+    // apple
+    std::string vertex_shader_path = "Data/Shaders/basic_rendering.vert";
+    std::string fragment_shader_path = "Data/Shaders/basic_rendering.frag";
 
-	// Post Processing Program
-	vertex_shader_path = "../Data/Shaders/postproc.vert";
-	fragment_shader_path = "../Data/Shaders/postproc.frag";
-	m_postprocess_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
-	m_postprocess_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
-	initialized = initialized && m_postprocess_program.CreateProgram();
-	m_postprocess_program.LoadUniform("uniform_texture");
-	m_postprocess_program.LoadUniform("uniform_time");
-	m_postprocess_program.LoadUniform("uniform_depth");
-	m_postprocess_program.LoadUniform("uniform_projection_inverse_matrix");
+#elif __linux__
+    // linux
+    std::string vertex_shader_path = "Data/Shaders/basic_rendering.vert";
+    std::string fragment_shader_path = "Data/Shaders/basic_rendering.frag";
 
-	// Shadow mapping Program
-	vertex_shader_path = "../Data/Shaders/shadow_map_rendering.vert";
-	fragment_shader_path = "../Data/Shaders/shadow_map_rendering.frag";
-	m_spot_light_shadow_map_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
-	m_spot_light_shadow_map_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
-	initialized = initialized && m_spot_light_shadow_map_program.CreateProgram();
-	m_spot_light_shadow_map_program.LoadUniform("uniform_projection_matrix");
-	m_spot_light_shadow_map_program.LoadUniform("uniform_view_matrix");
-	m_spot_light_shadow_map_program.LoadUniform("uniform_model_matrix");
-	
-	return initialized;
+#endif
+
+    m_geometry_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_geometry_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = m_geometry_rendering_program.CreateProgram();
+    m_geometry_rendering_program.LoadUniform("uniform_projection_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_view_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_model_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_normal_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_diffuse");
+    m_geometry_rendering_program.LoadUniform("uniform_specular");
+    m_geometry_rendering_program.LoadUniform("uniform_shininess");
+    m_geometry_rendering_program.LoadUniform("alpha_value");
+    m_geometry_rendering_program.LoadUniform("uniform_has_texture");
+    m_geometry_rendering_program.LoadUniform("diffuse_texture");
+    m_geometry_rendering_program.LoadUniform("uniform_camera_position");
+    // Light Source Uniforms
+    m_geometry_rendering_program.LoadUniform("uniform_light_projection_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_light_view_matrix");
+    m_geometry_rendering_program.LoadUniform("uniform_light_position");
+    m_geometry_rendering_program.LoadUniform("uniform_light_direction");
+    m_geometry_rendering_program.LoadUniform("uniform_light_color");
+    m_geometry_rendering_program.LoadUniform("uniform_light_umbra");
+    m_geometry_rendering_program.LoadUniform("uniform_light_penumbra");
+    m_geometry_rendering_program.LoadUniform("uniform_cast_shadows");
+    m_geometry_rendering_program.LoadUniform("shadowmap_texture");
+
+    // Post Processing Program
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        vertex_shader_path = "../Data/Shaders/postproc.vert";
+        fragment_shader_path = "../Data/Shaders/postproc.frag";
+    #endif
+#elif __APPLE__
+    // apple
+    vertex_shader_path = "Data/Shaders/postproc.vert";
+    fragment_shader_path = "Data/Shaders/postproc.frag";
+
+#elif __linux__
+    // linux
+    vertex_shader_path = "Data/Shaders/postproc.vert";
+    fragment_shader_path = "Data/Shaders/postproc.frag";
+
+#endif
+    m_postprocess_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_postprocess_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = initialized && m_postprocess_program.CreateProgram();
+    m_postprocess_program.LoadUniform("uniform_texture");
+    m_postprocess_program.LoadUniform("uniform_time");
+    m_postprocess_program.LoadUniform("uniform_depth");
+    m_postprocess_program.LoadUniform("uniform_projection_inverse_matrix");
+
+    // Shadow mapping Program
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        vertex_shader_path = "../Data/Shaders/shadow_map_rendering.vert";
+        fragment_shader_path = "../Data/Shaders/shadow_map_rendering.frag";
+    #endif
+#elif __APPLE__
+    // apple
+    vertex_shader_path = "Data/Shaders/shadow_map_rendering.vert";
+    fragment_shader_path = "Data/Shaders/shadow_map_rendering.frag";
+
+#elif __linux__
+    // linux
+    vertex_shader_path = "Data/Shaders/shadow_map_rendering.vert";
+    fragment_shader_path = "Data/Shaders/shadow_map_rendering.frag";
+
+#endif
+
+    m_spot_light_shadow_map_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_spot_light_shadow_map_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = initialized && m_spot_light_shadow_map_program.CreateProgram();
+    m_spot_light_shadow_map_program.LoadUniform("uniform_projection_matrix");
+    m_spot_light_shadow_map_program.LoadUniform("uniform_view_matrix");
+    m_spot_light_shadow_map_program.LoadUniform("uniform_model_matrix");
+
+    return initialized;
 }
-
 bool Renderer::ReloadShaders()
 {
 	bool reloaded = true;
@@ -312,122 +385,241 @@ bool Renderer::InitGeometricMeshes()
 	bool initialized = true;
 	OBJLoader loader;
 	// load terrain
-	auto mesh = loader.load("../Assets/Terrain/terrain.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object1 = new GeometryNode();
-		m_geometric_object1->Init(mesh);
-	}
-	else
-		initialized = false;
 
-	// load treasure
-	mesh = loader.load("../Assets/Treasure/treasure_chest.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object2 = new GeometryNode();
-		m_geometric_object2->Init(mesh);
-	}
-	else
-		initialized = false;
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        auto mesh = loader.load("../Assets/Terrain/terrain.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   auto mesh = loader.load("Assets/Terrain/terrain.obj");
 
-	// load tower
-	mesh = loader.load("../Assets/MedievalTower/tower.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object3 = new GeometryNode();
-		m_geometric_object3->Init(mesh);
-	}
-	else
-		initialized = false;
+#elif __linux__
+    // linux
+    auto mesh = loader.load("Assets/Terrain/terrain.obj");
 
-	// load tile
-	mesh = loader.load("../Assets/Terrain/road.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object4 = new GeometryNode();
+#endif
 
-		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 3), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 3), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 4), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 5), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 6), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 7), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 7), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 8), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(3, 0.01, 8), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(4, 0.01, 8), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(5, 0.01, 8), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 8), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 7), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 6), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 6), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 5), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 4), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 3), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 3), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 3), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 2), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 1), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 1), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 1), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 1), m_geometric_object4);
-		m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
+    if (mesh != nullptr)
+    {
+        m_geometric_object1 = new GeometryNode();
+        m_geometric_object1->Init(mesh);
+    }
+    else
+        initialized = false;
 
-		m_geometric_object4->Init(mesh);
-	}
-	else
-		initialized = false;
+    // load treasure
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Treasure/treasure_chest.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/Treasure/treasure_chest.obj");
 
-	// load green_tile
-	mesh = loader.load("../Assets/Various/plane_green.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object5 = new GeometryNode();
-		m_geometric_object5->Init(mesh);
-	}
-	else
-		initialized = false;
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Treasure/treasure_chest.obj");
 
-	// load pirate
-	mesh = loader.load("../Assets/Pirate/pirate_body.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object6[0] = new GeometryNode();
-		m_geometric_object6[0]->Init(mesh);
-	}
-	else
-		initialized = false;
+#endif
+    if (mesh != nullptr)
+    {
+        m_geometric_object2 = new GeometryNode();
+        m_geometric_object2->Init(mesh);
+    }
+    else
+        initialized = false;
 
-	mesh = loader.load("../Assets/Pirate/pirate_arm.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object6[1] = new GeometryNode();
-		m_geometric_object6[1]->Init(mesh);
-	}
-	else
-		initialized = false;
+    // load tower
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/MedievalTower/tower.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/MedievalTower/tower.obj");
 
-	mesh = loader.load("../Assets/Pirate/pirate_left_foot.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object6[2] = new GeometryNode();
-		m_geometric_object6[2]->Init(mesh);
-	}
-	else
-		initialized = false;
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/MedievalTower/tower.obj");
+#endif
 
-	mesh = loader.load("../Assets/Pirate/pirate_right_foot.obj");
-	if (mesh != nullptr)
-	{
-		m_geometric_object6[3] = new GeometryNode();
-		m_geometric_object6[3]->Init(mesh);
-	}
-	else
-		initialized = false;
+    if (mesh != nullptr)
+    {
+        m_geometric_object3 = new GeometryNode();
+        m_geometric_object3->Init(mesh);
+    }
+    else
+        initialized = false;
+
+    // load tile
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Terrain/road.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/Terrain/road.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Terrain/road.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object4 = new GeometryNode();
+
+        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 3), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 3), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 4), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 5), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 6), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 7), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 7), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 8), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(3, 0.01, 8), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(4, 0.01, 8), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(5, 0.01, 8), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 8), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 7), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 6), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 6), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 5), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 4), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 3), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 3), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 3), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 2), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 1), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 1), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 1), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 1), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
+
+        m_geometric_object4->Init(mesh);
+    }
+    else
+        initialized = false;
+
+    // load green_tile
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Various/plane_green.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/Various/plane_green.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Various/plane_green.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object5 = new GeometryNode();
+        m_geometric_object5->Init(mesh);
+    }
+    else
+        initialized = false;
+
+    // load pirate
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Pirate/pirate_body.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/Pirate/pirate_body.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Pirate/pirate_body.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object6[0] = new GeometryNode();
+        m_geometric_object6[0]->Init(mesh);
+    }
+    else
+        initialized = false;
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Pirate/pirate_arm.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("Assets/Pirate/pirate_arm.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Pirate/pirate_arm.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object6[1] = new GeometryNode();
+        m_geometric_object6[1]->Init(mesh);
+    }
+    else
+        initialized = false;
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+         mesh = loader.load("../Assets/Pirate/pirate_left_foot.obj");
+    #endif
+#elif __APPLE__
+    // apple
+    mesh = loader.load("Assets/Pirate/pirate_left_foot.obj");
+
+#elif __linux__
+    // linux
+     mesh = loader.load("Assets/Pirate/pirate_left_foot.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object6[2] = new GeometryNode();
+        m_geometric_object6[2]->Init(mesh);
+    }
+    else
+        initialized = false;
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+          mesh = loader.load("../Assets/Pirate/pirate_right_foot.obj");
+    #endif
+#elif __APPLE__
+    // apple
+     mesh = loader.load("Assets/Pirate/pirate_right_foot.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Pirate/pirate_right_foot.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object6[3] = new GeometryNode();
+        m_geometric_object6[3]->Init(mesh);
+    }
+    else
+        initialized = false;
 
 	m_pirate_position = glm::vec3(0, 0.1, 0);
 	m_skeletons.emplace_back(m_pirate_position, 1, m_road, m_geometric_object6);
