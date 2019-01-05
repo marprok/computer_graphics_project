@@ -50,13 +50,20 @@ void Skeleton::Move(float dt)
 {
 	glm::vec3 delta_skeleton = m_road[m_goal].getPosition() - m_position;
 	
-	if ((delta_skeleton.x < 0.001f || delta_skeleton.z < 0.001f) && m_goal < m_road.size() - 1)
+	if ((abs(delta_skeleton.x) < .3f && abs(delta_skeleton.z) < .3f) && m_goal < m_road.size() - 1)
 	{
 		std::cout << "Goal changed" << std::endl;
-		setGoal(m_goal + 1);
+		if (!(m_goal + 1 == m_road.size()))
+		{
+			setGoal(m_goal + 1);
+		}
+		else
+		{
+			std::cout << "Treasure reached!" << std::endl;
+		}
 	}
 
-	delta_skeleton *= dt;
+	delta_skeleton *= dt * 3.f;
 
 	setPosition(delta_skeleton + m_position);
 }
@@ -77,6 +84,11 @@ glm::mat4* Skeleton::getGeometricTransformationMatrix()
 glm::mat4* Skeleton::getGeometricTransformationNormalMatrix()
 {
 	return m_geometric_transformation_normal_matrix;
+}
+
+int Skeleton::GetGoal()
+{
+	return m_goal;
 }
 
 Skeleton::~Skeleton()

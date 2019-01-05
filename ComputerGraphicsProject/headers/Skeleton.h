@@ -47,6 +47,8 @@ public:
 	
 	glm::mat4* getGeometricTransformationNormalMatrix();
 
+	int GetGoal();
+
 private:
 	GeometryNode**			m_geometric_node;
 	

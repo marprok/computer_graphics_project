@@ -942,4 +942,20 @@ void Renderer::MoveSkeleton(float dt) {
 	for (auto &skeleton : m_skeletons) {
 		skeleton.Move(dt);
 	}
+	RemoveSkeleton();
+}
+
+void Renderer::RemoveSkeleton() {
+	for (size_t i = 0; i < m_skeletons.size();)
+	{
+		glm::vec3 delta_skeleton = m_road[m_road.size() - 1].getPosition() - m_skeletons[i].getPosition();
+
+		if (abs(delta_skeleton.x) < .3f && abs(delta_skeleton.z) < .3f) {
+			m_skeletons.erase(m_skeletons.begin() + i);
+		}
+		else
+		{
+			i++;
+		}
+	}
 }

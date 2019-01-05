@@ -149,6 +149,8 @@ public:
 
 	void MoveSkeleton(float dt);
 
+	void RemoveSkeleton();
+
 };
 
 #endif
