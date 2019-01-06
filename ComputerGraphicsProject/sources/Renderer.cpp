@@ -476,7 +476,20 @@ bool Renderer::InitGeometricMeshes()
     if (mesh != nullptr)
     {
         m_geometric_object4 = new GeometryNode();
+
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        readRoad("../Data/road.map");
+    #endif
+#elif __APPLE__
+    // apple
         readRoad("Data/road.map");
+
+#elif __linux__
+    // linux
+        readRoad("Data/road.map");
+#endif
         /*m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
         m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
@@ -977,6 +990,7 @@ bool Renderer::readRoad(const char *road)
     while (in >> x >> z)
         m_road.emplace_back(2, 2, glm::vec3(x, 0.01, z), m_geometric_object4);
     in.close();
+    std::cout << "DONE reading the road file" << std::endl;
     return true;
 
 }
