@@ -118,20 +118,11 @@ void GeometryNode::Init(GeometricMesh* mesh)
 	for (int i = 0; i < mesh->objects.size(); i++)
 	{
 		Objects part;
-        //part.valid = valid_temp;
-        //part.gs=plane_green;
 		part.start_offset = mesh->objects[i].start;
 		part.count = mesh->objects[i].end - mesh->objects[i].start;
-        //std::cout << mesh->objects[i].name << "\n";
 		auto material = mesh->materials[mesh->objects[i].material_id];
 
-        if(false) //edw
-        {
-            part.diffuseColor = glm::vec4(1.0,0.0,0.0,0.0);
-        }else
-        {
-            part.diffuseColor = glm::vec4(material.diffuse[0], material.diffuse[1], material.diffuse[2], 1.0f);
-        }
+        part.diffuseColor = glm::vec4(material.diffuse[0], material.diffuse[1], material.diffuse[2], 1.0f);
 		part.specularColor = glm::vec3(material.specular[0], material.specular[1], material.specular[2]);
 		part.shininess = material.shininess;
 		part.textureID = (material.texture.empty())? 0 : TextureManager::GetInstance().RequestTexture(material.texture.c_str());
@@ -141,18 +132,4 @@ void GeometryNode::Init(GeometricMesh* mesh)
 	}
 }
 
-
-void GeometryNode::setValid(bool flag)
-{
-    if(plane_green)
-    {
-        valid_temp = flag;
-    }
-
-}
-
-void GeometryNode::setPlaneGreen(bool flag)
-{
-    plane_green = flag;
-}
 

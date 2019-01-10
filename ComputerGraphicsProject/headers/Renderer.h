@@ -89,16 +89,20 @@ protected:
 	glm::mat4										m_geometric_object4_transformation_matrix;
 	glm::mat4										m_geometric_object4_transformation_normal_matrix;
 	
-	class GeometryNode*								m_geometric_object5;
-	glm::mat4										m_geometric_object5_transformation_matrix;
-	glm::mat4										m_geometric_object5_transformation_normal_matrix;
-	glm::vec3										m_geometric_object5_position;
+    class GeometryNode*								m_green_tile;
+    glm::mat4										m_player_tile_transformation_matrix;
+    glm::mat4										m_player_tile_transformation_normal_matrix;
+    glm::vec3										m_player_tile_position;
 
 	class GeometryNode*								m_geometric_object6[4];
 	glm::mat4										m_geometric_object6_transformation_matrix[4];
 	glm::mat4										m_geometric_object6_transformation_normal_matrix[4];
 	glm::vec3										m_geometric_object6_position[4];
 	glm::vec3										m_pirate_position;
+
+    class GeometryNode*								m_red_tile;
+
+    class GeometryNode*								m_player_tile;
 
 	std::vector<Tower>								m_towers;
 	std::vector<Tile>								m_road;
@@ -151,7 +155,6 @@ public:
 
 	void RemoveSkeleton();
 
-    void drawInvalidPosition();
 
     bool readRoad(const char *road);
 

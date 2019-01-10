@@ -40,7 +40,6 @@ public:
 		unsigned int count;
 		glm::vec3 diffuseColor;
 		glm::vec3 specularColor;
-        bool valid;
         bool gs=false;
 		float shininess;
 		GLuint textureID;
@@ -49,11 +48,6 @@ public:
 	std::vector<Objects> parts;
 	
 	float alpha;
-    bool valid_temp;
-    bool plane_green = false;
-
-    void setValid(bool flag);
-    void setPlaneGreen(bool flag);
 
 	GLuint m_vao;
 	GLuint m_vbo_positions;

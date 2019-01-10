@@ -108,9 +108,9 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 	bool meshes_initialization = InitGeometricMeshes();
 
 	// Set the starting player position to (0, 0.02, 0)
-	m_geometric_object5_position.x = 0.f;
-	m_geometric_object5_position.y = 0.02f;
-	m_geometric_object5_position.z = 0.f;
+    m_player_tile_position.x = 0.f;
+    m_player_tile_position.y = 0.02f;
+    m_player_tile_position.z = 0.f;
 
 	//If there was any errors
 	if (Tools::CheckGLError() != GL_NO_ERROR)
@@ -171,11 +171,19 @@ void Renderer::Update(float dt)
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
 	m_geometric_object4_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object4_transformation_matrix))));
 
-	m_geometric_object5_transformation_matrix =
-		glm::translate(glm::mat4(1.0), m_geometric_object5_position);
-	m_geometric_object5_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object5_transformation_matrix))));
+    m_player_tile_transformation_matrix =
+        glm::translate(glm::mat4(1.0), m_player_tile_position);
+    m_player_tile_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_player_tile_transformation_matrix))));
 
 	MoveSkeleton(dt);
+
+    if(isValidTowerPos())
+    {
+        m_player_tile = m_green_tile;
+    }else
+    {
+        m_player_tile = m_red_tile;
+    }
 
 	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
 	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
@@ -529,6 +537,8 @@ bool Renderer::InitGeometricMeshes()
     else
         initialized = false;
 
+
+
     // load green_tile
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -546,12 +556,43 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object5 = new GeometryNode();
-        m_geometric_object5->Init(mesh);
-        m_geometric_object5->setPlaneGreen(true);
+        m_green_tile = new GeometryNode();
+        m_green_tile->Init(mesh);
     }
     else
         initialized = false;
+
+
+
+
+
+    // load red_tile
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Various/plane_red.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/plane_red.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Various/plane_red.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_red_tile = new GeometryNode();
+        m_red_tile->Init(mesh);
+    }
+    else
+        initialized = false;
+
+
+
+
+
 
     // load pirate
 #ifdef _WIN32
@@ -800,7 +841,7 @@ void Renderer::RenderGeometry()
 	}
 
 	// draw the green tile
-	DrawGeometryNode(m_geometric_object5, m_geometric_object5_transformation_matrix, m_geometric_object5_transformation_normal_matrix);
+    DrawGeometryNode(m_player_tile, m_player_tile_transformation_matrix, m_player_tile_transformation_normal_matrix);
 
 	// draw the pirate
 	for (auto &skeleton : m_skeletons)
@@ -823,7 +864,7 @@ void Renderer::RenderGeometry()
 
 void Renderer::DrawGeometryNode(GeometryNode* node, glm::mat4 model_matrix, glm::mat4 normal_matrix)
 {
-	if (node == m_geometric_object5)
+    if (node == m_player_tile)
 	{
 		node->alpha = 0.5f;
 	}
@@ -923,53 +964,41 @@ void Renderer::CameraLook(glm::vec2 lookDir)
 }
 
 void Renderer::MovePlayer(int dx, int dz) {
-	if (m_geometric_object5_position.x + dx >= 0 && m_geometric_object5_position.x + dx <= 19)
+    if (m_player_tile_position.x + dx >= 0 && m_player_tile_position.x + dx <= 19)
 	{
-		m_geometric_object5_position.x += dx;
+        m_player_tile_position.x += dx;
 	}
-	if (m_geometric_object5_position.z + dz >= 0 && m_geometric_object5_position.z + dz <= 19)
+    if (m_player_tile_position.z + dz >= 0 && m_player_tile_position.z + dz <= 19)
 	{
-		m_geometric_object5_position.z += dz;
+        m_player_tile_position.z += dz;
 	}
 }
 
-void Renderer::drawInvalidPosition(){
-    for (auto &tile : m_road) {
-        if (m_geometric_object5_position.x == tile.getPosition().x
-            && m_geometric_object5_position.z == tile.getPosition().z)
-        {
-            m_geometric_object5->setValid(false);
-        }else
-        {
-            m_geometric_object5->setValid(true);
-        }
-    }
-}
 
 void Renderer::PlaceTower() {
-    if (!isValidTowerPos())
+    if (isValidTowerPos())
 	{
-		m_towers.emplace_back(m_geometric_object5_position, m_geometric_object3);
+        m_towers.emplace_back(m_player_tile_position, m_geometric_object3);
 		std::cout << "New tower!!!!!! :D" << std::endl;
 	}
 }
 
 bool Renderer::isValidTowerPos() {
 	for (auto &tower : m_towers) {
-		if (m_geometric_object5_position.x == tower.getPosition().x
-			&& m_geometric_object5_position.z == tower.getPosition().z)
+        if (m_player_tile_position.x == tower.getPosition().x
+            && m_player_tile_position.z == tower.getPosition().z)
 		{
-			return true;
+            return false;
 		}
 	}
 	for (auto &tile : m_road) {
-		if (m_geometric_object5_position.x == tile.getPosition().x
-			&& m_geometric_object5_position.z == tile.getPosition().z)
+        if (m_player_tile_position.x == tile.getPosition().x
+            && m_player_tile_position.z == tile.getPosition().z)
 		{
-			return true;
+            return false;
 		}
 	}
-	return false;
+    return true;
 }
 
 void Renderer::MoveSkeleton(float dt) {
