@@ -16,11 +16,15 @@
     #endif
 #elif __APPLE__
     // apple
-    #include "TargetConditionals.h"
+    #include "../headers/Renderer.h"
     #include "../headers/GeometryNode.h"
-    #include "../headers/GeometricMesh.h"
-    #include <../glm/gtc/type_ptr.hpp>
-    #include "../headers/TextureManager.h"
+    #include "../headers/Tools.h"
+    #include <algorithm>
+    #include "../headers/ShaderProgram.h"
+    #include "../glm/gtc/type_ptr.hpp"
+    #include "../glm/gtc/matrix_transform.hpp"
+    #include "../headers/OBJLoader.h"
+    #include <iostream>
     #include <fstream>
 #elif __linux__
     // linux
@@ -53,8 +57,8 @@ Renderer::Renderer()
 	m_continous_time = 0.0;
 
 	// initialize the camera parameters
-	m_camera_position = glm::vec3(1, 12, -6);
-	m_camera_target_position = glm::vec3(0, 0, 0);
+    m_camera_position = glm::vec3(1, 12, -7);
+    m_camera_target_position = glm::vec3(6, 0, 4);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 }
 
@@ -215,8 +219,8 @@ bool Renderer::InitRenderingTechniques()
     #endif
 #elif __APPLE__
     // apple
-    std::string vertex_shader_path = "Data/Shaders/basic_rendering.vert";
-    std::string fragment_shader_path = "Data/Shaders/basic_rendering.frag";
+    std::string vertex_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/basic_rendering.vert";
+    std::string fragment_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/basic_rendering.frag";
 
 #elif __linux__
     // linux
@@ -260,8 +264,8 @@ bool Renderer::InitRenderingTechniques()
     #endif
 #elif __APPLE__
     // apple
-    vertex_shader_path = "Data/Shaders/postproc.vert";
-    fragment_shader_path = "Data/Shaders/postproc.frag";
+    vertex_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/postproc.vert";
+    fragment_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/postproc.frag";
 
 #elif __linux__
     // linux
@@ -286,8 +290,8 @@ bool Renderer::InitRenderingTechniques()
     #endif
 #elif __APPLE__
     // apple
-    vertex_shader_path = "Data/Shaders/shadow_map_rendering.vert";
-    fragment_shader_path = "Data/Shaders/shadow_map_rendering.frag";
+    vertex_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/shadow_map_rendering.vert";
+    fragment_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/shadow_map_rendering.frag";
 
 #elif __linux__
     // linux
@@ -364,7 +368,7 @@ bool Renderer::ResizeBuffers(int width, int height)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	m_projection_matrix = glm::perspective(glm::radians(60.f), width / (float)height, 0.1f, 1500.0f);
-	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
+    m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
 	return true;
 }
@@ -396,7 +400,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   auto mesh = loader.load("Assets/Terrain/terrain.obj");
+   auto mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Terrain/terrain.obj");
 
 #elif __linux__
     // linux
@@ -420,7 +424,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/Treasure/treasure_chest.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Treasure/treasure_chest.obj");
 
 #elif __linux__
     // linux
@@ -443,7 +447,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/MedievalTower/tower.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower.obj");
 
 #elif __linux__
     // linux
@@ -466,7 +470,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/Terrain/road.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Terrain/road.obj");
 
 #elif __linux__
     // linux
@@ -484,7 +488,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-        readRoad("Data/road.map");
+        readRoad("/Users/dimitrisstaratzis/Desktop/CG_Project/Data/road.map");
 
 #elif __linux__
     // linux
@@ -533,7 +537,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/Various/plane_green.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/plane_green.obj");
 
 #elif __linux__
     // linux
@@ -544,6 +548,7 @@ bool Renderer::InitGeometricMeshes()
     {
         m_geometric_object5 = new GeometryNode();
         m_geometric_object5->Init(mesh);
+        m_geometric_object5->setPlaneGreen(true);
     }
     else
         initialized = false;
@@ -556,7 +561,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/Pirate/pirate_body.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Pirate/pirate_body.obj");
 
 #elif __linux__
     // linux
@@ -578,7 +583,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-   mesh = loader.load("Assets/Pirate/pirate_arm.obj");
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Pirate/pirate_arm.obj");
 
 #elif __linux__
     // linux
@@ -600,7 +605,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-    mesh = loader.load("Assets/Pirate/pirate_left_foot.obj");
+    mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Pirate/pirate_left_foot.obj");
 
 #elif __linux__
     // linux
@@ -622,7 +627,7 @@ bool Renderer::InitGeometricMeshes()
     #endif
 #elif __APPLE__
     // apple
-     mesh = loader.load("Assets/Pirate/pirate_right_foot.obj");
+     mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Pirate/pirate_right_foot.obj");
 
 #elif __linux__
     // linux
@@ -785,7 +790,7 @@ void Renderer::RenderGeometry()
 	// draw towers
 	for (auto &tower : m_towers)
 	{
-		DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
+        DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
 	}
 
 	// draw tiles
@@ -928,8 +933,21 @@ void Renderer::MovePlayer(int dx, int dz) {
 	}
 }
 
+void Renderer::drawInvalidPosition(){
+    for (auto &tile : m_road) {
+        if (m_geometric_object5_position.x == tile.getPosition().x
+            && m_geometric_object5_position.z == tile.getPosition().z)
+        {
+            m_geometric_object5->setValid(false);
+        }else
+        {
+            m_geometric_object5->setValid(true);
+        }
+    }
+}
+
 void Renderer::PlaceTower() {
-	if (!isValidTowerPos())
+    if (!isValidTowerPos())
 	{
 		m_towers.emplace_back(m_geometric_object5_position, m_geometric_object3);
 		std::cout << "New tower!!!!!! :D" << std::endl;

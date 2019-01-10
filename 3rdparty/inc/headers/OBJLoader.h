@@ -17,7 +17,6 @@
 	#include <vector>
 	#include <unordered_map>
 	#include <future>
-    #include <string>
 	#include "GeometricMesh.h"
 #elif __linux__
 	// linux

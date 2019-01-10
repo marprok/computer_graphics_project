@@ -15,7 +15,6 @@
 	#include "../glm/glm.hpp"
 	#include <unordered_map>
 	#include "../GLEW/glew.h"
-    #include <string>
 #elif __linux__
 	// linux
 	#include "../glm/glm.hpp"

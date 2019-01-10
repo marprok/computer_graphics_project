@@ -151,8 +151,6 @@ public:
 
 	void RemoveSkeleton();
 
-    void drawInvalidPosition();
-
     bool readRoad(const char *road);
 
 };
