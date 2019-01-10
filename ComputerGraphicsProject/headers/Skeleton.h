@@ -37,6 +37,10 @@ public:
 
 	void setGoal(int goal);
 
+    void setVelocity(float velocity);
+
+    float getVelocity();
+
 	void Move(float dt);
 	
 	glm::vec3 getPosition();
@@ -49,6 +53,8 @@ public:
 
 	int GetGoal();
 
+
+
 private:
 	GeometryNode**			m_geometric_node;
 	
@@ -57,6 +63,7 @@ private:
 	glm::vec3				m_position;
 
 	int						m_goal;
+    float                   m_velocity;
 
 	std::vector<Tile>		m_road;
 };
