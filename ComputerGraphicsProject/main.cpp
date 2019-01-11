@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
 	auto simulation_start = chrono::steady_clock::now();
 
 	// Wait for user exit
+    bool pause =false;
 	while (quit == false)
 	{
 		// While there are events to handle
@@ -150,6 +151,10 @@ int main(int argc, char *argv[])
 				{
 					renderer->CameraMoveForward(true);
 				}
+                else if (event.key.keysym.sym == SDLK_z)
+                {
+                    pause = !pause;
+                }
 				else if (event.key.keysym.sym == SDLK_s)
 				{
 					renderer->CameraMoveBackWard(true);
@@ -178,7 +183,7 @@ int main(int argc, char *argv[])
 				{
 					renderer->MovePlayer(-2, 0);
 				}
-				else if (event.key.keysym.sym == SDLK_SPACE)
+                else if (event.key.keysym.sym == SDLK_SPACE)
 				{
 					renderer->PlaceTower();
 				}
@@ -204,28 +209,28 @@ int main(int argc, char *argv[])
 			}
 			else if (event.type == SDL_MOUSEMOTION)
 			{
-				int x = event.motion.x;
-				int y = event.motion.y;
+                int x = event.motion.x;
+                int y = event.motion.y;
 				if (mouse_button_pressed)
 				{
-					renderer->CameraLook(glm::vec2(x, y) - prev_mouse_position);
-					prev_mouse_position = glm::vec2(x, y);
+                    renderer->CameraLook(glm::vec2(x, y) - prev_mouse_position);
+                    prev_mouse_position = glm::vec2(x, y);
 				}
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
 			{
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
-					int x = event.button.x;
-					int y = event.button.y;
+                    int x = event.button.x;
+                    int y = event.button.y;
 					mouse_button_pressed = (event.type == SDL_MOUSEBUTTONDOWN);
 					prev_mouse_position = glm::vec2(x, y);
 				}
 			}
 			else if (event.type == SDL_MOUSEWHEEL)
 			{
-				int x = event.wheel.x;
-				int y = event.wheel.y;
+                int x = event.wheel.x;
+                int y = event.wheel.y;
 			}
 			else if (event.type == SDL_WINDOWEVENT)
 			{
@@ -242,7 +247,13 @@ int main(int argc, char *argv[])
 		simulation_start = chrono::steady_clock::now();
 
 		// Update
-		renderer->Update(dt);
+        if(!pause)
+        {
+            renderer->Update(dt);
+        }else
+        {
+            renderer->Update(0.0f);
+        }
 
 		// Draw
 		renderer->Render();

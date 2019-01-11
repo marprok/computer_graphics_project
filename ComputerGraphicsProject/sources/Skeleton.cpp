@@ -19,39 +19,45 @@ void Skeleton::setPosition(glm::vec3 position, float a) {
     m_position.y = 0.1f;
 
     // body
-
+    //m_geometric_transformation_matrix[0] = glm::rotate(m_geometric_transformation_matrix[0], m_rotation, glm::vec3(0, 1, 0));
     m_geometric_transformation_matrix[0] =
         glm::translate(glm::mat4(1.0), m_position) *
-        glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+        glm::scale(glm::mat4(1.0), glm::vec3(0.1f))*
+        glm::rotate(glm::mat4(1.0), m_rotation, glm::vec3(0, 1, 0));
     m_geometric_transformation_normal_matrix[0] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[0]))));
-    //m_geometric_transformation_matrix[0] = glm::rotate(m_geometric_transformation_matrix[0], m_rotation, glm::vec3(0, 1, 0));
+
 
     // arm
+    //m_geometric_transformation_matrix[1] = glm::rotate(m_geometric_transformation_matrix[1], m_rotation, glm::vec3(0, 1, 0));
+    //0.45f, 1.f, -0.2f
     m_geometric_transformation_matrix[1] =
-        glm::translate(glm::mat4(1.0), glm::vec3(0.45f, 1.f, -0.2f) + m_position) *
-         // where x, y, z is axis of rotation (e.g. 0 1 0)
-        glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+        glm::translate(glm::mat4(1.0), glm::vec3(-0.45f, 1.f, +0.2f) + m_position) *
+        glm::scale(glm::mat4(1.0), glm::vec3(0.1f))*
+        glm::rotate(glm::mat4(1.0), m_rotation, glm::vec3(0, 1, 0));
 
     m_geometric_transformation_normal_matrix[1] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[1]))));
-    //m_geometric_transformation_matrix[1] = glm::rotate(m_geometric_transformation_matrix[1], m_rotation, glm::vec3(0, 1, 0));
+
 
     // right foot
-
+    //m_geometric_transformation_matrix[2] = glm::rotate(m_geometric_transformation_matrix[2], m_rotation , glm::vec3(0, 1, 0));
+    //-0.3f, 0.f, -0.2f
     m_geometric_transformation_matrix[2] =
-        glm::translate(glm::mat4(1.0), glm::vec3(-0.3f, 0.f, -0.2f) + m_position) *
-        glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+        glm::translate(glm::mat4(1.0), glm::vec3(0.3f, 0.f, +0.2f) + m_position) *
+        glm::scale(glm::mat4(1.0), glm::vec3(0.1f))*
+        glm::rotate(glm::mat4(1.0), m_rotation, glm::vec3(0, 1, 0));
 
     m_geometric_transformation_normal_matrix[2] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[2]))));
-    //m_geometric_transformation_matrix[2] = glm::rotate(m_geometric_transformation_matrix[2], m_rotation , glm::vec3(0, 1, 0));
+
 
     // left foot
-
-    m_geometric_transformation_matrix[3] =
-        glm::translate(glm::mat4(1.0), glm::vec3(0.3f, 0.f, -0.2f) + m_position) *
-        glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
-
-    m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
     //m_geometric_transformation_matrix[3] = glm::rotate(m_geometric_transformation_matrix[3], m_rotation, glm::vec3(0, 1, 0));
+    //+0.3f, 0.f, -0.2f
+    m_geometric_transformation_matrix[3] =
+        glm::translate(glm::mat4(1.0), glm::vec3(-0.3f, 0.f, +0.2f) + m_position) *
+        glm::scale(glm::mat4(1.0), glm::vec3(0.1f))*
+        glm::rotate(glm::mat4(1.0), m_rotation, glm::vec3(0, 1, 0));
+    m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
+
 }
 
 void Skeleton::setGoal(int goal)
