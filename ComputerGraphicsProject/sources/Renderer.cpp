@@ -57,8 +57,14 @@ Renderer::Renderer()
 	m_continous_time = 0.0;
 
 	// initialize the camera parameters
+
+
     m_camera_position = glm::vec3(1, 12, -7);
+    m_camera_position_temp = m_camera_position;
+    //m_camera_position = glm::vec3(0.720552, 18.1377, -11.3135);
+
     m_camera_target_position = glm::vec3(6, 0, 4);
+    //m_camera_target_position = glm::vec3(4.005, 12.634, -5.66336);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 }
 
@@ -125,15 +131,24 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
-	float movement_speed = 6.0f;
+    float movement_speed = 4.0f;
 	// compute the direction of the camera
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 
-	// move the camera towards the direction of the camera
-	m_camera_position += m_camera_movement.x *  movement_speed * direction * dt;
-	m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
+    // move the camera towards the direction of the camera
+    m_camera_position_temp += m_camera_movement.x *  movement_speed * direction * dt;
+    if(m_camera_position_temp.y >= 0.1 )
+    {
+        m_camera_position += m_camera_movement.x *  movement_speed * direction * dt;
+        m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
+    }else if(m_camera_target_position.y > -7.5f)
+    {
+        m_camera_position.y=0.1;
+        m_camera_position += m_camera_movement.x *  movement_speed * direction * dt;
+        m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
+    }
 
-	// move the camera sideways
+    // move the camera sideways
 	glm::vec3 right = glm::normalize(glm::cross(direction, m_camera_up_vector));
 	m_camera_position += m_camera_movement.y *  movement_speed * right * dt;
 	m_camera_target_position += m_camera_movement.y * movement_speed * right * dt;
@@ -384,9 +399,9 @@ bool Renderer::ResizeBuffers(int width, int height)
 // Initialize the light sources
 bool Renderer::InitLightSources()
 {
-	// Initialize the spot light
-	m_spotlight_node.SetPosition(glm::vec3(8, 20, -3));
-	m_spotlight_node.SetTarget(glm::vec3(0, 0, 0));
+    // Initialize the spot light
+    m_spotlight_node.SetPosition(glm::vec3(8, 20, -3));
+    m_spotlight_node.SetTarget(glm::vec3(0, 0, 0));
 	m_spotlight_node.SetColor(80.0f * glm::vec3(255, 255, 251) / 255.f);
 	m_spotlight_node.SetConeSize(180, 180);
 	m_spotlight_node.CastShadow(false);
@@ -502,42 +517,10 @@ bool Renderer::InitGeometricMeshes()
     // linux
         readRoad("Data/road.map");
 #endif
-        /*m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 0), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 1), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 2), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(0, 0.01, 3), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 3), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 4), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 5), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 6), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(1, 0.01, 7), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 7), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(2, 0.01, 8), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(3, 0.01, 8), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(4, 0.01, 8), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(5, 0.01, 8), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 8), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 7), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 6), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 6), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 5), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 4), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 3), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 3), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 3), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 2), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(9, 0.01, 1), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(8, 0.01, 1), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(7, 0.01, 1), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 1), m_geometric_object4);
-        m_road.emplace_back(2, 2, glm::vec3(6, 0.01, 0), m_geometric_object4);
-        */
         m_geometric_object4->Init(mesh);
     }
     else
         initialized = false;
-
-
 
     // load green_tile
 #ifdef _WIN32
@@ -563,9 +546,6 @@ bool Renderer::InitGeometricMeshes()
         initialized = false;
 
 
-
-
-
     // load red_tile
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -588,11 +568,6 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
-
-
-
-
-
 
     // load pirate
 #ifdef _WIN32
@@ -942,7 +917,7 @@ void Renderer::RenderToOutFB()
 
 void Renderer::CameraMoveForward(bool enable)
 {
-	m_camera_movement.x = (enable)? 1 : 0;
+    m_camera_movement.x = (enable)? 1 : 0;
 }
 void Renderer::CameraMoveBackWard(bool enable)
 {

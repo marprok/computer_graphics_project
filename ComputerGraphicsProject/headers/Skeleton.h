@@ -33,7 +33,7 @@ public:
 	Skeleton(glm::vec3 position, int goal, std::vector<Tile> &road, GeometryNode** g_node);
 	~Skeleton();
 	
-	void setPosition(glm::vec3 position);
+    void setPosition(glm::vec3 position, float rotation);
 
 	void setGoal(int goal);
 
@@ -64,6 +64,7 @@ private:
 
 	int						m_goal;
     float                   m_velocity;
+    float                   m_rotation;
 
 	std::vector<Tile>		m_road;
 };

@@ -52,6 +52,7 @@ protected:
 	glm::mat4										m_view_matrix;
 	glm::mat4										m_projection_matrix;
 	glm::vec3										m_camera_position;
+    glm::vec3                                       m_camera_position_temp;
 	glm::vec3										m_camera_target_position;
 	glm::vec3										m_camera_up_vector;
 	glm::vec2										m_camera_movement;
