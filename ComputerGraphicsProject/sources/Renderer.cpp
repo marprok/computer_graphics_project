@@ -13,6 +13,8 @@
         #include "../headers/OBJLoader.h"
         #include <iostream>
         #include <fstream>
+		#include <cstdlib>
+		#include <ctime>
     #endif
 #elif __APPLE__
     // apple
@@ -26,6 +28,8 @@
     #include "../headers/OBJLoader.h"
     #include <iostream>
     #include <fstream>
+	#include <cstdlib>
+	#include <ctime>
 #elif __linux__
     // linux
     #include "../headers/Renderer.h"
@@ -38,6 +42,8 @@
     #include "../headers/OBJLoader.h"
     #include <iostream>
     #include <fstream>
+	#include <cstdlib>
+	#include <ctime>
 #endif
 
 
@@ -54,11 +60,9 @@ Renderer::Renderer()
 	m_fbo_texture = 0;
 
 	m_rendering_mode = RENDERING_MODE::TRIANGLES;
-	m_continous_time = 0.0;
+	m_continuous_time = 0.0;
 
 	// initialize the camera parameters
-
-
     m_camera_position = glm::vec3(1, 12, -7);
     m_camera_position_temp = m_camera_position;
     //m_camera_position = glm::vec3(0.720552, 18.1377, -11.3135);
@@ -118,6 +122,9 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
     m_player_tile_position.y = 0.02f;
     m_player_tile_position.z = 0.f;
 
+	// Set random seed
+	srand(time(NULL));
+
 	//If there was any errors
 	if (Tools::CheckGLError() != GL_NO_ERROR)
 	{
@@ -169,8 +176,6 @@ void Renderer::Update(float dt)
 	// compute the view matrix
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
-	m_continous_time += dt;
-
 	// update meshes tranformations
 	m_geometric_object1_transformation_matrix = 
 		glm::translate(glm::mat4(1.f), glm::vec3(9, 0, 9)) *
@@ -203,6 +208,8 @@ void Renderer::Update(float dt)
 	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
 	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
 	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
+
+	m_continuous_time += dt;
 }
 
 bool Renderer::InitCommonItems()
@@ -659,13 +666,13 @@ bool Renderer::InitGeometricMeshes()
         initialized = false;
 
 	m_pirate_position = glm::vec3(0, 0.1, 0);
-	m_skeletons.emplace_back(m_pirate_position, 1, m_road, m_geometric_object6);
+	m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 2);
-	m_skeletons.emplace_back(m_pirate_position, 2, m_road, m_geometric_object6);
+	m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 4);
-	m_skeletons.emplace_back(m_pirate_position, 3, m_road, m_geometric_object6);
+	m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
 
 	return initialized;
 }
@@ -903,7 +910,7 @@ void Renderer::RenderToOutFB()
 	glBindTexture(GL_TEXTURE_2D, m_fbo_depth_texture);	
 	glUniform1i(m_postprocess_program["uniform_depth"], 1);
 
-	glUniform1f(m_postprocess_program["uniform_time"], m_continous_time);
+	glUniform1f(m_postprocess_program["uniform_time"], m_continuous_time);
 	glm::mat4 projection_inverse_matrix = glm::inverse(m_projection_matrix);
 	glUniformMatrix4fv(m_postprocess_program["uniform_projection_inverse_matrix"], 1, GL_FALSE, glm::value_ptr(projection_inverse_matrix));
 
@@ -978,7 +985,7 @@ bool Renderer::isValidTowerPos() {
 
 void Renderer::MoveSkeleton(float dt) {
 	for (auto &skeleton : m_skeletons) {
-		skeleton.Move(dt);
+		skeleton.Move(dt, m_continuous_time);
 	}
 	RemoveSkeleton();
 }

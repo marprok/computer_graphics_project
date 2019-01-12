@@ -65,7 +65,7 @@ protected:
 	
 	GLuint m_vao_fbo, m_vbo_fbo_vertices;
 
-	float m_continous_time;
+	float m_continuous_time;
 
 	// Rendering Mode
 	RENDERING_MODE m_rendering_mode;
