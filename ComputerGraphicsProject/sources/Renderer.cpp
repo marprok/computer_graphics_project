@@ -407,11 +407,11 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
     // Initialize the spot light
-    m_spotlight_node.SetPosition(glm::vec3(8, 20, -3));
-    m_spotlight_node.SetTarget(glm::vec3(0, 0, 0));
-	m_spotlight_node.SetColor(80.0f * glm::vec3(255, 255, 251) / 255.f);
-	m_spotlight_node.SetConeSize(180, 180);
-	m_spotlight_node.CastShadow(false);
+    m_spotlight_node.SetPosition(glm::vec3(16, 20, -3));
+    m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
+	m_spotlight_node.SetColor(80.f * glm::vec3(255, 255, 251) / 255.f);
+	m_spotlight_node.SetConeSize(100, 100);
+	m_spotlight_node.CastShadow(true);
 
 	return true;
 }
@@ -728,12 +728,33 @@ void Renderer::RenderShadowMaps()
 
 		// draw the terrain object
 		DrawGeometryNodeToShadowMap(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
-		
+
 		// draw the treasure object
 		DrawGeometryNodeToShadowMap(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
 
-		// draw the tower object
-		DrawGeometryNodeToShadowMap(m_geometric_object3, m_geometric_object3_transformation_matrix, m_geometric_object3_transformation_normal_matrix);
+		// draw towers
+		for (auto &tower : m_towers)
+		{
+			DrawGeometryNodeToShadowMap(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
+		}
+
+		// draw tiles
+		for (auto &tile : m_road)
+		{
+			DrawGeometryNodeToShadowMap(tile.getGeometricNode(), tile.getGeometricTransformationMatrix(), tile.getGeometricTransformationNormalMatrix());
+		}
+
+		// draw the green tile
+		DrawGeometryNodeToShadowMap(m_player_tile, m_player_tile_transformation_matrix, m_player_tile_transformation_normal_matrix);
+
+		// draw the pirate
+		for (auto &skeleton : m_skeletons)
+		{
+			for (size_t i = 0; i < 4; i++)
+			{
+				DrawGeometryNodeToShadowMap(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+			}
+		}
 
 		glBindVertexArray(0);
 
