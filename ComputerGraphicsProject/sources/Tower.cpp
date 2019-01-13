@@ -45,7 +45,6 @@ Tower::~Tower()
 void Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height)
 {
     std::map<float, size_t> in_range_skels;
-
     // loop over the total range of the tower
     for (int i = -m_range; i <= m_range; ++i)
     {
@@ -54,7 +53,6 @@ void Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int heigh
             float tile_x = m_position.x + i;
             float tile_z = m_position.z + j;
             // in bounds check
-            //std::cout <<m_position.x << ", " << m_position.z << std::endl;
 
             //std::cout <<tile_x << ", " << tile_z << std::endl;
             if (tile_x < 0 || tile_x >= width || tile_z < 0 || tile_z >= width)
@@ -69,7 +67,7 @@ void Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int heigh
             {
                 float is_here = skeletons[i].distance_from(tile_x, tile_z);
                 //std::cout << is_here << std::endl;
-                if (is_here >= 0 && is_here <= 1)
+                if (is_here >= 0 && is_here <= 1.0f)
                 {
                     // distance from the tower
                     float distance2 = skeletons[i].distance_from(m_position.x, m_position.z);

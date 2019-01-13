@@ -10,7 +10,7 @@ Tile::Tile(int width, int height, glm::vec3 position, GeometryNode* g_node) {
 }
 
 void Tile::setPosition(glm::vec3 position) {
-	m_position = position;
+    m_position = position;
 	m_position.x *= 2;
 	m_position.z *= 2;
 	m_geometric_transformation_matrix =

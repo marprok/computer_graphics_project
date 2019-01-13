@@ -1001,7 +1001,7 @@ void Renderer::MovePlayer(int dx, int dz) {
     if (m_player_tile_position.z + dz >= 0 && m_player_tile_position.z + dz <= 19)
 	{
         m_player_tile_position.z += dz;
-	}
+    }
 }
 
 
