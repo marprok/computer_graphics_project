@@ -46,6 +46,8 @@
 	#include <ctime>
 #endif
 
+#define TERRAIN_WIDTH 20
+#define TERRAIN_HEIGHT 20
 
 // RENDERER
 Renderer::Renderer()
@@ -70,6 +72,8 @@ Renderer::Renderer()
     m_camera_target_position = glm::vec3(6, 0, 4);
     //m_camera_target_position = glm::vec3(4.005, 12.634, -5.66336);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
+
+    m_tower_shoot_timer = 0.0f;
 }
 
 Renderer::~Renderer()
@@ -210,6 +214,29 @@ void Renderer::Update(float dt)
 	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
 
 	m_continuous_time += dt;
+    m_tower_shoot_timer += dt;
+    if (m_tower_shoot_timer >= 1.0f) // every 3 secs
+    {
+        // The towers must shoot the closest skeletons
+        shoot();
+        std::cout << "1 sec" << std::endl;
+        m_tower_shoot_timer = 0.0f;
+    }
+    // remove the dead skeletons
+    for (size_t i = 0; i < m_skeletons.size();)
+    {
+        //glm::vec3 delta_skeleton = m_road[m_road.size() - 1].getPosition() - m_skeletons[i].getPosition();
+        if (m_skeletons[i].get_health() == 0)
+        {
+            m_skeletons.erase(m_skeletons.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+    //hoot();
+
 }
 
 bool Renderer::InitCommonItems()
@@ -666,13 +693,13 @@ bool Renderer::InitGeometricMeshes()
         initialized = false;
 
 	m_pirate_position = glm::vec3(0, 0.1, 0);
-	m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 2);
-	m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
+    m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 4);
-	m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6);
+    m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
 
 	return initialized;
 }
@@ -981,7 +1008,7 @@ void Renderer::MovePlayer(int dx, int dz) {
 void Renderer::PlaceTower() {
     if (isValidTowerPos())
 	{
-        m_towers.emplace_back(m_player_tile_position, m_geometric_object3);
+        m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2);
 		std::cout << "New tower!!!!!! :D" << std::endl;
 	}
 }
@@ -1043,4 +1070,12 @@ bool Renderer::readRoad(const char *road)
     std::cout << "DONE reading the road file" << std::endl;
     return true;
 
+}
+
+void Renderer::shoot()
+{
+    for (auto & tower : m_towers)
+    {
+        tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
+    }
 }

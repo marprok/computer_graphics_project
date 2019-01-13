@@ -108,6 +108,7 @@ protected:
 	std::vector<Tower>								m_towers;
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
+    float                                           m_tower_shoot_timer;
 
 	// Protected Functions
 	bool InitRenderingTechniques();
@@ -158,6 +159,8 @@ public:
 
 
     bool readRoad(const char *road);
+
+    void shoot();
 
 };
 

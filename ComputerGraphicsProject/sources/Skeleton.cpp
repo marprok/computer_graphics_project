@@ -6,7 +6,7 @@ Skeleton::Skeleton()
 {
 }
 
-Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node)
+Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node, int health)
 {
     setPosition(position, 0, 0);
     setGoal(goal);
@@ -15,6 +15,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_velocity = 2.f;
     m_geometric_node = g_node;
 	m_hand_start_rotation = hand_start_rotation;
+    m_health = health;
 }
 
 void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_time) {
@@ -156,4 +157,21 @@ int Skeleton::GetGoal()
 
 Skeleton::~Skeleton()
 {
+}
+
+float Skeleton::distance_from(int x, int z)
+{
+    float distance = std::sqrt((m_position.x - x)*(m_position.x - x) + (m_position.z - z)*(m_position.z - z));
+    return (distance <= 1.0f)? distance : -1.0f;
+}
+
+void Skeleton::lose_health(int i)
+{
+    m_health = (m_health - i < 0) ? 0 : m_health - i;
+    std::cout << "health = " << m_health << std::endl;
+}
+
+int Skeleton::get_health()
+{
+    return m_health;
 }

@@ -30,7 +30,7 @@ class Skeleton
 {
 public:
 	Skeleton();
-	Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode** g_node);
+    Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode** g_node, int health);
 	~Skeleton();
 	
     void setPosition(glm::vec3 position, float rotation, float dt);
@@ -53,6 +53,12 @@ public:
 
 	int GetGoal();
 
+    float distance_from(int x, int z);
+
+    void lose_health(int i);
+
+    int get_health();
+
 private:
 	GeometryNode**			m_geometric_node;
 	
@@ -64,6 +70,7 @@ private:
     float                   m_velocity;
     float                   m_rotation;
 	float					m_hand_start_rotation;
+    int                     m_health;
 
 	std::vector<Tile>		m_road;
 };
