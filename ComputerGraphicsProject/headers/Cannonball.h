@@ -27,14 +27,16 @@
     #include "Skeleton.h"
 #endif
 
-class Tower
+class Cannonball
 {
 public:
-	Tower();
-    Tower(glm::vec3 position, GeometryNode* g_node, int range);
-	~Tower();
+    Cannonball();
+    Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed);
+    ~Cannonball();
 
 	void setPosition(glm::vec3 position);
+
+    bool update(float dt, std::vector<Skeleton> &skeletons, float gravity);
 
 	glm::vec3 getPosition();
 
@@ -44,12 +46,14 @@ public:
 
 	glm::mat4 getGeometricTransformationNormalMatrix();
 
-    int shoot_closest(std::vector<Skeleton> &skeletons, int width, int height);
 
 private:
 	glm::vec3				m_position;
 	glm::mat4				m_geometric_transformation_matrix;
 	glm::mat4				m_geometric_transformation_normal_matrix;
-    int                     m_range; // the number of tiles in one direction
 	GeometryNode*			m_geometric_node;
+
+    int                     m_target;
+    float                   m_speed;
+
 };

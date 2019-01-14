@@ -42,7 +42,7 @@ Tower::~Tower()
 {
 }
 
-void Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height)
+int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height)
 {
     std::map<float, size_t> in_range_skels;
     // loop over the total range of the tower
@@ -81,5 +81,7 @@ void Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int heigh
         auto closest = in_range_skels.begin();
         skeletons[closest->second].lose_health(1);
         std::cout << "the tower shoots the closest skeleton " << std::endl;
+        return closest->second;
     }
+    return -1;
 }

@@ -12,6 +12,7 @@
 		#include "SpotlightNode.h"
 		#include "Tower.h"
 		#include "Tile.h"
+        #include "Cannonball.h"
 		#include "Skeleton.h"
 	#endif
 #elif __APPLE__
@@ -24,6 +25,7 @@
 	#include "SpotlightNode.h"
 	#include "Tower.h"
 	#include "Tile.h"
+    #include "Cannonball.h"
 	#include "Skeleton.h"
 #elif __linux__
 	// linux
@@ -33,6 +35,7 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "Cannonball.h"
 	#include "Tile.h"
 	#include "Skeleton.h"
 #endif
@@ -101,11 +104,16 @@ protected:
 	glm::vec3										m_geometric_object6_position[4];
 	glm::vec3										m_pirate_position;
 
+    class GeometryNode*								m_geometric_object8;
+    glm::mat4										m_geometric_object8_transformation_matrix;
+    glm::mat4                                       m_geometric_object8_transformation_normal_matrix;
+
     class GeometryNode*								m_red_tile;
 
     class GeometryNode*								m_player_tile;
 
 	std::vector<Tower>								m_towers;
+    std::vector<Cannonball>							m_cannonballs;
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
     float                                           m_tower_shoot_timer;

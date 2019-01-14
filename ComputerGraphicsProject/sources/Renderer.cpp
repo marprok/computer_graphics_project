@@ -235,8 +235,18 @@ void Renderer::Update(float dt)
             i++;
         }
     }
-    //hoot();
 
+    for (size_t i = 0; i < m_cannonballs.size();)
+    {
+        if (!m_cannonballs[i].update(dt, m_skeletons, 2.0f))
+        {
+            m_cannonballs.erase(m_cannonballs.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
+    }
 }
 
 bool Renderer::InitCommonItems()
@@ -434,10 +444,10 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
     // Initialize the spot light
-    m_spotlight_node.SetPosition(glm::vec3(16, 20, -3));
+    m_spotlight_node.SetPosition(glm::vec3(16, 20, -24));
     m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
-	m_spotlight_node.SetColor(80.f * glm::vec3(255, 255, 251) / 255.f);
-	m_spotlight_node.SetConeSize(100, 100);
+    m_spotlight_node.SetColor(160.f * glm::vec3(255, 255, 251) / 255.f);
+    m_spotlight_node.SetConeSize(110, 110);
 	m_spotlight_node.CastShadow(true);
 
 	return true;
@@ -552,6 +562,30 @@ bool Renderer::InitGeometricMeshes()
         readRoad("Data/road.map");
 #endif
         m_geometric_object4->Init(mesh);
+    }
+    else
+        initialized = false;
+
+
+    // load cannonball
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Various/cannonball.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/cannonball.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Various/cannonball.obj");
+
+#endif
+    if (mesh != nullptr)
+    {
+        m_geometric_object8 = new GeometryNode();
+        m_geometric_object8->Init(mesh);
     }
     else
         initialized = false;
@@ -765,6 +799,12 @@ void Renderer::RenderShadowMaps()
 			DrawGeometryNodeToShadowMap(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
 		}
 
+        //draw cannonballs
+        for (auto &cannonball : m_cannonballs)
+        {
+            DrawGeometryNodeToShadowMap(cannonball.getGeometricNode(), cannonball.getGeometricTransformationMatrix(), cannonball.getGeometricTransformationNormalMatrix());
+        }
+
 		// draw tiles
 		for (auto &tile : m_road)
 		{
@@ -858,8 +898,14 @@ void Renderer::RenderGeometry()
 	// draw the treasure object
 	DrawGeometryNode(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
 
+    //draw cannonball
+    for (auto &cannonball : m_cannonballs)
+    {
+        DrawGeometryNode(cannonball.getGeometricNode(), cannonball.getGeometricTransformationMatrix(), cannonball.getGeometricTransformationNormalMatrix());
+    }
+
 	// draw towers
-	for (auto &tower : m_towers)
+    for (auto &tower : m_towers)
 	{
         DrawGeometryNode(tower.getGeometricNode(), tower.getGeometricTransformationMatrix(), tower.getGeometricTransformationNormalMatrix());
 	}
@@ -1043,7 +1089,7 @@ void Renderer::RemoveSkeleton() {
 	{
 		glm::vec3 delta_skeleton = m_road[m_road.size() - 1].getPosition() - m_skeletons[i].getPosition();
 
-		if (abs(delta_skeleton.x) < .3f && abs(delta_skeleton.z) < .3f) {
+        if (std::abs(delta_skeleton.x) < .3f && std::abs(delta_skeleton.z) < .3f) {
 			m_skeletons.erase(m_skeletons.begin() + i);
 		}
 		else
@@ -1076,6 +1122,12 @@ void Renderer::shoot()
 {
     for (auto & tower : m_towers)
     {
-        tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
+
+        int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
+        if(target != -1)
+        {
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 3.0f);
+        }
+
     }
 }
