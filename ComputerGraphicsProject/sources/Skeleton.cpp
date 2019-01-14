@@ -10,7 +10,9 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
 {
     setPosition(position, 0, 0);
     setGoal(goal);
+    m_center_of_sphere = glm::vec3(-0.06082, 0.962787, -0.089274);
     m_road = road;
+    m_radius = 0.4f;
     m_rotation = 3.14f;
     m_velocity = 2.f;
     m_geometric_node = g_node;
@@ -21,7 +23,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
 void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_time) {
     m_position = position;
 	m_rotation = angle;
-    m_position.y = 0.1f;
+    m_position.y = 0.002f;
 
 	glm::mat4 pirate_position;
 	pirate_position =
@@ -32,8 +34,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
 
     // body
     //m_geometric_transformation_matrix[0] = glm::rotate(m_geometric_transformation_matrix[0], m_rotation, glm::vec3(0, 1, 0));
-	m_geometric_transformation_matrix[0] =
-		pirate_position;
+    m_geometric_transformation_matrix[0] = pirate_position;
         //glm::rotate(glm::mat4(1.0), m_rotation, glm::vec3(0, 1, 0));
     m_geometric_transformation_normal_matrix[0] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[0]))));
 
@@ -155,18 +156,36 @@ int Skeleton::GetGoal()
     return m_goal;
 }
 
+glm::vec3 Skeleton::getCenterOfSphere()
+{
+    return m_center_of_sphere + m_position;
+}
+
+float Skeleton::getRadius()
+{
+    return m_radius;
+}
+
 Skeleton::~Skeleton()
 {
 }
 
-float Skeleton::distance_from(int x, int z)
+float Skeleton::distance_from(glm::vec3 cannonball)
 {
-    float distance = std::sqrt((m_position.x - x)*(m_position.x - x) + (m_position.z - z)*(m_position.z - z));
-    return (distance <= 1.0f)? distance : -1.0f;
+    glm::vec3 m = getCenterOfSphere();
+    float distance = std::sqrt((m.x - cannonball.x)*(m.x - cannonball.x) + (m.z - cannonball.z)*(m.z - cannonball.z) + (m.y - cannonball.y)*(m.y - cannonball.y));
+    return distance;
+}
+
+float Skeleton::distance_from_position(glm::vec3 cannonball)
+{
+    float distance = std::sqrt((m_position.x - cannonball.x)*(m_position.x - cannonball.x) + (m_position.z - cannonball.z)*(m_position.z - cannonball.z) + (m_position.y - cannonball.y)*(m_position.y - cannonball.y));
+    return distance;
 }
 
 void Skeleton::lose_health(int i)
 {
+
     m_health = (m_health - i < 0) ? 0 : m_health - i;
     std::cout << "health = " << m_health << std::endl;
 }

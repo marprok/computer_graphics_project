@@ -238,7 +238,7 @@ void Renderer::Update(float dt)
 
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 2.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 1.5f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -727,13 +727,13 @@ bool Renderer::InitGeometricMeshes()
         initialized = false;
 
 	m_pirate_position = glm::vec3(0, 0.1, 0);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 2);
-    m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
+    m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
 	m_pirate_position = glm::vec3(0, 0.1, 4);
-    m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 6);
+    m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
 	return initialized;
 }
@@ -1126,7 +1126,7 @@ void Renderer::shoot()
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 3.0f);
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 4.0f);
         }
 
     }

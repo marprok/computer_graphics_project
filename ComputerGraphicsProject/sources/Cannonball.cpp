@@ -10,7 +10,9 @@ Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, flo
     m_geometric_node = g_node;
     position.y = 2.5f;
     setPosition(position);
+    m_radius = 0.2f;
     m_target = target;
+    m_center_of_sphere = m_position;
     m_speed = speed;
 }
 
@@ -24,8 +26,13 @@ void Cannonball::setPosition(glm::vec3 position) {
 
 bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravity)
 {
-    glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
 
+    if (skeletons.size() <= m_target)
+        {
+            return false;
+        }
+
+    glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
 
     if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z))
     {
@@ -52,14 +59,19 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
     }
 
     m_position.y -= gravity *dt;
-    if(m_position.y < 0 )
+    if(m_position.y < 0)
     {
         return false;
     }
-
-
     setPosition(m_position);
+    m_center_of_sphere = m_position;
 
+    float distance = skeletons[m_target].distance_from(m_center_of_sphere);
+    if(distance <= (m_radius + skeletons[m_target].getRadius()))
+    {
+        skeletons[m_target].lose_health(1);
+        return false;
+    }
     return true;
 
 }

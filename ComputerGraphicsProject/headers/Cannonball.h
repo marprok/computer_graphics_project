@@ -52,8 +52,10 @@ private:
 	glm::mat4				m_geometric_transformation_matrix;
 	glm::mat4				m_geometric_transformation_normal_matrix;
 	GeometryNode*			m_geometric_node;
+    glm::vec3               m_center_of_sphere;
 
     int                     m_target;
     float                   m_speed;
+    float                   m_radius;
 
 };
