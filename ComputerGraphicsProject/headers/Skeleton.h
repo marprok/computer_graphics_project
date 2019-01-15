@@ -42,6 +42,8 @@ public:
     float getVelocity();
 
 	void Move(float dt, float continuous_time);
+
+    void kill();
 	
 	glm::vec3 getPosition();
 
@@ -51,9 +53,9 @@ public:
 
 	GeometryNode ** getGeometricNode();
 	
-	glm::mat4* getGeometricTransformationMatrix();
+    glm::mat4* getGeometricTransformationMatrix();
 	
-	glm::mat4* getGeometricTransformationNormalMatrix();
+    glm::mat4* getGeometricTransformationNormalMatrix();
 
 	int GetGoal();
 
@@ -81,6 +83,7 @@ private:
 	float					m_hand_start_rotation;
     int                     m_health;
     float                   m_radius;
+    float                   m_randomNumber;
 
 	std::vector<Tile>		m_road;
 };

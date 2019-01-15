@@ -228,7 +228,9 @@ void Renderer::Update(float dt)
         //glm::vec3 delta_skeleton = m_road[m_road.size() - 1].getPosition() - m_skeletons[i].getPosition();
         if (m_skeletons[i].get_health() == 0)
         {
-            m_skeletons.erase(m_skeletons.begin() + i);
+            m_skeletons[i].kill();
+            //m_skeletons.erase(m_skeletons.begin() + i);
+            i++;
         }
         else
         {
@@ -238,7 +240,7 @@ void Renderer::Update(float dt)
 
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 1.5f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -1126,7 +1128,7 @@ void Renderer::shoot()
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 4.0f);
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 8.0f);
         }
 
     }

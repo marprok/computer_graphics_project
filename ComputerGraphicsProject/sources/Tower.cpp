@@ -71,7 +71,7 @@ int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height
             {
                 float is_here = skeletons[i].distance_from_position(tile_pos);
                 //std::cout << is_here << std::endl;
-                if (is_here >= 0 && is_here <= 1.0f)
+                if (is_here >= 0 && is_here <= 2.0f && skeletons[i].get_health() !=0)
                 {
                     // distance from the tower
                     float distance2 = skeletons[i].distance_from(m_position);
