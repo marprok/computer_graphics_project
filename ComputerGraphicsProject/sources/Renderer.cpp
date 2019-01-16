@@ -52,6 +52,7 @@
 // RENDERER
 Renderer::Renderer()
 {
+    GAME_OVER=false;
 	m_vbo_fbo_vertices = 0;
 	m_vao_fbo = 0;
 	
@@ -186,10 +187,14 @@ void Renderer::Update(float dt)
 		glm::scale(glm::mat4(1.f), glm::vec3(10.f));
 	m_geometric_object1_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object1_transformation_matrix))));
 
-	m_geometric_object2_transformation_matrix = 
-		glm::translate(glm::mat4(1.0), glm::vec3(12, 0, -1.25)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(0.05f));
-	m_geometric_object2_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object2_transformation_matrix))));
+    glm::vec3 chest_position = glm::vec3(12, 0, 0);
+    chest->setPosition(chest_position);
+    m_geometric_object2_transformation_matrix =
+            glm::translate(glm::mat4(1.0), chest_position) *
+            glm::scale(glm::mat4(1.f), glm::vec3(0.05f));
+    m_geometric_object2_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object2_transformation_matrix))));
+    chest->setTransformationMatrix(m_geometric_object2_transformation_matrix);
+    chest->setTransformationNormalMatrix(m_geometric_object2_transformation_normal_matrix);
 
 	m_geometric_object4_transformation_matrix = 
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
@@ -209,35 +214,38 @@ void Renderer::Update(float dt)
         m_player_tile = m_red_tile;
     }
 
-	//glm::mat4 object_translation = glm::translate(glm::mat4(1.0), glm::vec3(2, 5, 0));
-	//glm::mat4 object_rotation = glm::rotate(glm::mat4(1.0), 1.5f * m_continous_time, glm::vec3(0, 1, 0));
-	//glm::mat4 object_scale = glm::scale(glm::mat4(1.0), glm::vec3(0.8f));
-
 	m_continuous_time += dt;
     m_tower_shoot_timer += dt;
     if (m_tower_shoot_timer >= 1.0f) // every 3 secs
     {
         // The towers must shoot the closest skeletons
         shoot();
-        std::cout << "1 sec" << std::endl;
+        //std::cout << "1 sec" << std::endl;
         m_tower_shoot_timer = 0.0f;
     }
-    // remove the dead skeletons
-    for (size_t i = 0; i < m_skeletons.size();)
+
+    // show dead skeletons as dead
+    for (size_t i = 0; i < m_skeletons.size(); i++)
     {
-        //glm::vec3 delta_skeleton = m_road[m_road.size() - 1].getPosition() - m_skeletons[i].getPosition();
         if (m_skeletons[i].get_health() == 0)
         {
             m_skeletons[i].kill();
-            //m_skeletons.erase(m_skeletons.begin() + i);
-            i++;
-        }
-        else
-        {
-            i++;
         }
     }
 
+    //Remove the skeleton that reached the tresure(always the leader)
+    if(chest->isReached(m_skeletons))
+    {
+        m_skeletons.erase(m_skeletons.begin());
+    }
+
+    //End the game if the chest is empty
+    if(chest->getCoinsLeft() == 0)
+    {
+        GAME_OVER = true;
+    }
+
+    //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
         if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
@@ -449,7 +457,7 @@ bool Renderer::InitLightSources()
     m_spotlight_node.SetPosition(glm::vec3(16, 20, -24));
     m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
     m_spotlight_node.SetColor(160.f * glm::vec3(255, 255, 251) / 255.f);
-    m_spotlight_node.SetConeSize(110, 110);
+    m_spotlight_node.SetConeSize(65, 65);
 	m_spotlight_node.CastShadow(true);
 
 	return true;
@@ -507,6 +515,8 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
+
+    chest = new Chest(m_geometric_object2);
 
     // load tower
 #ifdef _WIN32
@@ -728,13 +738,13 @@ bool Renderer::InitGeometricMeshes()
     else
         initialized = false;
 
-	m_pirate_position = glm::vec3(0, 0.1, 0);
+    m_pirate_position = glm::vec3(0, 0.1, 0);
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
-	m_pirate_position = glm::vec3(0, 0.1, 2);
+    m_pirate_position = glm::vec3(0, 0.1, -2);
     m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
-	m_pirate_position = glm::vec3(0, 0.1, 4);
+    m_pirate_position = glm::vec3(0, 0.1, -4);
     m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
 	return initialized;
@@ -793,8 +803,9 @@ void Renderer::RenderShadowMaps()
 		DrawGeometryNodeToShadowMap(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
 
 		// draw the treasure object
-		DrawGeometryNodeToShadowMap(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
-
+        if(!GAME_OVER){
+            DrawGeometryNodeToShadowMap(chest->getGeometricNode(), chest->getGeometricTransformationMatrix(), chest->getGeometricTransformationNormalMatrix());
+        }
 		// draw towers
 		for (auto &tower : m_towers)
 		{
@@ -898,7 +909,10 @@ void Renderer::RenderGeometry()
 	DrawGeometryNode(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
 	
 	// draw the treasure object
-	DrawGeometryNode(m_geometric_object2, m_geometric_object2_transformation_matrix, m_geometric_object2_transformation_normal_matrix);
+    if(!GAME_OVER){
+        DrawGeometryNode(chest->getGeometricNode(), chest->getGeometricTransformationMatrix(), chest->getGeometricTransformationNormalMatrix());
+    }
+
 
     //draw cannonball
     for (auto &cannonball : m_cannonballs)
@@ -1083,7 +1097,7 @@ void Renderer::MoveSkeleton(float dt) {
 	for (auto &skeleton : m_skeletons) {
 		skeleton.Move(dt, m_continuous_time);
 	}
-	RemoveSkeleton();
+    //RemoveSkeleton();
 }
 
 void Renderer::RemoveSkeleton() {

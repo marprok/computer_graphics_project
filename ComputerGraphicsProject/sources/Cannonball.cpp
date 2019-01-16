@@ -14,6 +14,7 @@ Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, flo
     m_target = target;
     m_center_of_sphere = m_position;
     m_speed = speed;
+
 }
 
 void Cannonball::setPosition(glm::vec3 position) {
@@ -26,6 +27,10 @@ void Cannonball::setPosition(glm::vec3 position) {
 
 bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravity)
 {
+    bool a=false;
+    bool b=false;
+    bool c=false;
+    bool d=false;
 
     if (skeletons.size() <= m_target)
         {
@@ -34,28 +39,32 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
 
     glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
 
-    if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z))
+    if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z)&& !b)
     {
         m_position.x += dt*m_speed;
         //std::cout << "x>0" <<std::endl;
+        a=true;
 
     }
-    if (delta_cannonball.x < 0 && std::abs(delta_cannonball.z) < std::abs(delta_cannonball.x))
+    if (delta_cannonball.x < 0 && std::abs(delta_cannonball.z) < std::abs(delta_cannonball.x) && !a)
     {
         m_position.x -= dt*m_speed;
         //std::cout << "x<0" <<std::endl;
+        b=true;
 
     }
-    if(delta_cannonball.z > 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
+    if(delta_cannonball.z > 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x) && !d)
     {
         //std::cout << "z>0" <<std::endl;
         m_position.z += dt*m_speed;
+        c=true;
 
     }
-    if (delta_cannonball.z < 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
+    if (delta_cannonball.z < 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x) && !c)
     {
         //std::cout << "z<0 "<<std::endl;
         m_position.z -= dt*m_speed;
+        d=true;
     }
 
     m_position.y -= gravity *dt;

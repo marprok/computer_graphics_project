@@ -14,6 +14,7 @@
 		#include "Tile.h"
         #include "Cannonball.h"
 		#include "Skeleton.h"
+        #include "Chest.h"
 	#endif
 #elif __APPLE__
 	// apple
@@ -25,6 +26,7 @@
 	#include "SpotlightNode.h"
 	#include "Tower.h"
 	#include "Tile.h"
+    #include "Chest.h"
     #include "Cannonball.h"
 	#include "Skeleton.h"
 #elif __linux__
@@ -38,6 +40,7 @@
     #include "Cannonball.h"
 	#include "Tile.h"
 	#include "Skeleton.h"
+    #include "Chest.h"
 #endif
 
 class Renderer
@@ -118,6 +121,8 @@ protected:
 	std::vector<Skeleton>							m_skeletons;
     float                                           m_tower_shoot_timer;
 
+    class Chest*                                     chest;
+
 	// Protected Functions
 	bool InitRenderingTechniques();
 	bool InitDeferredShaderBuffers();
@@ -140,6 +145,7 @@ public:
 	bool										ResizeBuffers(int SCREEN_WIDTH, int SCREEN_HEIGHT);
 	bool										ReloadShaders();
 	void										Render();
+    bool                                        GAME_OVER;
 
 	// Passes
 	void										RenderShadowMaps();
