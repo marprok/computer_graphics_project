@@ -746,11 +746,11 @@ bool Renderer::InitGeometricMeshes()
 #endif
 #elif __APPLE__
 	// apple
-	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower.obj");
+	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/health_bar_green.obj");
 
 #elif __linux__
 	// linux
-	mesh = loader.load("Assets/MedievalTower/tower.obj");
+	mesh = loader.load("Assets/Various/health_bar_green.obj");
 #endif
 
 	if (mesh != nullptr)
@@ -769,11 +769,11 @@ bool Renderer::InitGeometricMeshes()
 #endif
 #elif __APPLE__
 	// apple
-	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower.obj");
+	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/health_bar_red.obj");
 
 #elif __linux__
 	// linux
-	mesh = loader.load("Assets/MedievalTower/tower.obj");
+	mesh = loader.load("Assets/Various/health_bar_red.obj");
 #endif
 
 	if (mesh != nullptr)
