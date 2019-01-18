@@ -1,0 +1,4 @@
+Health bar:
+	s = health / max_health
+	scale on X axis by (green ? s : (1 - s))
+	move 7 units (green ? left : right)

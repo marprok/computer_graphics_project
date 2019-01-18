@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sources\Cannonball.cpp" />
+    <ClCompile Include="sources\Chest.cpp" />
     <ClCompile Include="sources\GeometricMesh.cpp" />
     <ClCompile Include="sources\GeometryNode.cpp" />
     <ClCompile Include="sources\OBJLoader.cpp" />
@@ -33,6 +35,8 @@
     <ClCompile Include="sources\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Cannonball.h" />
+    <ClInclude Include="headers\Chest.h" />
     <ClInclude Include="headers\GeometricMesh.h" />
     <ClInclude Include="headers\GeometryNode.h" />
     <ClInclude Include="headers\OBJLoader.h" />

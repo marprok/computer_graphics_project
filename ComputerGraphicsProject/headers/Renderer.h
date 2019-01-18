@@ -101,10 +101,10 @@ protected:
     glm::mat4										m_player_tile_transformation_normal_matrix;
     glm::vec3										m_player_tile_position;
 
-	class GeometryNode*								m_geometric_object6[4];
-	glm::mat4										m_geometric_object6_transformation_matrix[4];
-	glm::mat4										m_geometric_object6_transformation_normal_matrix[4];
-	glm::vec3										m_geometric_object6_position[4];
+	class GeometryNode*								m_geometric_object6[6];
+	glm::mat4										m_geometric_object6_transformation_matrix[6];
+	glm::mat4										m_geometric_object6_transformation_normal_matrix[6];
+	glm::vec3										m_geometric_object6_position[6];
 	glm::vec3										m_pirate_position;
 
     class GeometryNode*								m_geometric_object8;

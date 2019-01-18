@@ -62,6 +62,28 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
         glm::translate(glm::mat4(1.0), glm::vec3(4.f, 0, 2.f * std::sin(continuous_time * 4 * m_velocity)));
     m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
 
+	float bar_scale_factor = get_health() / 3.f /*max_health*/;
+	std::cout << "remaing life = " << bar_scale_factor << std::endl;
+	// green health bar
+	m_geometric_transformation_matrix[4] =
+		pirate_position *
+		glm::translate(glm::mat4(1.0), glm::vec3(-7, 26, 0)) *
+		glm::scale(glm::mat4(1.0), glm::vec3((get_health() == 0) ? 0.f : bar_scale_factor, 1.f, 1.f));
+	m_geometric_transformation_normal_matrix[4] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[4]))));
+
+	// red health bar
+	m_geometric_transformation_matrix[5] =
+		pirate_position *
+		glm::translate(glm::mat4(1.0), glm::vec3(7, 26, 0));
+	
+	if (bar_scale_factor < 1 /*max_health*/)
+	{
+		m_geometric_transformation_matrix[5] *=
+			glm::scale(glm::mat4(1.0), glm::vec3((get_health() == 0) ? 0.f : (1 - bar_scale_factor), 1.f, 1.f));
+	}
+
+	m_geometric_transformation_normal_matrix[5] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[5]))));
+
 }
 
 void Skeleton::kill()

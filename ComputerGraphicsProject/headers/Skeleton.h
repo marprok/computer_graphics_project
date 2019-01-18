@@ -72,8 +72,8 @@ public:
 private:
 	GeometryNode**			m_geometric_node;
 	
-	glm::mat4				m_geometric_transformation_matrix[4];
-	glm::mat4				m_geometric_transformation_normal_matrix[4];
+	glm::mat4				m_geometric_transformation_matrix[6];
+	glm::mat4				m_geometric_transformation_normal_matrix[6];
 	glm::vec3				m_position;
     glm::vec3               m_center_of_sphere;
 

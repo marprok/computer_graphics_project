@@ -738,6 +738,52 @@ bool Renderer::InitGeometricMeshes()
     else
         initialized = false;
 
+	// load green health bar
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+#ifdef _WIN64
+	mesh = loader.load("../Assets/Various/health_bar_green.obj");
+#endif
+#elif __APPLE__
+	// apple
+	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower.obj");
+
+#elif __linux__
+	// linux
+	mesh = loader.load("Assets/MedievalTower/tower.obj");
+#endif
+
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[4] = new GeometryNode();
+		m_geometric_object6[4]->Init(mesh);
+	}
+	else
+		initialized = false;
+
+	// load red health bar
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+#ifdef _WIN64
+	mesh = loader.load("../Assets/Various/health_bar_red.obj");
+#endif
+#elif __APPLE__
+	// apple
+	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower.obj");
+
+#elif __linux__
+	// linux
+	mesh = loader.load("Assets/MedievalTower/tower.obj");
+#endif
+
+	if (mesh != nullptr)
+	{
+		m_geometric_object6[5] = new GeometryNode();
+		m_geometric_object6[5]->Init(mesh);
+	}
+	else
+		initialized = false;
+
     m_pirate_position = glm::vec3(0, 0.1, 0);
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
@@ -830,6 +876,7 @@ void Renderer::RenderShadowMaps()
 		// draw the pirate
 		for (auto &skeleton : m_skeletons)
 		{
+			// Don' t render shadow map for the health bars
 			for (size_t i = 0; i < 4; i++)
 			{
 				DrawGeometryNodeToShadowMap(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
@@ -913,7 +960,6 @@ void Renderer::RenderGeometry()
         DrawGeometryNode(chest->getGeometricNode(), chest->getGeometricTransformationMatrix(), chest->getGeometricTransformationNormalMatrix());
     }
 
-
     //draw cannonball
     for (auto &cannonball : m_cannonballs)
     {
@@ -938,9 +984,14 @@ void Renderer::RenderGeometry()
 	// draw the pirate
 	for (auto &skeleton : m_skeletons)
 	{
-		for (size_t i = 0; i < 4; i++)
+		for (size_t i = 0; i < 6; i++)
 		{
-			DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+			// Don' t render the health bar when skeleton is dead
+			// Don' t render the red health bar when skeleton has full health
+			if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == 3 /*max_health*/))
+			{
+				DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+			}
 		}
 	}
 
