@@ -20,6 +20,8 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_geometric_node = g_node;
 	m_hand_start_rotation = hand_start_rotation;
     m_health = health;
+    m_max_health = health;
+
 }
 
 void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_time) {
@@ -62,7 +64,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
         glm::translate(glm::mat4(1.0), glm::vec3(4.f, 0, 2.f * std::sin(continuous_time * 4 * m_velocity)));
     m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
 
-	float bar_scale_factor = get_health() / 3.f /*max_health*/;
+    float bar_scale_factor = get_health() / m_max_health /*max_health*/;
     //std::cout << "remaing life = " << bar_scale_factor << std::endl;
 	// green health bar
 	m_geometric_transformation_matrix[4] =
@@ -233,7 +235,7 @@ float Skeleton::distance_from(glm::vec3 cannonball)
 
 float Skeleton::distance_from_position(glm::vec3 cannonball)
 {
-    float distance = std::sqrt((m_position.x - cannonball.x)*(m_position.x - cannonball.x) + (m_position.z - cannonball.z)*(m_position.z - cannonball.z) + (m_position.y - cannonball.y)*(m_position.y - cannonball.y));
+    float distance = std::sqrt((m_position.x - cannonball.x)*(m_position.x - cannonball.x) + (m_position.z - cannonball.z)*(m_position.z - cannonball.z));
     return distance;
 }
 
@@ -248,3 +250,5 @@ int Skeleton::get_health()
 {
     return m_health;
 }
+
+float Skeleton::get_max_health() { return m_max_health; }

@@ -31,7 +31,7 @@ class Tower
 {
 public:
 	Tower();
-    Tower(glm::vec3 position, GeometryNode* g_node, int range);
+    Tower(glm::vec3 position, GeometryNode* g_node, int range, float shoot_threshold);
 	~Tower();
 
 	void setPosition(glm::vec3 position);
@@ -44,7 +44,7 @@ public:
 
 	glm::mat4 getGeometricTransformationNormalMatrix();
 
-    int shoot_closest(std::vector<Skeleton> &skeletons, int width, int height);
+    int shoot_closest(std::vector<Skeleton> &skeletons, int width, int height, float dt);
 
 private:
 	glm::vec3				m_position;
@@ -52,4 +52,6 @@ private:
 	glm::mat4				m_geometric_transformation_normal_matrix;
     int                     m_range; // the number of tiles in one direction
 	GeometryNode*			m_geometric_node;
+    float                   m_shoot_timer;
+    float                   m_shoot_threshold;
 };

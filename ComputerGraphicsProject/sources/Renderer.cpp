@@ -220,13 +220,13 @@ void Renderer::Update(float dt)
 
 	m_continuous_time += dt;
     m_tower_shoot_timer += dt;
-    if (m_tower_shoot_timer >= 1.0f) // every 3 secs
-    {
+    //if (m_tower_shoot_timer >= 1.0f) // every 3 secs
+    //{
         // The towers must shoot the closest skeletons
-        shoot();
+        shoot(dt);
         //std::cout << "1 sec" << std::endl;
         m_tower_shoot_timer = 0.0f;
-    }
+    //}
 
     // show dead skeletons as dead
     for (size_t i = 0; i < m_skeletons.size(); i++)
@@ -264,7 +264,7 @@ void Renderer::Update(float dt)
     //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 6.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -1004,7 +1004,7 @@ void Renderer::RenderGeometry()
 		{
 			// Don' t render the health bar when skeleton is dead
 			// Don' t render the red health bar when skeleton has full health
-			if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == 3 /*max_health*/))
+            if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == skeleton.get_max_health() /*max_health*/))
 			{
 				DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
 			}
@@ -1139,7 +1139,7 @@ void Renderer::PlaceTower() {
 	{
         std::cout<<"can place tower now"<<std::endl;
         m_new_tower_timer=0;
-        m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2);
+        m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2, 1.0f);
 		std::cout << "New tower!!!!!! :D" << std::endl;
 	}
 }
@@ -1203,12 +1203,12 @@ bool Renderer::readRoad(const char *road)
 
 }
 
-void Renderer::shoot()
+void Renderer::shoot(float dt)
 {
     for (auto & tower : m_towers)
     {
 
-        int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
+        int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT, dt);
         if(target != -1)
         {
             m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 10.0f);

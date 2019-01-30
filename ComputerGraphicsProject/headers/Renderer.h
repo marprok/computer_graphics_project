@@ -179,7 +179,7 @@ public:
 
     bool readRoad(const char *road);
 
-    void shoot();
+    void shoot(float dt);
 
 };
 

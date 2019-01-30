@@ -45,6 +45,16 @@ void func()
 	system("pause");
 }
 
+void cap_fps(int fps,float dt)
+{
+
+  if ((1000.0f / fps) > dt)
+  {
+    SDL_Delay(1000.0f / fps - dt);
+  }
+}
+
+
 // initialize SDL and OpenGL
 bool init()
 {
@@ -260,6 +270,8 @@ int main(int argc, char *argv[])
 		
 		//Update screen (swap buffer for double buffering)
 		SDL_GL_SwapWindow(window);
+
+        cap_fps(60, dt);
 	}
 
 	//Clean up

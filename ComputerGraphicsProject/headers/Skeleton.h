@@ -67,6 +67,8 @@ public:
 
     int get_health();
 
+    float get_max_health();
+
 
 
 private:
@@ -82,8 +84,10 @@ private:
     float                   m_rotation;
 	float					m_hand_start_rotation;
     int                     m_health;
+    float                     m_max_health;
     float                   m_radius;
     float                   m_randomNumber;
+
 
 	std::vector<Tile>		m_road;
 };
