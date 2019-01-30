@@ -237,18 +237,6 @@ void Renderer::Update(float dt)
         }
     }
 
-    m_skeletons_wave_timer += dt;
-    // place new and more powerfull skeletons every 20 secods
-    //std::cout<< m_skeletons_wave_timer << std::endl;
-    if(m_skeletons_wave_timer >= 20 && m_skeletons.back().getPosition().z > 2)
-    {
-        //std::cout<< "NEW WAVE!"<< std::endl;;
-        pawn_new_skeletons(m_level);
-        m_level++;
-        m_skeletons_wave_timer=0;
-    }
-
-
     //Remove the skeleton that reached the tresure(always the leader)
     if(chest->isReached(m_skeletons))
     {
@@ -256,7 +244,7 @@ void Renderer::Update(float dt)
         {
             if (m_skeletons[i].get_health() == -1)
             {
-                std::cout<<"MPHKA"<< std::endl;
+                //std::cout<<"MPHKA"<< std::endl;
                m_skeletons.erase(m_skeletons.begin()+i);
             }
         }
@@ -272,7 +260,7 @@ void Renderer::Update(float dt)
     //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 6.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -280,6 +268,17 @@ void Renderer::Update(float dt)
         {
             i++;
         }
+    }
+
+    m_skeletons_wave_timer += dt;
+    // place new and more powerfull skeletons every 20 secods
+    //std::cout<< m_skeletons_wave_timer << std::endl;
+    if(m_skeletons_wave_timer >= 20 && m_skeletons.back().getPosition().z > 2)
+    {
+        //std::cout<< "NEW WAVE!"<< std::endl;;
+        pawn_new_skeletons(m_level);
+        m_level++;
+        m_skeletons_wave_timer=0;
     }
 }
 
@@ -1219,7 +1218,8 @@ void Renderer::shoot(float dt)
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT, dt);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 10.0f, m_skeletons[target].getPosition());
+            std::cout<<"MPHKAAA"<<std::endl;
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.0f, m_skeletons[target].getPosition());
         }
 
     }

@@ -12,7 +12,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     setGoal(goal);
     m_center_of_sphere = glm::vec3(-0.06082, 0.962787, -0.089274);
     m_road = road;
-    m_radius = 0.4f;
+    m_radius = 0.7f;
     m_rotation = 3.14f;
     m_velocity = 2.f;
     //m_randomNumber = ((float)rand() / RAND_MAX) * 2.0f;

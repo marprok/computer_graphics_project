@@ -37,55 +37,57 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
     //glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
     //glm::vec3 delta_cannonball = m_goal - m_position;
 	glm::vec3 delta_cannonball = m_direction;
-	std::cout << "goal: " << delta_cannonball.x << " " << delta_cannonball.y << " " << delta_cannonball.z << std::endl;
+    //std::cout << "goal: " << delta_cannonball.x << " " << delta_cannonball.y << " " << delta_cannonball.z << std::endl;
 
-	if (delta_cannonball.x > 0)
+
+    if (delta_cannonball.x > 0.6f)
 	{
 		m_position.x += dt * m_speed;
-		std::cout << "x>0" << std::endl;
+        //std::cout << "x>0" << std::endl;
 
 	}
-	if (delta_cannonball.x < 0)
+    if (delta_cannonball.x < -0.6f)
 	{
-		m_position.x -= dt * m_speed;
-		std::cout << "x<0" << std::endl;
+        m_position.x -= dt * m_speed;
+        //std::cout << "x<0" << std::endl;
 
 	}
-	if (delta_cannonball.z > 0)
+    if (delta_cannonball.z > 0.6f)
 	{
-		std::cout << "z>0" << std::endl;
+        //std::cout << "z>0" << std::endl;
 		m_position.z += dt * m_speed;
 
 	}
-	if (delta_cannonball.z < 0)
+    if (delta_cannonball.z < -0.6f)
 	{
-		std::cout << "z<0 " << std::endl;
-		m_position.z -= dt * m_speed;
+        //std::cout << "z<0 " << std::endl;
+        m_position.z -= dt * m_speed;
 	}
-
-    /*if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z))
+    /*
+    if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z))
     {
         m_position.x += dt*m_speed;
-        std::cout << "x>0" <<std::endl;
+        //std::cout << "x>0" <<std::endl;
 
     }
     if (delta_cannonball.x < 0 && std::abs(delta_cannonball.z) < std::abs(delta_cannonball.x))
     {
         m_position.x -= dt*m_speed;
-        std::cout << "x<0" <<std::endl;
+        //std::cout << "x<0" <<std::endl;
 
     }
     if(delta_cannonball.z > 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
     {
-        std::cout << "z>0" <<std::endl;
+        //std::cout << "z>0" <<std::endl;
         m_position.z += dt*m_speed;
 
     }
     if (delta_cannonball.z < 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
     {
-        std::cout << "z<0 "<<std::endl;
+        //std::cout << "z<0 "<<std::endl;
         m_position.z -= dt*m_speed;
-    }*/
+    }
+    */
 
     m_position.y -= gravity *dt;
     if(m_position.y < 0)

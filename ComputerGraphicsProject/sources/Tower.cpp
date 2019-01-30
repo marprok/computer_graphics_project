@@ -11,7 +11,7 @@ Tower::Tower(glm::vec3 position, GeometryNode* g_node, int range, float threshol
 	m_geometric_node = g_node;
     m_range = range;
     m_shoot_threshold = threshold;
-    m_shoot_timer = m_shoot_threshold;
+    m_shoot_timer = 0.0f;
 }
 
 void Tower::setPosition(glm::vec3 position) {
@@ -85,14 +85,14 @@ int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height
             }
         }
     }
+    m_shoot_timer += dt;
     if (in_range_skels.size() != 0 && m_shoot_timer >= m_shoot_threshold)
     {
         auto closest = in_range_skels.begin();
         m_shoot_timer = 0.0f;
         //std::cout << "the tower shoots the closest skeleton " << std::endl;
         return closest->second;
-    }
-    m_shoot_timer += dt;
+    } 
     //std::exit(1);
     return -1;
 }
