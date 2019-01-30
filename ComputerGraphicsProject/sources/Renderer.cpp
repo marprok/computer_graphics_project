@@ -272,7 +272,7 @@ void Renderer::Update(float dt)
     //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 6.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -482,7 +482,7 @@ bool Renderer::InitLightSources()
     m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
     m_spotlight_node.SetColor(160.f * glm::vec3(255, 255, 251) / 255.f);
     m_spotlight_node.SetConeSize(65, 65);
-	m_spotlight_node.CastShadow(true);
+	m_spotlight_node.CastShadow(false);
 
 	return true;
 }
@@ -1219,7 +1219,7 @@ void Renderer::shoot(float dt)
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT, dt);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 10.0f);
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 10.0f, m_skeletons[target].getPosition());
         }
 
     }

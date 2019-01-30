@@ -6,7 +6,7 @@ Cannonball::Cannonball()
 
 }
 
-Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed) {
+Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed, glm::vec3 goal) {
     m_geometric_node = g_node;
     position.y = 2.5f;
     setPosition(position);
@@ -14,7 +14,8 @@ Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, flo
     m_target = target;
     m_center_of_sphere = m_position;
     m_speed = speed;
-
+	m_goal = goal;
+	m_direction = m_goal - m_position;
 }
 
 void Cannonball::setPosition(glm::vec3 position) {
@@ -27,45 +28,64 @@ void Cannonball::setPosition(glm::vec3 position) {
 
 bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravity)
 {
-    bool a=false;
-    bool b=false;
-    bool c=false;
-    bool d=false;
 
     if (skeletons.size() <= m_target)
-        {
-            return false;
-        }
+    {
+        return false;
+    }
 
-    glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
+    //glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
+    //glm::vec3 delta_cannonball = m_goal - m_position;
+	glm::vec3 delta_cannonball = m_direction;
+	std::cout << "goal: " << delta_cannonball.x << " " << delta_cannonball.y << " " << delta_cannonball.z << std::endl;
 
-    if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z)&& !b)
+	if (delta_cannonball.x > 0)
+	{
+		m_position.x += dt * m_speed;
+		std::cout << "x>0" << std::endl;
+
+	}
+	if (delta_cannonball.x < 0)
+	{
+		m_position.x -= dt * m_speed;
+		std::cout << "x<0" << std::endl;
+
+	}
+	if (delta_cannonball.z > 0)
+	{
+		std::cout << "z>0" << std::endl;
+		m_position.z += dt * m_speed;
+
+	}
+	if (delta_cannonball.z < 0)
+	{
+		std::cout << "z<0 " << std::endl;
+		m_position.z -= dt * m_speed;
+	}
+
+    /*if(delta_cannonball.x > 0 && std::abs(delta_cannonball.x) > std::abs(delta_cannonball.z))
     {
         m_position.x += dt*m_speed;
-        //std::cout << "x>0" <<std::endl;
-        a=true;
+        std::cout << "x>0" <<std::endl;
 
     }
-    if (delta_cannonball.x < 0 && std::abs(delta_cannonball.z) < std::abs(delta_cannonball.x) && !a)
+    if (delta_cannonball.x < 0 && std::abs(delta_cannonball.z) < std::abs(delta_cannonball.x))
     {
         m_position.x -= dt*m_speed;
-        //std::cout << "x<0" <<std::endl;
-        b=true;
+        std::cout << "x<0" <<std::endl;
 
     }
-    if(delta_cannonball.z > 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x) && !d)
+    if(delta_cannonball.z > 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
     {
-        //std::cout << "z>0" <<std::endl;
+        std::cout << "z>0" <<std::endl;
         m_position.z += dt*m_speed;
-        c=true;
 
     }
-    if (delta_cannonball.z < 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x) && !c)
+    if (delta_cannonball.z < 0 && std::abs(delta_cannonball.z) > std::abs(delta_cannonball.x))
     {
-        //std::cout << "z<0 "<<std::endl;
+        std::cout << "z<0 "<<std::endl;
         m_position.z -= dt*m_speed;
-        d=true;
-    }
+    }*/
 
     m_position.y -= gravity *dt;
     if(m_position.y < 0)
@@ -75,12 +95,22 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
     setPosition(m_position);
     m_center_of_sphere = m_position;
 
-    float distance = skeletons[m_target].distance_from(m_center_of_sphere);
+    /*float distance = skeletons[m_target].distance_from(m_center_of_sphere);
     if(distance <= (m_radius + skeletons[m_target].getRadius()))
     {
         skeletons[m_target].lose_health(1);
         return false;
-    }
+    }*/
+	
+	for (auto &skeleton : skeletons)
+	{
+		float distance = skeleton.distance_from(m_center_of_sphere);
+		if (distance <= (m_radius + skeleton.getRadius()))
+		{
+			skeleton.lose_health(1);
+			return false;
+		}
+	}
     return true;
 
 }

@@ -31,7 +31,7 @@ class Cannonball
 {
 public:
     Cannonball();
-    Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed);
+    Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed, glm::vec3 goal);
     ~Cannonball();
 
 	void setPosition(glm::vec3 position);
@@ -54,6 +54,8 @@ private:
 	GeometryNode*			m_geometric_node;
     glm::vec3               m_center_of_sphere;
     glm::vec3               m_initial_position;
+	glm::vec3				m_goal;
+	glm::vec3				m_direction;
 
     int                     m_target;
     float                   m_speed;
