@@ -69,6 +69,8 @@ public:
 
     float get_max_health();
 
+    void set_health(int health);
+
 
 
 private:

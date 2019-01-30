@@ -252,8 +252,16 @@ void Renderer::Update(float dt)
     //Remove the skeleton that reached the tresure(always the leader)
     if(chest->isReached(m_skeletons))
     {
-        m_skeletons.erase(m_skeletons.begin());
+        for (size_t i = 0; i < m_skeletons.size(); i++)
+        {
+            if (m_skeletons[i].get_health() == -1)
+            {
+                std::cout<<"MPHKA"<< std::endl;
+               m_skeletons.erase(m_skeletons.begin()+i);
+            }
+        }
     }
+
 
     //End the game if the chest is empty
     if(chest->getCoinsLeft() == 0)

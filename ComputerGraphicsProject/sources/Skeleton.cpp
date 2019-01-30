@@ -251,4 +251,9 @@ int Skeleton::get_health()
     return m_health;
 }
 
+void Skeleton::set_health(int health)
+{
+    m_health = health;
+}
+
 float Skeleton::get_max_health() { return m_max_health; }
