@@ -63,7 +63,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
     m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
 
 	float bar_scale_factor = get_health() / 3.f /*max_health*/;
-	std::cout << "remaing life = " << bar_scale_factor << std::endl;
+    //std::cout << "remaing life = " << bar_scale_factor << std::endl;
 	// green health bar
 	m_geometric_transformation_matrix[4] =
 		pirate_position *

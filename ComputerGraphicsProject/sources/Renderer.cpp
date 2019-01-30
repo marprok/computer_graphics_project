@@ -75,6 +75,9 @@ Renderer::Renderer()
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 
     m_tower_shoot_timer = 0.0f;
+    m_skeletons_wave_timer=0.0f;
+    m_level=1;
+    m_new_tower_timer=10.0f;
 }
 
 Renderer::~Renderer()
@@ -143,6 +146,7 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
+    m_new_tower_timer += dt;
     float movement_speed = 4.0f;
 	// compute the direction of the camera
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
@@ -233,6 +237,18 @@ void Renderer::Update(float dt)
         }
     }
 
+    m_skeletons_wave_timer += dt;
+    // place new and more powerfull skeletons every 20 secods
+    //std::cout<< m_skeletons_wave_timer << std::endl;
+    if(m_skeletons_wave_timer >= 20 && m_skeletons.back().getPosition().z > 2)
+    {
+        //std::cout<< "NEW WAVE!"<< std::endl;;
+        pawn_new_skeletons(m_level);
+        m_level++;
+        m_skeletons_wave_timer=0;
+    }
+
+
     //Remove the skeleton that reached the tresure(always the leader)
     if(chest->isReached(m_skeletons))
     {
@@ -248,7 +264,7 @@ void Renderer::Update(float dt)
     //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 6.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -425,8 +441,8 @@ bool Renderer::ResizeBuffers(int width, int height)
 
 	// depth texture
 	glBindTexture(GL_TEXTURE_2D, m_fbo_depth_texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_screen_width, m_screen_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -788,10 +804,10 @@ bool Renderer::InitGeometricMeshes()
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
     m_pirate_position = glm::vec3(0, 0.1, -2);
-    m_skeletons.emplace_back(m_pirate_position, 2, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 	
     m_pirate_position = glm::vec3(0, 0.1, -4);
-    m_skeletons.emplace_back(m_pirate_position, 3, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
 	return initialized;
 }
@@ -1119,8 +1135,10 @@ void Renderer::MovePlayer(int dx, int dz) {
 
 
 void Renderer::PlaceTower() {
-    if (isValidTowerPos())
+    if (isValidTowerPos() && m_new_tower_timer >= 10 )//place towers every 10 seconds
 	{
+        std::cout<<"can place tower now"<<std::endl;
+        m_new_tower_timer=0;
         m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2);
 		std::cout << "New tower!!!!!! :D" << std::endl;
 	}
@@ -1193,8 +1211,19 @@ void Renderer::shoot()
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 8.0f);
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 10.0f);
         }
 
     }
+}
+
+void Renderer::pawn_new_skeletons(int level)
+{
+    m_pirate_position = glm::vec3(0, 0.1, 0);
+    for (int i=0; i<level+3; i++)
+    {
+       m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3+level);
+       m_pirate_position.z -= 2;
+    }
+
 }

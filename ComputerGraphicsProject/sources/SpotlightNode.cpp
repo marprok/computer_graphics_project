@@ -54,8 +54,8 @@ void SpotLightNode::CastShadow(bool cast)
 		// Depth buffer
 		glBindTexture(GL_TEXTURE_2D, m_shadow_map_texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_shadow_map_resolution, m_shadow_map_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -106,7 +106,7 @@ void SpotLightNode::SetConeSize(float umbra, float penumbra)
 	float far_clipping_range = 1500.f;
 
 	// create a frustum that  encapsulate the light cone
-	float h = near_clipping_range * glm::tan(glm::radians(m_penumbra * 0.5f));
+    float h = near_clipping_range * glm::tan(glm::radians(m_penumbra * 0.5f));
 	m_projection_matrix = glm::frustum(-h, h, -h, h, near_clipping_range, far_clipping_range);
 	m_projection_inverse_matrix = glm::inverse(m_projection_matrix);
 }

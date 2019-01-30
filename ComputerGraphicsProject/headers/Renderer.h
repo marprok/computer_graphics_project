@@ -120,6 +120,9 @@ protected:
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
     float                                           m_tower_shoot_timer;
+    float                                           m_skeletons_wave_timer;
+    float                                           m_new_tower_timer;
+    int                                             m_level;
 
     class Chest*                                     chest;
 
@@ -168,6 +171,8 @@ public:
 	bool isValidTowerPos();
 
 	void MoveSkeleton(float dt);
+
+    void pawn_new_skeletons(int level);
 
 	void RemoveSkeleton();
 

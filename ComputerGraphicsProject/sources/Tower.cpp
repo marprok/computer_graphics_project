@@ -83,7 +83,7 @@ int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height
     if (in_range_skels.size() != 0)
     {
         auto closest = in_range_skels.begin();
-        std::cout << "the tower shoots the closest skeleton " << std::endl;
+        //std::cout << "the tower shoots the closest skeleton " << std::endl;
         return closest->second;
     }
     return -1;
