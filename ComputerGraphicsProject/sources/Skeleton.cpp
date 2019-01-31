@@ -12,7 +12,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     setGoal(goal);
     m_center_of_sphere = glm::vec3(-0.06082, 0.962787, -0.089274);
     m_road = road;
-    m_radius = 0.8f;
+    m_radius = 0.75f;
     m_rotation = 3.14f;
     m_velocity = 2.f;
     //m_randomNumber = ((float)rand() / RAND_MAX) * 2.0f;
@@ -32,7 +32,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
 	glm::mat4 pirate_position;
 	pirate_position =
 		glm::translate(glm::mat4(1.0f), m_position) *
-		glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.11, 0)) *
+        glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.05, 0)) *
 		glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0, 1, 0)) *
         glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
 

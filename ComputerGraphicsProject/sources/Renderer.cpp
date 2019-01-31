@@ -78,6 +78,10 @@ Renderer::Renderer()
     m_skeletons_wave_timer=0.0f;
     m_level=1;
     m_new_tower_timer=10.0f;
+    m_particles_timer=0;
+    hit = false;
+    exploded_cannonball_index=0;
+    //a = ParticleEmitter(glm::vec3(3, 1, 2));
 }
 
 Renderer::~Renderer()
@@ -146,6 +150,7 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
+
     m_new_tower_timer += dt;
     float movement_speed = 4.0f;
 	// compute the direction of the camera
@@ -258,10 +263,19 @@ void Renderer::Update(float dt)
     }
 
     //throw cannonballs
+    m_particles_timer += dt;
     for (size_t i = 0; i < m_cannonballs.size();)
     {
         if (!m_cannonballs[i].update(dt, m_skeletons, 3.0f))
         {
+            hit = true;
+            m_explosion_position = m_cannonballs[i].getPosition();
+            if(!(m_explosion_position.x > 19.5 || m_explosion_position.x < -1.0f || m_explosion_position.z > 19.5 || m_explosion_position.z < -1.0f))//when ball reached the end of the board
+            {
+                m_particle_emitters.emplace_back(m_explosion_position);
+                m_particle_emitters[m_particle_emitters.size()-1].Init();
+                m_particles_timer = 0;
+            }
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
         else
@@ -270,16 +284,55 @@ void Renderer::Update(float dt)
         }
     }
 
+    for(int i=0; i<m_particle_emitters.size(); i++)
+    {
+        m_particle_emitters[i].Update(dt);
+    }
+
+    for(int i=0; i<m_particle_emitters.size(); i++)
+    {
+        if(m_particle_emitters[i].get_continuous_time() > 0.2)//delete particles after 0.2 seconds
+        {
+            m_particle_emitters.erase(m_particle_emitters.begin()+i);
+        }
+    }
+
     m_skeletons_wave_timer += dt;
     // place new and more powerfull skeletons every 20 secods
-    //std::cout<< m_skeletons_wave_timer << std::endl;
-    if(m_skeletons_wave_timer >= 20 && m_skeletons.back().getPosition().z > 2)
+    if(m_skeletons_wave_timer >= 5 && m_skeletons.back().getPosition().z > 2)
     {
-        //std::cout<< "NEW WAVE!"<< std::endl;;
         pawn_new_skeletons(m_level);
         m_level++;
         m_skeletons_wave_timer=0;
     }
+
+    //clean terrain from dead skeleton if there are more than 30 dead.
+    m_dead_skeletons = 0;
+    for(int i=0; i<m_skeletons.size(); i++)
+    {
+        if(m_skeletons[i].get_health()==0)
+        {
+            m_dead_skeletons++;
+        }
+    }
+
+    std::cout<<"dead: "<<m_dead_skeletons<<std::endl;
+    int j=0;
+    if(m_dead_skeletons > 30)
+    {
+        while(true)
+        {
+            if(m_skeletons[j].get_health()==0)
+            {
+                m_skeletons.erase(m_skeletons.begin()+j);
+                m_dead_skeletons--;
+                if(m_dead_skeletons<=20)
+                    break;
+            }
+            j++;
+        }
+    }
+
 }
 
 bool Renderer::InitCommonItems()
@@ -354,6 +407,15 @@ bool Renderer::InitRenderingTechniques()
     m_geometry_rendering_program.LoadUniform("uniform_cast_shadows");
     m_geometry_rendering_program.LoadUniform("shadowmap_texture");
 
+    // Create and Compile Particle Shader
+    vertex_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/particle_rendering.vert";
+    fragment_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/particle_rendering.frag";
+    m_particle_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_particle_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = initialized && m_particle_rendering_program.CreateProgram();
+    m_particle_rendering_program.LoadUniform("uniform_view_matrix");
+    m_particle_rendering_program.LoadUniform("uniform_projection_matrix");
+
     // Post Processing Program
 
 #ifdef _WIN32
@@ -416,6 +478,8 @@ bool Renderer::ReloadShaders()
 	reloaded = reloaded && m_geometry_rendering_program.ReloadProgram();
 	reloaded = reloaded && m_postprocess_program.ReloadProgram();
 	reloaded = reloaded && m_spot_light_shadow_map_program.ReloadProgram();
+    // Reload Particle Shader
+    reloaded = reloaded && m_particle_rendering_program.ReloadProgram();
 
 	return reloaded;
 }
@@ -816,6 +880,8 @@ bool Renderer::InitGeometricMeshes()
     m_pirate_position = glm::vec3(0, 0.1, -4);
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
+    a.Init();
+
 	return initialized;
 }
 
@@ -1017,9 +1083,24 @@ void Renderer::RenderGeometry()
 			}
 		}
 	}
-
 	glBindVertexArray(0);
 	m_geometry_rendering_program.Unbind();
+
+    // Render Particles
+    m_particle_rendering_program.Bind();
+
+    glUniformMatrix4fv(m_particle_rendering_program["uniform_projection_matrix"], 1, GL_FALSE, glm::value_ptr(m_projection_matrix));
+    glUniformMatrix4fv(m_particle_rendering_program["uniform_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_view_matrix));
+
+    for(int i=0; i<m_particle_emitters.size(); i++)
+    {
+        m_particle_emitters[i].Render();
+
+    }
+    a.Render();
+
+    m_particle_rendering_program.Unbind();
+
 
 	glDisable(GL_DEPTH_TEST);
 	if(m_rendering_mode != RENDERING_MODE::TRIANGLES)

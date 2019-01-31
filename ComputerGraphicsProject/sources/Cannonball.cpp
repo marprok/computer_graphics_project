@@ -29,10 +29,10 @@ void Cannonball::setPosition(glm::vec3 position) {
 bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravity)
 {
 
-    if (skeletons.size() <= m_target)
-    {
-        return false;
-    }
+    //if (skeletons.size() <= m_target)
+    //{
+     //   return false;
+    //}
 
     //glm::vec3 delta_cannonball = skeletons[m_target].getPosition() - m_position;
     //glm::vec3 delta_cannonball = m_goal - m_position;
@@ -113,10 +113,13 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
 	for (auto &skeleton : skeletons)
 	{
 		float distance = skeleton.distance_from(m_center_of_sphere);
-		if (distance <= (m_radius + skeleton.getRadius()))
+        if (distance <= (m_radius + skeleton.getRadius()))
 		{
-            skeleton.lose_health(2);
-			return false;
+            if(skeleton.get_health()>0)
+            {
+                skeleton.lose_health(2);
+                return false;
+            }
 		}
 	}
     return true;

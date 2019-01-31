@@ -25,6 +25,7 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "ParticleSystem.h"
 	#include "Tile.h"
     #include "Chest.h"
     #include "Cannonball.h"
@@ -107,6 +108,8 @@ protected:
 	glm::vec3										m_geometric_object6_position[6];
 	glm::vec3										m_pirate_position;
 
+    glm::vec3										m_explosion_position;
+
     class GeometryNode*								m_geometric_object8;
     glm::mat4										m_geometric_object8_transformation_matrix;
     glm::mat4                                       m_geometric_object8_transformation_normal_matrix;
@@ -119,10 +122,19 @@ protected:
     std::vector<Cannonball>							m_cannonballs;
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
+    std::vector<ParticleEmitter>                    m_particle_emitters;
     float                                           m_tower_shoot_timer;
     float                                           m_skeletons_wave_timer;
     float                                           m_new_tower_timer;
+    float                                           m_particles_timer;
     int                                             m_level;
+    bool                                            hit;
+    int                                             exploded_cannonball_index;
+    int                                             m_dead_skeletons;
+    ParticleEmitter                                 a;
+
+    ParticleEmitter								m_particle_emitter;
+    ShaderProgram								m_particle_rendering_program;
 
     class Chest*                                     chest;
 
