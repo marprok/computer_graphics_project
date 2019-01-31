@@ -8,7 +8,7 @@ Chest::Chest()
 
 Chest::Chest(GeometryNode* g_node) {
     m_geometric_node = g_node;
-    m_radius = 0.7f;
+    m_radius = 0.3f;
     m_first_skeleton=0;
     m_coins_left = 30;
 }

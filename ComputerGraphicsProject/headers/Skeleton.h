@@ -71,6 +71,8 @@ public:
 
     void set_health(int health);
 
+    void set_radious(float radius);
+
 
 
 private:

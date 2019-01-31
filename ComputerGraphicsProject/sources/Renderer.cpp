@@ -159,7 +159,7 @@ void Renderer::Update(float dt)
         m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
     }else if(m_camera_target_position.y > -7.5f)
     {
-        m_camera_position.y=0.1;
+        m_camera_position.y = 0.1;
         m_camera_position += m_camera_movement.x *  movement_speed * direction * dt;
         m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
     }
@@ -260,7 +260,7 @@ void Renderer::Update(float dt)
     //throw cannonballs
     for (size_t i = 0; i < m_cannonballs.size();)
     {
-        if (!m_cannonballs[i].update(dt, m_skeletons, 4.0f))
+        if (!m_cannonballs[i].update(dt, m_skeletons, 3.0f))
         {
             m_cannonballs.erase(m_cannonballs.begin() + i);
         }
@@ -481,7 +481,7 @@ bool Renderer::InitLightSources()
     m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
     m_spotlight_node.SetColor(160.f * glm::vec3(255, 255, 251) / 255.f);
     m_spotlight_node.SetConeSize(65, 65);
-	m_spotlight_node.CastShadow(false);
+    m_spotlight_node.CastShadow(true);
 
 	return true;
 }
@@ -1142,7 +1142,7 @@ void Renderer::MovePlayer(int dx, int dz) {
 
 
 void Renderer::PlaceTower() {
-    if (isValidTowerPos() && m_new_tower_timer >= 10 )//place towers every 10 seconds
+    if (isValidTowerPos() && m_new_tower_timer >= 0 )//place towers every 10 seconds
 	{
         std::cout<<"can place tower now"<<std::endl;
         m_new_tower_timer=0;
@@ -1218,8 +1218,7 @@ void Renderer::shoot(float dt)
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT, dt);
         if(target != -1)
         {
-            std::cout<<"MPHKAAA"<<std::endl;
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.0f, m_skeletons[target].getPosition());
+            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.5f, m_skeletons[target].getPosition());
         }
 
     }

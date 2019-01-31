@@ -8,9 +8,9 @@ Cannonball::Cannonball()
 
 Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, float speed, glm::vec3 goal) {
     m_geometric_node = g_node;
-    position.y = 2.5f;
+    position.y = 2.0f;
     setPosition(position);
-    m_radius = 0.2f;
+    m_radius = 0.1f;
     m_target = target;
     m_center_of_sphere = m_position;
     m_speed = speed;
@@ -89,11 +89,17 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
     }
     */
 
-    m_position.y -= gravity *dt;
-    if(m_position.y < 0)
+
+    if(m_position.y > 0.25)
+    {
+        m_position.y -= gravity *dt;//ball will continue to move paraller to the ground
+    }
+
+    if(m_position.x > 19.5 || m_position.x < -1.0f || m_position.z > 19.5 || m_position.z < -1.0f)//when ball reached the end of the board
     {
         return false;
     }
+
     setPosition(m_position);
     m_center_of_sphere = m_position;
 
@@ -109,7 +115,7 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
 		float distance = skeleton.distance_from(m_center_of_sphere);
 		if (distance <= (m_radius + skeleton.getRadius()))
 		{
-			skeleton.lose_health(1);
+            skeleton.lose_health(2);
 			return false;
 		}
 	}

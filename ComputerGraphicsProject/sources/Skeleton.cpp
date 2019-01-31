@@ -12,7 +12,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     setGoal(goal);
     m_center_of_sphere = glm::vec3(-0.06082, 0.962787, -0.089274);
     m_road = road;
-    m_radius = 0.7f;
+    m_radius = 0.8f;
     m_rotation = 3.14f;
     m_velocity = 2.f;
     //m_randomNumber = ((float)rand() / RAND_MAX) * 2.0f;
@@ -91,6 +91,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
 void Skeleton::kill()
 {
 
+    m_radius = 0;
     glm::vec3 random_position = m_position;
     random_position.x += m_randomNumber;
     random_position.z += m_randomNumber;
@@ -243,7 +244,7 @@ void Skeleton::lose_health(int i)
 {
 
     m_health = (m_health - i < 0) ? 0 : m_health - i;
-    std::cout << "health = " << m_health << std::endl;
+    //std::cout << "health = " << m_health << std::endl;
 }
 
 int Skeleton::get_health()
@@ -254,6 +255,11 @@ int Skeleton::get_health()
 void Skeleton::set_health(int health)
 {
     m_health = health;
+}
+
+void Skeleton::set_radious(float radius)
+{
+    m_radius = radius;
 }
 
 float Skeleton::get_max_health() { return m_max_health; }
