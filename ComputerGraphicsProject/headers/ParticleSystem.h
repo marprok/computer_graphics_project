@@ -1,10 +1,27 @@
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 
-#include "../GLEW/glew.h"
-#include "../glm/glm.hpp"
-#include <vector>
-#include "../headers/ShaderProgram.h"
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+    //define something for Windows (64-bit only)
+    #include "GLEW/glew.h"
+    #include "glm/glm.hpp"
+    #include <vector>
+    #include "ShaderProgram.h"
+    #endif
+#elif __APPLE__
+    // apple
+    #include "../GLEW/glew.h"
+    #include "../glm/glm.hpp"
+    #include <vector>
+    #include "ShaderProgram.h"
+#elif __linux__
+    #include "../GLEW/glew.h"
+    #include "../glm/glm.hpp"
+    #include <vector>
+    #include "ShaderProgram.h"
+#endif
 
 
 class ParticleEmitter

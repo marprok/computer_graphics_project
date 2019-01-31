@@ -408,6 +408,18 @@ bool Renderer::InitRenderingTechniques()
     m_geometry_rendering_program.LoadUniform("shadowmap_texture");
 
     // Create and Compile Particle Shader
+
+
+
+#ifdef _WIN32
+    vertex_shader_path = "../Data/Shaders/particle_rendering.vert";
+    fragment_shader_path = "../Data/Shaders/particle_rendering.frag";
+    m_particle_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_particle_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = initialized && m_particle_rendering_program.CreateProgram();
+    m_particle_rendering_program.LoadUniform("uniform_view_matrix");
+    m_particle_rendering_program.LoadUniform("uniform_projection_matrix");
+#elif __APPLE__
     vertex_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/particle_rendering.vert";
     fragment_shader_path = "/Users/dimitrisstaratzis/Desktop/CG_Project/Data/Shaders/particle_rendering.frag";
     m_particle_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
@@ -415,9 +427,18 @@ bool Renderer::InitRenderingTechniques()
     initialized = initialized && m_particle_rendering_program.CreateProgram();
     m_particle_rendering_program.LoadUniform("uniform_view_matrix");
     m_particle_rendering_program.LoadUniform("uniform_projection_matrix");
+#elif __linux__
+    vertex_shader_path = "Data/Shaders/particle_rendering.vert";
+    fragment_shader_path = "Data/Shaders/particle_rendering.frag";
+    m_particle_rendering_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+    m_particle_rendering_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+    initialized = initialized && m_particle_rendering_program.CreateProgram();
+    m_particle_rendering_program.LoadUniform("uniform_view_matrix");
+    m_particle_rendering_program.LoadUniform("uniform_projection_matrix");
+#endif
+
 
     // Post Processing Program
-
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #ifdef _WIN64
