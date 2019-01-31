@@ -1,27 +1,16 @@
-#include "ParticleSystem.h"
-#include "GeometryNode.h"
-#include "Tools.h"
-#include <algorithm>
-#include "ShaderProgram.h"
-#include "../glm/gtc/type_ptr.hpp"
-#include "../glm/gtc/matrix_transform.hpp"
-#include "OBJLoader.h"
-#include "TextureManager.h"
-#include <iostream>
-
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #ifdef _WIN64
     //define something for Windows (64-bit only)
-    #include "ParticleSystem.h"
-    #include "GeometryNode.h"
-    #include "Tools.h"
+    #include "../headers/ParticleSystem.h"
+    #include "../headers/GeometryNode.h"
+    #include "../headers/Tools.h"
     #include <algorithm>
-    #include "ShaderProgram.h"
+    #include "../headers/ShaderProgram.h"
     #include "glm/gtc/type_ptr.hpp"
     #include "glm/gtc/matrix_transform.hpp"
-    #include "OBJLoader.h"
-    #include "TextureManager.h"
+    #include "../headers/OBJLoader.h"
+    #include "../headers/TextureManager.h"
     #include <iostream>
     #endif
 #elif __APPLE__

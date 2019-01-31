@@ -25,6 +25,7 @@
     <ClCompile Include="sources\GeometricMesh.cpp" />
     <ClCompile Include="sources\GeometryNode.cpp" />
     <ClCompile Include="sources\OBJLoader.cpp" />
+    <ClCompile Include="sources\ParticleSystem.cpp" />
     <ClCompile Include="sources\Renderer.cpp" />
     <ClCompile Include="sources\ShaderProgram.cpp" />
     <ClCompile Include="sources\Skeleton.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="headers\GeometricMesh.h" />
     <ClInclude Include="headers\GeometryNode.h" />
     <ClInclude Include="headers\OBJLoader.h" />
+    <ClInclude Include="headers\ParticleSystem.h" />
     <ClInclude Include="headers\Renderer.h" />
     <ClInclude Include="headers\ShaderProgram.h" />
     <ClInclude Include="headers\Skeleton.h" />
