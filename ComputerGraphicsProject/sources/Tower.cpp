@@ -12,6 +12,7 @@ Tower::Tower(glm::vec3 position, GeometryNode* g_node, int range, float threshol
     m_range = range;
     m_shoot_threshold = threshold;
     m_shoot_timer = 0.0f;
+    m_to_be_removed=false;
 }
 
 void Tower::setPosition(glm::vec3 position) {
@@ -20,6 +21,13 @@ void Tower::setPosition(glm::vec3 position) {
 		glm::translate(glm::mat4(1.f), getPosition()) *
 		glm::scale(glm::mat4(1.f), glm::vec3(0.25f));
 	m_geometric_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix))));
+}
+
+void Tower::Remove(float dt)
+{
+    glm::vec3 new_position = m_position;
+    new_position.y -= dt*4;
+    setPosition(new_position);
 }
 
 glm::vec3 Tower::getPosition() {
@@ -95,4 +103,14 @@ int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height
     } 
     //std::exit(1);
     return -1;
+}
+
+bool Tower::to_be_removed()
+{
+    return m_to_be_removed;
+}
+
+void Tower::set_to_be_removed(bool flag)
+{
+    m_to_be_removed=flag;
 }

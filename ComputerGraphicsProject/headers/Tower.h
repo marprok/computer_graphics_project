@@ -36,6 +36,8 @@ public:
 
 	void setPosition(glm::vec3 position);
 
+    void Remove(float dt);
+
 	glm::vec3 getPosition();
 
 	GeometryNode* getGeometricNode();
@@ -46,6 +48,10 @@ public:
 
     int shoot_closest(std::vector<Skeleton> &skeletons, int width, int height, float dt);
 
+    bool to_be_removed();
+
+    void set_to_be_removed(bool flag);
+
 private:
 	glm::vec3				m_position;
 	glm::mat4				m_geometric_transformation_matrix;
@@ -54,4 +60,5 @@ private:
 	GeometryNode*			m_geometric_node;
     float                   m_shoot_timer;
     float                   m_shoot_threshold;
+    bool                    m_to_be_removed;
 };

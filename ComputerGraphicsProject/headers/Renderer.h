@@ -190,6 +190,7 @@ public:
 
 	void RemoveSkeleton();
 
+    void RemoveTower();
 
     bool readRoad(const char *road);
 

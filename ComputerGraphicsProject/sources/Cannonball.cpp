@@ -10,7 +10,7 @@ Cannonball::Cannonball(glm::vec3 position, GeometryNode* g_node, int target, flo
     m_geometric_node = g_node;
     position.y = 2.0f;
     setPosition(position);
-    m_radius = 0.1f;
+    m_radius = 0.05f;
     m_target = target;
     m_center_of_sphere = m_position;
     m_speed = speed;

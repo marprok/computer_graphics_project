@@ -316,7 +316,7 @@ void Renderer::Update(float dt)
         }
     }
 
-    std::cout<<"dead: "<<m_dead_skeletons<<std::endl;
+    //std::cout<<"dead: "<<m_dead_skeletons<<std::endl;
     int j=0;
     if(m_dead_skeletons > 30)
     {
@@ -331,6 +331,21 @@ void Renderer::Update(float dt)
             }
             j++;
         }
+    }
+
+    //Towers are removed in style!
+    for(int i = 0; i<m_towers.size(); i++)
+    {
+        if(m_towers[i].to_be_removed())
+        {
+            //m_towers.erase(m_towers.begin()+i);
+            m_towers[i].Remove(dt);
+            if(m_towers[i].getPosition().y < -3)
+            {
+                m_towers.erase(m_towers.begin()+i);
+            }
+        }
+
     }
 
 }
@@ -1335,4 +1350,16 @@ void Renderer::pawn_new_skeletons(int level)
        m_pirate_position.z -= 2;
     }
 
+}
+
+void Renderer::RemoveTower()
+{
+    for(int i = 0; i<m_towers.size(); i++)
+    {
+        if(m_towers[i].getPosition() == m_player_tile_position)
+        {
+            //m_towers.erase(m_towers.begin()+i);
+            m_towers[i].set_to_be_removed(true);
+        }
+    }
 }
