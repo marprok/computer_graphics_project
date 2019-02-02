@@ -133,7 +133,7 @@ protected:
     bool                                            hit;
     int                                             exploded_cannonball_index;
     int                                             m_dead_skeletons;
-    ParticleEmitter                                 a;
+    Skeleton                                        m_last_alive_skeleton;
 
     ParticleEmitter								m_particle_emitter;
     ShaderProgram								m_particle_rendering_program;

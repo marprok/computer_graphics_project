@@ -299,7 +299,22 @@ void Renderer::Update(float dt)
 
     m_skeletons_wave_timer += dt;
     // place new and more powerfull skeletons every 20 secods
-    if(m_skeletons_wave_timer >= 5 && m_skeletons.back().getPosition().z > 2)
+
+    //first find the last alive skeleton to prevent new waves from overlapping him
+    for(int i=m_skeletons.size()-1; i>-1; i--)
+    {
+        if(m_skeletons[i].get_health()!=0)
+        {
+            m_last_alive_skeleton = m_skeletons[i];
+            break;
+        }else
+        {
+            m_last_alive_skeleton.set_health(0);
+        }
+    }
+
+    //Now generate the new wave
+    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
     {
         pawn_new_skeletons(m_level);
         m_level++;
@@ -577,10 +592,10 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
     // Initialize the spot light
-    m_spotlight_node.SetPosition(glm::vec3(16, 20, -24));
+    m_spotlight_node.SetPosition(glm::vec3(16, 20, 0));
     m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
-    m_spotlight_node.SetColor(160.f * glm::vec3(255, 255, 251) / 255.f);
-    m_spotlight_node.SetConeSize(65, 65);
+    m_spotlight_node.SetColor(65.f * glm::vec3(200, 200, 200) / 255.f);
+    m_spotlight_node.SetConeSize(115, 100);
     m_spotlight_node.CastShadow(true);
 
 	return true;
@@ -916,8 +931,6 @@ bool Renderer::InitGeometricMeshes()
     m_pirate_position = glm::vec3(0, 0.1, -4);
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
-    a.Init();
-
 	return initialized;
 }
 
@@ -1133,7 +1146,6 @@ void Renderer::RenderGeometry()
         m_particle_emitters[i].Render();
 
     }
-    a.Render();
 
     m_particle_rendering_program.Unbind();
 
