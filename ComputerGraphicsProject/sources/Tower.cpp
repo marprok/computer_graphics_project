@@ -54,53 +54,56 @@ Tower::~Tower()
 
 int Tower::shoot_closest(std::vector<Skeleton> &skeletons, int width, int height, float dt)
 {
-    //std::cout << m_position.x << " pos " << m_position.z << std::endl;
-    std::map<float, size_t> in_range_skels;
-    // loop over the total range of the tower
-    for (int i = -m_range; i <= m_range; ++i)
+    if(!m_to_be_removed)
     {
-        for (int j = -m_range; j <= m_range; ++j)
+        //std::cout << m_position.x << " pos " << m_position.z << std::endl;
+        std::map<float, size_t> in_range_skels;
+        // loop over the total range of the tower
+        for (int i = -m_range; i <= m_range; ++i)
         {
-            glm::vec3 tile_pos;
-            float tile_x = m_position.x + 2*i;
-            float tile_z = m_position.z + 2*j;
-            tile_pos.x = tile_x;
-            tile_pos.z = tile_z;
-            tile_pos.y = 0.0f;
-            // in bounds check
-
-
-            if (tile_pos.x < 0 || tile_pos.x  >= width || tile_pos.z < 0 || tile_pos.z >= width)
+            for (int j = -m_range; j <= m_range; ++j)
             {
-                continue;
-            }
-            //std::cout <<tile_x << ", " << tile_z << std::endl;
-            // this map is always ordered by the keys
-            // now we have to see if a skeleton is in this tile
-            //std::cout << "here" << std::endl;
+                glm::vec3 tile_pos;
+                float tile_x = m_position.x + 2*i;
+                float tile_z = m_position.z + 2*j;
+                tile_pos.x = tile_x;
+                tile_pos.z = tile_z;
+                tile_pos.y = 0.0f;
+                // in bounds check
 
-            for (size_t i = 0; i < skeletons.size(); ++i)
-            {
-                float is_here = skeletons[i].distance_from_position(tile_pos);
-                //std::cout << is_here << std::endl;
-                if (is_here <= 1.0f && skeletons[i].get_health() !=0)
+
+                if (tile_pos.x < 0 || tile_pos.x  >= width || tile_pos.z < 0 || tile_pos.z >= width)
                 {
-                    //std::cout << "here" << std::endl;
-                    // distance from the tower
-                    float distance2 = skeletons[i].distance_from(m_position);
-                    in_range_skels[distance2] = i;
+                    continue;
+                }
+                //std::cout <<tile_x << ", " << tile_z << std::endl;
+                // this map is always ordered by the keys
+                // now we have to see if a skeleton is in this tile
+                //std::cout << "here" << std::endl;
+
+                for (size_t i = 0; i < skeletons.size(); ++i)
+                {
+                    float is_here = skeletons[i].distance_from_position(tile_pos);
+                    //std::cout << is_here << std::endl;
+                    if (is_here <= 1.0f && skeletons[i].get_health() !=0)
+                    {
+                        //std::cout << "here" << std::endl;
+                        // distance from the tower
+                        float distance2 = skeletons[i].distance_from(m_position);
+                        in_range_skels[distance2] = i;
+                    }
                 }
             }
         }
+        m_shoot_timer += dt;
+        if (in_range_skels.size() != 0 && m_shoot_timer >= m_shoot_threshold)
+        {
+            auto closest = in_range_skels.begin();
+            m_shoot_timer = 0.0f;
+            //std::cout << "the tower shoots the closest skeleton " << std::endl;
+            return closest->second;
+        }
     }
-    m_shoot_timer += dt;
-    if (in_range_skels.size() != 0 && m_shoot_timer >= m_shoot_threshold)
-    {
-        auto closest = in_range_skels.begin();
-        m_shoot_timer = 0.0f;
-        //std::cout << "the tower shoots the closest skeleton " << std::endl;
-        return closest->second;
-    } 
     //std::exit(1);
     return -1;
 }

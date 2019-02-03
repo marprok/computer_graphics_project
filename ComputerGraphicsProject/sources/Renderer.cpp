@@ -81,7 +81,7 @@ Renderer::Renderer()
     m_particles_timer=0;
     hit = false;
     exploded_cannonball_index=0;
-    //a = ParticleEmitter(glm::vec3(3, 1, 2));
+    m_place_new_tower_time_limit=30;
 }
 
 Renderer::~Renderer()
@@ -301,22 +301,20 @@ void Renderer::Update(float dt)
     // place new and more powerfull skeletons every 20 secods
 
     //first find the last alive skeleton to prevent new waves from overlapping him
+    m_last_alive_skeleton.set_health(0);
     for(int i=m_skeletons.size()-1; i>-1; i--)
     {
-        if(m_skeletons[i].get_health()!=0)
+        if(m_skeletons[i].get_health()>0)
         {
             m_last_alive_skeleton = m_skeletons[i];
             break;
-        }else
-        {
-            m_last_alive_skeleton.set_health(0);
         }
     }
 
     //Now generate the new wave
-    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
+    if(m_skeletons_wave_timer >= 20 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
     {
-        pawn_new_skeletons(m_level);
+        PawnNewSkeletons(m_level);
         m_level++;
         m_skeletons_wave_timer=0;
     }
@@ -592,10 +590,10 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
     // Initialize the spot light
-    m_spotlight_node.SetPosition(glm::vec3(16, 20, 0));
-    m_spotlight_node.SetTarget(glm::vec3(16.4, 0, 16));
-    m_spotlight_node.SetColor(65.f * glm::vec3(200, 200, 200) / 255.f);
-    m_spotlight_node.SetConeSize(115, 100);
+    m_spotlight_node.SetPosition(glm::vec3(13, 18, 0));
+    m_spotlight_node.SetTarget(glm::vec3(10.4, 0, 16));
+    m_spotlight_node.SetColor(82.f * glm::vec3(200, 200, 200) / 255.f);
+    m_spotlight_node.SetConeSize(90, 100);
     m_spotlight_node.CastShadow(true);
 
 	return true;
@@ -1271,7 +1269,7 @@ void Renderer::MovePlayer(int dx, int dz) {
 
 
 void Renderer::PlaceTower() {
-    if (isValidTowerPos() && m_new_tower_timer >= 0 )//place towers every 10 seconds
+    if (isValidTowerPos() && (m_new_tower_timer >= m_place_new_tower_time_limit || m_towers.size()<2))//place towers every 10 seconds. Allow player to build two towers at first
 	{
         std::cout<<"can place tower now"<<std::endl;
         m_new_tower_timer=0;
@@ -1353,7 +1351,7 @@ void Renderer::shoot(float dt)
     }
 }
 
-void Renderer::pawn_new_skeletons(int level)
+void Renderer::PawnNewSkeletons(int level)
 {
     m_pirate_position = glm::vec3(0, 0.1, 0);
     for (int i=0; i<level+3; i++)
@@ -1370,7 +1368,7 @@ void Renderer::RemoveTower()
     {
         if(m_towers[i].getPosition() == m_player_tile_position)
         {
-            //m_towers.erase(m_towers.begin()+i);
+            m_new_tower_timer += m_place_new_tower_time_limit;
             m_towers[i].set_to_be_removed(true);
         }
     }

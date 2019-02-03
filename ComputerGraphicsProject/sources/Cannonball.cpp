@@ -93,6 +93,7 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
     if(m_position.y > 0.25)
     {
         m_position.y -= gravity *dt;//ball will continue to move paraller to the ground
+        m_radius = 0.14f;
     }
 
     if(m_position.x > 19.5 || m_position.x < -1.0f || m_position.z > 19.5 || m_position.z < -1.0f)//when ball reached the end of the board

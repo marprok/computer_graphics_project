@@ -134,6 +134,7 @@ protected:
     int                                             exploded_cannonball_index;
     int                                             m_dead_skeletons;
     Skeleton                                        m_last_alive_skeleton;
+    int                                             m_place_new_tower_time_limit;
 
     ParticleEmitter								m_particle_emitter;
     ShaderProgram								m_particle_rendering_program;
@@ -186,7 +187,7 @@ public:
 
 	void MoveSkeleton(float dt);
 
-    void pawn_new_skeletons(int level);
+    void PawnNewSkeletons(int level);
 
 	void RemoveSkeleton();
 
