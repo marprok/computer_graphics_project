@@ -11,6 +11,7 @@
         #include "glm/gtc/type_ptr.hpp"
         #include "glm/gtc/matrix_transform.hpp"
         #include "GeometryNode.h"
+        #include "AudioSystem.h"
         #include <vector>
         #include "Skeleton.h"
     #endif
@@ -21,6 +22,7 @@
     #include "../glm/gtc/matrix_transform.hpp"
     #include "GeometryNode.h"
     #include <vector>
+    #include "AudioSystem.h"
     #include "Skeleton.h"
 #elif __linux__
     // linux
@@ -28,6 +30,7 @@
     #include "../glm/gtc/matrix_transform.hpp"
     #include "GeometryNode.h"
     #include <vector>
+    #include "AudioSystem.h"
     #include "Skeleton.h"
 #endif
 

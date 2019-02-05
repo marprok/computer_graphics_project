@@ -1,6 +1,7 @@
 #include "../headers/Chest.h"
 #include <map>
 
+
 Chest::Chest()
 {
 
@@ -68,6 +69,10 @@ void Chest::setTransformationNormalMatrix(glm::mat4 transformationNormalMatrix)
 void Chest::lose_coins()
 {
     m_coins_left -= 10;
+    if(m_coins_left>=0)
+    {
+       Audio::PlayAudio("Coins.wav");
+    }
     std::cout<<"Coins left: "<< m_coins_left<<std::endl;
 }
 

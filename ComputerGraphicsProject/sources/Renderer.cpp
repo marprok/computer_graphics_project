@@ -52,6 +52,7 @@
 // RENDERER
 Renderer::Renderer()
 {
+
     GAME_OVER=false;
 	m_vbo_fbo_vertices = 0;
 	m_vao_fbo = 0;
@@ -81,7 +82,10 @@ Renderer::Renderer()
     m_particles_timer=0;
     hit = false;
     exploded_cannonball_index=0;
-    m_place_new_tower_time_limit=30;
+    m_place_new_tower_time_limit=0;
+    //deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
+
+    Mix_AllocateChannels(16);
 }
 
 Renderer::~Renderer()
@@ -150,6 +154,12 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
+
+    std::string text;
+    text = "AANTE GEIA";
+    //glColor3f(1, 0, 0);
+    //DrawText(text.data(), text.size(), 50, 100);
+
 
     m_new_tower_timer += dt;
     float movement_speed = 4.0f;
@@ -312,7 +322,7 @@ void Renderer::Update(float dt)
     }
 
     //Now generate the new wave
-    if(m_skeletons_wave_timer >= 20 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
+    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
     {
         PawnNewSkeletons(m_level);
         m_level++;
@@ -360,6 +370,7 @@ void Renderer::Update(float dt)
         }
 
     }
+
 
 }
 
@@ -941,19 +952,19 @@ void Renderer::SetRenderingMode(RENDERING_MODE mode)
 void Renderer::Render()
 {
 	// Draw the geometry to the shadow maps
-	RenderShadowMaps();
+    RenderShadowMaps();
 
 	// Draw the geometry
-	RenderGeometry();
+    RenderGeometry();
 
 	// Render to screen
-	RenderToOutFB();
+    RenderToOutFB();
 
 	GLenum error = Tools::CheckGLError();
 	if (error != GL_NO_ERROR)
 	{
-		printf("Reanderer:Draw GL Error\n");
-		system("pause");
+        printf("Renderer:Draw GL Error\n");
+        //system("pause");
 	}
 }
 
@@ -1346,6 +1357,7 @@ void Renderer::shoot(float dt)
         if(target != -1)
         {
             m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.5f, m_skeletons[target].getPosition());
+            Audio::PlayAudio("Cannon.wav");
         }
 
     }
@@ -1373,3 +1385,29 @@ void Renderer::RemoveTower()
         }
     }
 }
+
+void Renderer::DrawText(const char *text, int length, int x, int y)
+{
+
+    glMatrixMode(GL_PROJECTION);
+    double *matrix = new double[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, matrix);
+    glLoadIdentity();
+    glOrtho(0, 800, 0, 600, -5, 5);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glPushMatrix();
+    glLoadIdentity();
+    glRasterPos2i(x, y);
+    for(int i=0; i<length; i++)
+    {
+        //glutBitmapCharacter(GLUT_BITMAP_9_BY_15 , (int)text[i]);
+    }
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(matrix);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+
+

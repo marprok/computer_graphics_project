@@ -1,5 +1,6 @@
 #include "../headers/Skeleton.h"
 
+
 #define PI 3.14159f
 
 Skeleton::Skeleton()
@@ -21,6 +22,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
 	m_hand_start_rotation = hand_start_rotation;
     m_health = health;
     m_max_health = health;
+    m_is_dead=false;
 
 }
 
@@ -90,7 +92,11 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
 
 void Skeleton::kill()
 {
-
+    if(!m_is_dead)
+    {
+        Audio::PlayAudio("death.wav");
+    }
+    m_is_dead=true;
     m_radius = 0;
     glm::vec3 random_position = m_position;
     random_position.x += m_randomNumber;

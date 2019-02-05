@@ -13,8 +13,8 @@
 	#include "TargetConditionals.h"
 	#include "SDL2/SDL.h"
 	#include <iostream>
-	#include <chrono>
-	#include "inc/GLEW/glew.h"
+    #include <chrono>
+    #include "inc/GLEW/glew.h"
 	#include "inc/headers/Renderer.h"
 #elif __linux__
 	// linux
@@ -62,7 +62,12 @@ bool init()
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
 		return false;
-	}
+    }
+
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+    {
+       printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+    }
 
 	// use Double Buffering
 	if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) < 0)
@@ -119,7 +124,7 @@ void clean_up()
 
 	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
+    SDL_Quit();
 }
 
 int main(int argc, char *argv[])
@@ -141,7 +146,7 @@ int main(int argc, char *argv[])
 	// Wait for user exit
     bool pause =false;
 	while (quit == false)
-	{
+    {
 		// While there are events to handle
 		while (SDL_PollEvent(&event))
 		{
@@ -273,7 +278,7 @@ int main(int argc, char *argv[])
 		renderer->Render();
 		
 		//Update screen (swap buffer for double buffering)
-		SDL_GL_SwapWindow(window);
+        SDL_GL_SwapWindow(window);
 
         cap_fps(60, dt);
 	}

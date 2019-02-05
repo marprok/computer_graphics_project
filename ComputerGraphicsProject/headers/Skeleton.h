@@ -6,6 +6,7 @@
 		#include "glm/gtc/type_ptr.hpp"
 		#include "glm/gtc/matrix_transform.hpp"
 		#include "GeometryNode.h"
+        #include "AudioSystem.h"
 		#include "Tile.h"
 		#include <iostream>
 	#endif
@@ -15,6 +16,7 @@
 	#include "../glm/gtc/type_ptr.hpp"
 	#include "../glm/gtc/matrix_transform.hpp"
 	#include "GeometryNode.h"
+    #include "AudioSystem.h"
 	#include "Tile.h"
 	#include <iostream>
 #elif __linux__
@@ -22,6 +24,7 @@
 	#include "../glm/gtc/type_ptr.hpp"
 	#include "../glm/gtc/matrix_transform.hpp"
 	#include "GeometryNode.h"
+    #include "AudioSystem.h"
 	#include "Tile.h"
 	#include <iostream>
 #endif
@@ -88,9 +91,10 @@ private:
     float                   m_rotation;
 	float					m_hand_start_rotation;
     int                     m_health;
-    float                     m_max_health;
+    float                   m_max_health;
     float                   m_radius;
     float                   m_randomNumber;
+    bool                    m_is_dead;
 
 
 	std::vector<Tile>		m_road;

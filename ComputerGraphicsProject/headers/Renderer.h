@@ -12,10 +12,12 @@
 		#include "SpotlightNode.h"
 		#include "Tower.h"
 		#include "Tile.h"
+        #include "GL/glut.h"
         #include "ParticleSystem.h"
         #include "Cannonball.h"
 		#include "Skeleton.h"
         #include "Chest.h"
+        #include <AudioSystem.h>
 	#endif
 #elif __APPLE__
 	// apple
@@ -26,11 +28,16 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "GLUT/glut.h"
     #include "ParticleSystem.h"
 	#include "Tile.h"
     #include "Chest.h"
     #include "Cannonball.h"
 	#include "Skeleton.h"
+    #include <SDL2/SDL_ttf.h>
+    #include <AudioSystem.h>
+
+
 #elif __linux__
 	// linux
 	#include "../GLEW/glew.h"
@@ -39,11 +46,13 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "GL/glut.h"
     #include "ParticleSystem.h"
     #include "Cannonball.h"
 	#include "Tile.h"
 	#include "Skeleton.h"
     #include "Chest.h"
+    #include <AudioSystem.h>
 #endif
 
 class Renderer
@@ -136,8 +145,8 @@ protected:
     Skeleton                                        m_last_alive_skeleton;
     int                                             m_place_new_tower_time_limit;
 
-    ParticleEmitter								m_particle_emitter;
-    ShaderProgram								m_particle_rendering_program;
+    ParticleEmitter                                 m_particle_emitter;
+    ShaderProgram                                   m_particle_rendering_program;
 
     class Chest*                                     chest;
 
@@ -196,6 +205,8 @@ public:
     bool readRoad(const char *road);
 
     void shoot(float dt);
+
+    void DrawText(const char *text, int length, int x, int y);
 
 };
 
