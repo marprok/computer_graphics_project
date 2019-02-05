@@ -13,6 +13,7 @@
 		#include "Tower.h"
 		#include "Tile.h"
         #include "GL/glut.h"
+        #include "Menu.h"
         #include "ParticleSystem.h"
         #include "Cannonball.h"
 		#include "Skeleton.h"
@@ -31,6 +32,7 @@
     #include "GLUT/glut.h"
     #include "ParticleSystem.h"
 	#include "Tile.h"
+    #include "Menu.h"
     #include "Chest.h"
     #include "Cannonball.h"
 	#include "Skeleton.h"
@@ -46,6 +48,7 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "Menu.h"
     #include "GL/glut.h"
     #include "ParticleSystem.h"
     #include "Cannonball.h"
@@ -90,6 +93,7 @@ protected:
 
 	// Lights
 	SpotLightNode m_spotlight_node;
+    SpotLightNode m_menu_light;
 
 	// Meshes
 	class GeometryNode*								m_geometric_object1;
@@ -125,6 +129,10 @@ protected:
     glm::mat4										m_geometric_object8_transformation_matrix;
     glm::mat4                                       m_geometric_object8_transformation_normal_matrix;
 
+    class GeometryNode*								m_geometric_object10;
+    glm::mat4										m_geometric_object10_transformation_matrix;
+    glm::mat4                                       m_geometric_object10_transformation_normal_matrix;
+
     class GeometryNode*								m_red_tile;
 
     class GeometryNode*								m_player_tile;
@@ -148,7 +156,8 @@ protected:
     ParticleEmitter                                 m_particle_emitter;
     ShaderProgram                                   m_particle_rendering_program;
 
-    class Chest*                                     chest;
+    class Chest*                                    chest;
+    class Menu*                                     menu;
 
 	// Protected Functions
 	bool InitRenderingTechniques();

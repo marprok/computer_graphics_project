@@ -14,6 +14,7 @@
 	#include "SDL2/SDL.h"
 	#include <iostream>
     #include <chrono>
+    #include "SDL2/SDL_ttf.h"
     #include "inc/GLEW/glew.h"
 	#include "inc/headers/Renderer.h"
 #elif __linux__
@@ -64,6 +65,7 @@ bool init()
 		return false;
     }
 
+    //initialize SDL_mixer
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
     {
        printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
@@ -72,6 +74,11 @@ bool init()
 	// use Double Buffering
 	if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) < 0)
 		cout << "Error: No double buffering" << endl;
+
+    //initiallize SDL_ttf
+    if (TTF_Init() < 0) {
+        printf( "SDL_mixer could not be initialized");
+    }
 
 	// set OpenGL Version (3.3)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -84,7 +91,7 @@ bool init()
 	{
 		printf("Could not create window: %s\n", SDL_GetError());
 		return false;
-	}
+    }
 
 	//Create OpenGL context
 	gContext = SDL_GL_CreateContext(window);
@@ -110,7 +117,7 @@ bool init()
 	glGetError();
 
 	renderer = new Renderer();
-	bool engine_initialized = renderer->Init(SCREEN_WIDTH, SCREEN_HEIGHT);
+    bool engine_initialized = renderer->Init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	//atexit(func);
 	
@@ -141,12 +148,27 @@ int main(int argc, char *argv[])
 	bool mouse_button_pressed = false;
 	glm::vec2 prev_mouse_position(0);
 
+
+
+    /*
+    SDL_Window * text_window = SDL_CreateWindow("SDL_ttf in SDL2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, 0);
+    SDL_Renderer * text_renderer = SDL_CreateRenderer(text_window, -1, 0);
+    const char * font = "font.ttf";
+    TTF_Font* pointer = TTF_OpenFont(font, 20);
+    SDL_Color color = {255, 255, 255};
+    SDL_Surface * text_surface = TTF_RenderText_Solid(pointer, "Welcome to Gigi Labs", color);
+    SDL_Texture * text_texture = SDL_CreateTextureFromSurface(text_renderer, text_surface);
+
+
+    */
+
 	auto simulation_start = chrono::steady_clock::now();
 
 	// Wait for user exit
     bool pause =false;
 	while (quit == false)
     {
+
 		// While there are events to handle
 		while (SDL_PollEvent(&event))
 		{
@@ -275,10 +297,15 @@ int main(int argc, char *argv[])
         }
 
 		// Draw
+        //SDL_RenderCopy(text_renderer, text_texture, NULL, NULL);
+        //SDL_RenderPresent(text_renderer);
 		renderer->Render();
+
 		
 		//Update screen (swap buffer for double buffering)
         SDL_GL_SwapWindow(window);
+
+
 
         cap_fps(60, dt);
 	}

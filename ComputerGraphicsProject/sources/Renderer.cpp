@@ -86,6 +86,8 @@ Renderer::Renderer()
     //deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
     Mix_AllocateChannels(16);
+
+
 }
 
 Renderer::~Renderer()
@@ -147,18 +149,12 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 		printf("Exiting with error at Renderer::Init\n");
 		return false;
 	}
-
 	//If everything initialized
 	return techniques_initialization && items_initialization && buffers_initialization && meshes_initialization && lights_sources_initialization;
 }
 
 void Renderer::Update(float dt)
 {
-
-    std::string text;
-    text = "AANTE GEIA";
-    //glColor3f(1, 0, 0);
-    //DrawText(text.data(), text.size(), 50, 100);
 
 
     m_new_tower_timer += dt;
@@ -195,7 +191,7 @@ void Renderer::Update(float dt)
 	// rotate the camera direction
 	direction = rotation * glm::vec4(direction, 0);
 	float dist = glm::distance(m_camera_position, m_camera_target_position);
-	m_camera_target_position = m_camera_position + direction * dist;
+    m_camera_target_position = m_camera_position + direction * dist;//anti gia dist 2
 
 	// compute the view matrix
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
@@ -208,12 +204,8 @@ void Renderer::Update(float dt)
 
     glm::vec3 chest_position = glm::vec3(12, 0, 0);
     chest->setPosition(chest_position);
-    m_geometric_object2_transformation_matrix =
-            glm::translate(glm::mat4(1.0), chest_position) *
-            glm::scale(glm::mat4(1.f), glm::vec3(0.05f));
-    m_geometric_object2_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object2_transformation_matrix))));
-    chest->setTransformationMatrix(m_geometric_object2_transformation_matrix);
-    chest->setTransformationNormalMatrix(m_geometric_object2_transformation_normal_matrix);
+
+    //menu->SetPosition(m_camera_target_position);//set menu
 
 	m_geometric_object4_transformation_matrix = 
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
@@ -249,6 +241,9 @@ void Renderer::Update(float dt)
         if (m_skeletons[i].get_health() == 0)
         {
             m_skeletons[i].kill();
+
+            //glm::vec3 menuposition = m_camera_target_position;
+            //m_skeletons[i].setPosition(menuposition, 0, 0);
         }
     }
 
@@ -322,7 +317,7 @@ void Renderer::Update(float dt)
     }
 
     //Now generate the new wave
-    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 2 || m_last_alive_skeleton.get_health()==0))
+    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 6 || m_last_alive_skeleton.get_health()==0))
     {
         PawnNewSkeletons(m_level);
         m_level++;
@@ -604,8 +599,15 @@ bool Renderer::InitLightSources()
     m_spotlight_node.SetPosition(glm::vec3(13, 18, 0));
     m_spotlight_node.SetTarget(glm::vec3(10.4, 0, 16));
     m_spotlight_node.SetColor(82.f * glm::vec3(200, 200, 200) / 255.f);
-    m_spotlight_node.SetConeSize(90, 100);
+    m_spotlight_node.SetConeSize(200, 200);
     m_spotlight_node.CastShadow(true);
+
+    // Initialize the camera light
+    m_menu_light.SetPosition(glm::vec3(13, 18, 0));
+    m_menu_light.SetTarget(glm::vec3(10.4, 0, 16));
+    m_menu_light.SetColor(82.f * glm::vec3(200, 200, 200) / 255.f);
+    m_menu_light.SetConeSize(200, 200);
+    m_menu_light.CastShadow(false);
 
 	return true;
 }
@@ -665,6 +667,34 @@ bool Renderer::InitGeometricMeshes()
 
     chest = new Chest(m_geometric_object2);
 
+
+    /*
+    // load menu
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Menu/menu.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Menu/road.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Menu/menu.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object10 = new GeometryNode();
+        m_geometric_object10->Init(mesh);
+    }
+    else
+        initialized = false;
+
+    menu = new Menu(m_geometric_object10);
+
+*/
     // load tower
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -940,6 +970,9 @@ bool Renderer::InitGeometricMeshes()
     m_pirate_position = glm::vec3(0, 0.1, -4);
     m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
 
+    //m_skeletons.emplace_back(m_camera_target_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+
+
 	return initialized;
 }
 
@@ -1020,15 +1053,17 @@ void Renderer::RenderShadowMaps()
 		// draw the green tile
 		DrawGeometryNodeToShadowMap(m_player_tile, m_player_tile_transformation_matrix, m_player_tile_transformation_normal_matrix);
 
-		// draw the pirate
+        // draw the pirate
 		for (auto &skeleton : m_skeletons)
 		{
 			// Don' t render shadow map for the health bars
 			for (size_t i = 0; i < 4; i++)
 			{
-				DrawGeometryNodeToShadowMap(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+                if(skeleton.getPosition().z > -1)
+                    DrawGeometryNodeToShadowMap(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
 			}
 		}
+
 
 		glBindVertexArray(0);
 
@@ -1078,22 +1113,23 @@ void Renderer::RenderGeometry()
 	glUniform3f(m_geometry_rendering_program["uniform_camera_position"], m_camera_position.x, m_camera_position.y, m_camera_position.z);
 	
 	// pass the light source parameters to uniforms
-	glm::vec3 light_position = m_spotlight_node.GetPosition();
-	glm::vec3 light_direction = m_spotlight_node.GetDirection();
-	glm::vec3 light_color = m_spotlight_node.GetColor();
-	glUniformMatrix4fv(m_geometry_rendering_program["uniform_light_projection_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetProjectionMatrix()));
-	glUniformMatrix4fv(m_geometry_rendering_program["uniform_light_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetViewMatrix()));
+    glm::vec3 light_position = m_spotlight_node.GetPosition();
+    glm::vec3 light_direction = m_spotlight_node.GetDirection();
+    glm::vec3 light_color = m_spotlight_node.GetColor();
+    glUniformMatrix4fv(m_geometry_rendering_program["uniform_light_projection_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetProjectionMatrix()));
+    glUniformMatrix4fv(m_geometry_rendering_program["uniform_light_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetViewMatrix()));
 	glUniform3f(m_geometry_rendering_program["uniform_light_position"], light_position.x, light_position.y, light_position.z);
 	glUniform3f(m_geometry_rendering_program["uniform_light_direction"], light_direction.x, light_direction.y, light_direction.z);
 	glUniform3f(m_geometry_rendering_program["uniform_light_color"], light_color.x, light_color.y, light_color.z);
-	glUniform1f(m_geometry_rendering_program["uniform_light_umbra"], m_spotlight_node.GetUmbra());
-	glUniform1f(m_geometry_rendering_program["uniform_light_penumbra"], m_spotlight_node.GetPenumbra());
-	glUniform1i(m_geometry_rendering_program["uniform_cast_shadows"], (m_spotlight_node.GetCastShadowsStatus())? 1 : 0);
+    glUniform1f(m_geometry_rendering_program["uniform_light_umbra"], m_spotlight_node.GetUmbra());
+    glUniform1f(m_geometry_rendering_program["uniform_light_penumbra"], m_spotlight_node.GetPenumbra());
+    glUniform1i(m_geometry_rendering_program["uniform_cast_shadows"], (m_spotlight_node.GetCastShadowsStatus())? 1 : 0);
 	// Set the sampler2D uniform to use texture unit 1
 	glUniform1i(m_geometry_rendering_program["shadowmap_texture"], 1);
 	// Bind the shadow map texture to texture unit 1
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, (m_spotlight_node.GetCastShadowsStatus()) ? m_spotlight_node.GetShadowMapDepthTexture() : 0);
+    glBindTexture(GL_TEXTURE_2D, (m_spotlight_node.GetCastShadowsStatus()) ? m_spotlight_node.GetShadowMapDepthTexture() : 0);
+
 	
 	// Enable Texture Unit 0
 	glUniform1i(m_geometry_rendering_program["uniform_diffuse_texture"], 0);
@@ -1101,6 +1137,9 @@ void Renderer::RenderGeometry()
 
 	// draw the terrain object
 	DrawGeometryNode(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
+
+    //Draw menu
+    //DrawGeometryNode(menu->getGeometricNode(), menu->getGeometricTransformationMatrix(), menu->getGeometricTransformationNormalMatrix());
 	
 	// draw the treasure object
     if(!GAME_OVER){
@@ -1137,7 +1176,8 @@ void Renderer::RenderGeometry()
 			// Don' t render the red health bar when skeleton has full health
             if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == skeleton.get_max_health() /*max_health*/))
 			{
-				DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+                if(skeleton.getPosition().z > -1)
+                    DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
 			}
 		}
 	}
@@ -1286,6 +1326,42 @@ void Renderer::PlaceTower() {
         m_new_tower_timer=0;
         m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2, 1.0f);
 		std::cout << "New tower!!!!!! :D" << std::endl;
+
+
+
+
+        //TTF_CloseFont(font);
+        //SDL_DestroyTexture(texture);
+        //SDL_FreeSurface(surface);
+
+
+
+/*
+
+        const char * font = "font.ttf";
+        TTF_Font* pointer = TTF_OpenFont(font, 20);
+        if(pointer ==NULL)
+        {
+            std::cout<< "NULL"<<std::endl;
+
+        }
+        SDL_Surface *screen = SDL_SetVideoMode( 1366 , 769, 2, SDL_SWSURFACE );
+        SDL_Color color = {255, 255, 255};
+        const char * text  = "ante geia";
+        SDL_Surface *message = TTF_RenderText_Solid( font, "The quick brown fox jumps over the lazy dog", color);
+        apply_surface( 0, 150, message, screen );
+
+*/
+
+
+
+
+
+
+        //SDL_Surface *TTF_RenderText_Solid(pointer, text, color);
+        //SDL_Surface *TTF_RenderUTF8_Solid(pointer, text, color);
+
+
 	}
 }
 
@@ -1344,6 +1420,9 @@ bool Renderer::readRoad(const char *road)
         m_road.emplace_back(2, 2, glm::vec3(x, 0.01, z), m_geometric_object4);
     in.close();
     std::cout << "DONE reading the road file" << std::endl;
+
+
+
     return true;
 
 }
@@ -1365,7 +1444,7 @@ void Renderer::shoot(float dt)
 
 void Renderer::PawnNewSkeletons(int level)
 {
-    m_pirate_position = glm::vec3(0, 0.1, 0);
+    m_pirate_position = glm::vec3(0, -1.f, 0);
     for (int i=0; i<level+3; i++)
     {
        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3+level);

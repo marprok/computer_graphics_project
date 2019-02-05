@@ -61,6 +61,8 @@ public:
 
     int getCoinsLeft();
 
+    void add_coins(int coins);
+
 
 private:
     glm::vec3				m_position;

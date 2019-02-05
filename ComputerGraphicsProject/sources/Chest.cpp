@@ -18,7 +18,7 @@ void Chest::setPosition(glm::vec3 position) {
     m_position = position;
     m_geometric_transformation_matrix =
         glm::translate(glm::mat4(1.f), getPosition()) *
-        glm::scale(glm::mat4(1.f), glm::vec3(0.25f));
+        glm::scale(glm::mat4(1.f), glm::vec3(0.05f));
     m_geometric_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix))));
 }
 
@@ -79,6 +79,11 @@ void Chest::lose_coins()
 int Chest::getCoinsLeft()
 {
     return m_coins_left;
+}
+
+void Chest::add_coins(int coins)
+{
+    m_coins_left+=coins;
 }
 
 Chest::~Chest()

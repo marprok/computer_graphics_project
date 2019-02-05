@@ -268,4 +268,5 @@ void Skeleton::set_radious(float radius)
     m_radius = radius;
 }
 
-float Skeleton::get_max_health() { return m_max_health; }
+int Skeleton::get_max_health() { return m_max_health; }
+

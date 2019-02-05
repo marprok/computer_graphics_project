@@ -70,7 +70,7 @@ public:
 
     int get_health();
 
-    float get_max_health();
+    int get_max_health();
 
     void set_health(int health);
 
