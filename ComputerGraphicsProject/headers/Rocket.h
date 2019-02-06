@@ -27,16 +27,16 @@
     #include "Skeleton.h"
 #endif
 
-class Tower
+class Rocket
 {
 public:
-	Tower();
-    Tower(glm::vec3 position, GeometryNode* g_node, int range, float shoot_threshold, bool follows_target);
-	~Tower();
+    Rocket();
+    Rocket(glm::vec3 position, GeometryNode* g_node, int target, float speed, glm::vec3 goal);
+    ~Rocket();
 
-	void setPosition(glm::vec3 position);
+    void setPosition(glm::vec3 position, float theta, float theta_z);
 
-    void Remove(float dt);
+    bool update(float dt, std::vector<Skeleton> &skeletons);
 
 	glm::vec3 getPosition();
 
@@ -44,24 +44,22 @@ public:
 
 	glm::mat4 getGeometricTransformationMatrix();
 
-    bool is_following_target();
-
 	glm::mat4 getGeometricTransformationNormalMatrix();
 
-    int shoot_closest(std::vector<Skeleton> &skeletons, int width, int height, float dt);
-
-    bool to_be_removed();
-
-    void set_to_be_removed(bool flag);
 
 private:
 	glm::vec3				m_position;
 	glm::mat4				m_geometric_transformation_matrix;
 	glm::mat4				m_geometric_transformation_normal_matrix;
-    int                     m_range; // the number of tiles in one direction
 	GeometryNode*			m_geometric_node;
-    float                   m_shoot_timer;
-    float                   m_shoot_threshold;
-    bool                    m_to_be_removed;
-    bool                    m_follows_target;
+    glm::vec3               m_center_of_sphere;
+    glm::vec3               m_initial_position;
+	glm::vec3				m_goal;
+	glm::vec3				m_direction;
+
+    int                     m_target;
+    float                   m_speed;
+    float                   m_radius;
+    int                     i;
+
 };

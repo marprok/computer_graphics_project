@@ -175,13 +175,19 @@ int main(int argc, char *argv[])
 				// Key down events
 				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
                 else if (event.key.keysym.sym == SDLK_q) renderer->ReloadShaders();
-				else if (event.key.keysym.sym == SDLK_t) renderer->SetRenderingMode(Renderer::RENDERING_MODE::TRIANGLES);
-				else if (event.key.keysym.sym == SDLK_l) renderer->SetRenderingMode(Renderer::RENDERING_MODE::LINES);
-				else if (event.key.keysym.sym == SDLK_p) renderer->SetRenderingMode(Renderer::RENDERING_MODE::POINTS);
+                else if (event.key.keysym.sym == SDLK_t) renderer->PlaceTower();
 				else if (event.key.keysym.sym == SDLK_w)
 				{
 					renderer->CameraMoveForward(true);
 				}
+                else if (event.key.keysym.sym == SDLK_1)
+                {
+                    renderer->setDefaultTower(true);
+                }
+                else if (event.key.keysym.sym == SDLK_2)
+                {
+                    renderer->setDefaultTower(false);
+                }
                 else if (event.key.keysym.sym == SDLK_z)
                 {
                     pause = !pause;
@@ -217,10 +223,6 @@ int main(int argc, char *argv[])
 				else if (event.key.keysym.sym == SDLK_RIGHT)
 				{
 					renderer->MovePlayer(-2, 0);
-				}
-                else if (event.key.keysym.sym == SDLK_SPACE)
-				{
-					renderer->PlaceTower();
 				}
 			}
 			else if (event.type == SDL_KEYUP)

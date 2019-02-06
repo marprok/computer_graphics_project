@@ -82,10 +82,10 @@ Renderer::Renderer()
     m_particles_timer=0;
     hit = false;
     exploded_cannonball_index=0;
-    m_place_new_tower_time_limit=0;
+    m_place_new_tower_time_limit=20;
     //deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
-
     Mix_AllocateChannels(16);
+    m_default_tower = true;
 
 
 }
@@ -289,6 +289,30 @@ void Renderer::Update(float dt)
         }
     }
 
+    //throw rockets
+    m_particles_timer += dt;
+    for (size_t i = 0; i < m_rockets.size();)
+    {
+        if (!m_rockets[i].update(dt, m_skeletons))//
+        {
+            hit = true;
+            m_explosion_position = m_rockets[i].getPosition();
+            if(!(m_explosion_position.x > 19.5 || m_explosion_position.x < -1.0f || m_explosion_position.z > 19.5 || m_explosion_position.z < -1.0f))//when ball reached the end of the board
+            {
+                m_particle_emitters.emplace_back(m_explosion_position);
+                m_particle_emitters[m_particle_emitters.size()-1].Init();
+                m_particles_timer = 0;
+            }
+            m_rockets.erase(m_rockets.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+
+//
     for(int i=0; i<m_particle_emitters.size(); i++)
     {
         m_particle_emitters[i].Update(dt);
@@ -317,7 +341,7 @@ void Renderer::Update(float dt)
     }
 
     //Now generate the new wave
-    if(m_skeletons_wave_timer >= 5 && (m_last_alive_skeleton.getPosition().z > 6 || m_last_alive_skeleton.get_health()==0))
+    if(m_skeletons_wave_timer >= 20 && (m_last_alive_skeleton.getPosition().z > 6 || m_last_alive_skeleton.get_health()==0))
     {
         PawnNewSkeletons(m_level);
         m_level++;
@@ -695,7 +719,7 @@ bool Renderer::InitGeometricMeshes()
     menu = new Menu(m_geometric_object10);
 
 */
-    // load tower
+    // load tower1
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #ifdef _WIN64
@@ -717,6 +741,33 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
+
+
+
+    // load tower2
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/MedievalTower/tower2.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/MedievalTower/tower2.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/MedievalTower/tower2.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_geometric_object11 = new GeometryNode();
+        m_geometric_object11->Init(mesh);
+    }
+    else
+        initialized = false;
+
+
 
     // load tile
 #ifdef _WIN32
@@ -778,6 +829,33 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
+
+
+
+    // load rocketl
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Various/tocket.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/rocket.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Various/rocket.obj");
+
+#endif
+    if (mesh != nullptr)
+    {
+        m_geometric_object12 = new GeometryNode();
+        m_geometric_object12->Init(mesh);
+    }
+    else
+        initialized = false;
+
+
 
     // load green_tile
 #ifdef _WIN32
@@ -1044,6 +1122,12 @@ void Renderer::RenderShadowMaps()
             DrawGeometryNodeToShadowMap(cannonball.getGeometricNode(), cannonball.getGeometricTransformationMatrix(), cannonball.getGeometricTransformationNormalMatrix());
         }
 
+        //draw rocket
+        for (auto &rocket : m_rockets)
+        {
+            DrawGeometryNodeToShadowMap(rocket.getGeometricNode(), rocket.getGeometricTransformationMatrix(), rocket.getGeometricTransformationNormalMatrix());
+        }
+
 		// draw tiles
 		for (auto &tile : m_road)
 		{
@@ -1150,6 +1234,12 @@ void Renderer::RenderGeometry()
     for (auto &cannonball : m_cannonballs)
     {
         DrawGeometryNode(cannonball.getGeometricNode(), cannonball.getGeometricTransformationMatrix(), cannonball.getGeometricTransformationNormalMatrix());
+    }
+
+    //draw rockets
+    for (auto &rocket : m_rockets)
+    {
+        DrawGeometryNode(rocket.getGeometricNode(), rocket.getGeometricTransformationMatrix(), rocket.getGeometricTransformationNormalMatrix());
     }
 
 	// draw towers
@@ -1324,45 +1414,21 @@ void Renderer::PlaceTower() {
 	{
         std::cout<<"can place tower now"<<std::endl;
         m_new_tower_timer=0;
-        m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2, 1.0f);
-		std::cout << "New tower!!!!!! :D" << std::endl;
-
-
-
-
-        //TTF_CloseFont(font);
-        //SDL_DestroyTexture(texture);
-        //SDL_FreeSurface(surface);
-
-
-
-/*
-
-        const char * font = "font.ttf";
-        TTF_Font* pointer = TTF_OpenFont(font, 20);
-        if(pointer ==NULL)
+        if(m_default_tower)
         {
-            std::cout<< "NULL"<<std::endl;
-
+           m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2, 1.0f, false);
+        }else
+        {
+            m_towers.emplace_back(m_player_tile_position, m_geometric_object11, 2, 2.0f, true);
         }
-        SDL_Surface *screen = SDL_SetVideoMode( 1366 , 769, 2, SDL_SWSURFACE );
-        SDL_Color color = {255, 255, 255};
-        const char * text  = "ante geia";
-        SDL_Surface *message = TTF_RenderText_Solid( font, "The quick brown fox jumps over the lazy dog", color);
-        apply_surface( 0, 150, message, screen );
-
-*/
-
-
-
-
-
-
-        //SDL_Surface *TTF_RenderText_Solid(pointer, text, color);
-        //SDL_Surface *TTF_RenderUTF8_Solid(pointer, text, color);
 
 
 	}
+}
+
+void Renderer::setDefaultTower(bool flag)
+{
+    m_default_tower = flag;
 }
 
 bool Renderer::isValidTowerPos() {
@@ -1435,8 +1501,30 @@ void Renderer::shoot(float dt)
         int target = tower.shoot_closest(m_skeletons, TERRAIN_WIDTH, TERRAIN_HEIGHT, dt);
         if(target != -1)
         {
-            m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.5f, m_skeletons[target].getPosition());
-            Audio::PlayAudio("Cannon.wav");
+            if(!tower.is_following_target())
+            {
+                m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.5f, m_skeletons[target].getPosition());
+                #ifdef __APPLE__
+                    // apple
+                        Audio::PlayAudio("Cannon.wav");
+                #elif __linux__
+                    // linux
+                        Audio::PlayAudio("Coins.wav");
+
+                #endif
+            }else
+            {
+                m_rockets.emplace_back(tower.getPosition(), m_geometric_object12, target, 2.7f, m_skeletons[target].getPosition());
+                #ifdef __APPLE__
+                    // apple
+                        Audio::PlayAudio("Rocket.wav");
+                #elif __linux__
+                    // linux
+                        Audio::PlayAudio("Rocket.wav");
+
+                #endif
+            }
+
         }
 
     }

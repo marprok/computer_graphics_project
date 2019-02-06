@@ -6,12 +6,13 @@ Tower::Tower()
 
 }
 
-Tower::Tower(glm::vec3 position, GeometryNode* g_node, int range, float threshold) {
+Tower::Tower(glm::vec3 position, GeometryNode* g_node, int range, float threshold, bool follows_target) {
 	setPosition(position);
 	m_geometric_node = g_node;
     m_range = range;
     m_shoot_threshold = threshold;
-    m_shoot_timer = 0.0f;
+    m_follows_target = follows_target;
+    m_shoot_timer = m_shoot_threshold;
     m_to_be_removed=false;
 }
 
@@ -116,4 +117,9 @@ bool Tower::to_be_removed()
 void Tower::set_to_be_removed(bool flag)
 {
     m_to_be_removed=flag;
+}
+
+bool Tower::is_following_target()
+{
+    return m_follows_target;
 }

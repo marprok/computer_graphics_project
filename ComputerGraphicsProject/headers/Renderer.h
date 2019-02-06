@@ -13,6 +13,7 @@
 		#include "Tower.h"
 		#include "Tile.h"
         #include "Menu.h"
+        #include "Rocket.h"
         #include "ParticleSystem.h"
         #include "Cannonball.h"
 		#include "Skeleton.h"
@@ -28,6 +29,7 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "Rocket.h"
     #include "ParticleSystem.h"
 	#include "Tile.h"
     #include "Menu.h"
@@ -45,6 +47,7 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
+    #include "Rocket.h"
     #include "Menu.h"
     #include "ParticleSystem.h"
     #include "Cannonball.h"
@@ -129,12 +132,21 @@ protected:
     glm::mat4										m_geometric_object10_transformation_matrix;
     glm::mat4                                       m_geometric_object10_transformation_normal_matrix;
 
+    class GeometryNode*								m_geometric_object11;
+    glm::mat4										m_geometric_object11_transformation_matrix;
+    glm::mat4                                       m_geometric_object11_transformation_normal_matrix;
+
+    class GeometryNode*								m_geometric_object12;
+    glm::mat4										m_geometric_object12_transformation_matrix;
+    glm::mat4                                       m_geometric_object12_transformation_normal_matrix;
+
     class GeometryNode*								m_red_tile;
 
     class GeometryNode*								m_player_tile;
 
 	std::vector<Tower>								m_towers;
     std::vector<Cannonball>							m_cannonballs;
+    std::vector<Rocket> 							m_rockets;
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
     std::vector<ParticleEmitter>                    m_particle_emitters;
@@ -148,6 +160,7 @@ protected:
     int                                             m_dead_skeletons;
     Skeleton                                        m_last_alive_skeleton;
     int                                             m_place_new_tower_time_limit;
+    bool                                            m_default_tower;
 
     ParticleEmitter                                 m_particle_emitter;
     ShaderProgram                                   m_particle_rendering_program;
@@ -212,6 +225,8 @@ public:
     void shoot(float dt);
 
     void DrawText(const char *text, int length, int x, int y);
+
+    void setDefaultTower(bool flag);
 
 };
 

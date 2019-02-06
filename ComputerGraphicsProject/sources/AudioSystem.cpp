@@ -24,9 +24,19 @@ void Audio::PlayAudio(const char *filename)
     strcpy( concatString, folder );
     strcat( concatString, filename);
 
+#ifdef __APPLE__
+    // apple
     Mix_Chunk *chunk = NULL;
     chunk = Mix_LoadWAV(concatString);
-    delete[] concatString;
     Mix_PlayChannel(-1, chunk, 0);
+#elif __linux__
+    // linux
+    Mix_Chunk *chunk = NULL;
+    chunk = Mix_LoadWAV(concatString);
+    Mix_PlayChannel(-1, chunk, 0);
+
+#endif
+    delete[] concatString;
+
 
 }

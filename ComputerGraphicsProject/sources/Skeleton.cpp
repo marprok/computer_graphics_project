@@ -94,7 +94,14 @@ void Skeleton::kill()
 {
     if(!m_is_dead)
     {
-        Audio::PlayAudio("death.wav");
+        #ifdef __APPLE__
+            // apple
+                Audio::PlayAudio("death.wav");
+        #elif __linux__
+            // linux
+                Audio::PlayAudio("death.wav");
+
+        #endif
     }
     m_is_dead=true;
     m_radius = 0;
