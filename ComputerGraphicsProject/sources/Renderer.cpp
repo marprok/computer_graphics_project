@@ -1509,7 +1509,7 @@ void Renderer::shoot(float dt)
                         Audio::PlayAudio("Cannon.wav");
                 #elif __linux__
                     // linux
-                        Audio::PlayAudio("Coins.wav");
+                        Audio::PlayAudio("Cannon.wav");
 
                 #endif
             }else
@@ -1520,7 +1520,7 @@ void Renderer::shoot(float dt)
                         Audio::PlayAudio("Rocket.wav");
                 #elif __linux__
                     // linux
-                        Audio::PlayAudio("Rocket.wav");
+                        Audio::PlayAudio("rocket.wav");
 
                 #endif
             }
