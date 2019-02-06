@@ -12,7 +12,7 @@ void Menu::SetPosition(glm::vec3 position) {
     m_position = position;
     m_geometric_transformation_matrix =
         glm::translate(glm::mat4(1.f), m_position) *
-            glm::rotate(glm::mat4(1.0f), 0.4f, glm::vec3(0, 1, 0 )) *
+        glm::rotate(glm::mat4(1.0f), 0.4f, glm::vec3(0, 1, 0 )) *
         glm::rotate(glm::mat4(1.0f), -1.0f, glm::vec3(1, 0, 0)) *
         glm::scale(glm::mat4(1.f), glm::vec3(0.2f));
     m_geometric_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix))));

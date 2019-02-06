@@ -31,8 +31,8 @@ SpotLightNode::SpotLightNode()
 	SetConeSize(120, 120);
 
 	m_cast_shadow = false;
-	m_shadow_map_resolution = 4096;
-	m_shadow_map_bias = 0.001;
+    m_shadow_map_resolution = 4096;
+    m_shadow_map_bias = 0.01;
 	m_shadow_map_texture = 0;
 	m_shadow_map_fbo = 0;
 }
@@ -102,8 +102,8 @@ void SpotLightNode::SetConeSize(float umbra, float penumbra)
 	m_umbra = umbra;
 	m_penumbra = penumbra;
 
-	float near_clipping_range = 1.f;
-	float far_clipping_range = 1500.f;
+    float near_clipping_range = 1.f;
+    float far_clipping_range = 1500.f;
 
 	// create a frustum that  encapsulate the light cone
     float h = near_clipping_range * glm::tan(glm::radians(m_penumbra * 0.5f));

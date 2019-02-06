@@ -12,13 +12,12 @@
 		#include "SpotlightNode.h"
 		#include "Tower.h"
 		#include "Tile.h"
-        #include "GL/glut.h"
         #include "Menu.h"
         #include "ParticleSystem.h"
         #include "Cannonball.h"
 		#include "Skeleton.h"
         #include "Chest.h"
-        #include <AudioSystem.h>
+        #include "AudioSystem.h"
 	#endif
 #elif __APPLE__
 	// apple
@@ -29,14 +28,12 @@
 	#include "ShaderProgram.h"
 	#include "SpotlightNode.h"
 	#include "Tower.h"
-    #include "GLUT/glut.h"
     #include "ParticleSystem.h"
 	#include "Tile.h"
     #include "Menu.h"
     #include "Chest.h"
     #include "Cannonball.h"
 	#include "Skeleton.h"
-    #include <SDL2/SDL_ttf.h>
     #include <AudioSystem.h>
 
 
@@ -49,13 +46,12 @@
 	#include "SpotlightNode.h"
 	#include "Tower.h"
     #include "Menu.h"
-    #include "GL/glut.h"
     #include "ParticleSystem.h"
     #include "Cannonball.h"
 	#include "Tile.h"
 	#include "Skeleton.h"
     #include "Chest.h"
-    #include <AudioSystem.h>
+    #include "AudioSystem.h"
 #endif
 
 class Renderer
