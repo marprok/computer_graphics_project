@@ -28,4 +28,6 @@ public:
     ~Audio();
 
     static void PlayAudio(const char *filename);
+
+    static void PlayMusic(const char *filename);
 };

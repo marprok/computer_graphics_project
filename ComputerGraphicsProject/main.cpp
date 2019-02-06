@@ -174,7 +174,6 @@ int main(int argc, char *argv[])
 			{
 				// Key down events
 				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
-                else if (event.key.keysym.sym == SDLK_q) renderer->ReloadShaders();
                 else if (event.key.keysym.sym == SDLK_t) renderer->PlaceTower();
 				else if (event.key.keysym.sym == SDLK_w)
 				{

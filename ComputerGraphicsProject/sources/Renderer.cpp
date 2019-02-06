@@ -57,8 +57,8 @@ Renderer::Renderer()
 	m_vbo_fbo_vertices = 0;
 	m_vao_fbo = 0;
 	
-	m_geometric_object1 = nullptr;
-	m_geometric_object2 = nullptr;
+    m_terrain = nullptr;
+    m_chest_object = nullptr;
 
 	m_fbo = 0;
 	m_fbo_texture = 0;
@@ -86,6 +86,7 @@ Renderer::Renderer()
     //deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
     Mix_AllocateChannels(16);
     m_default_tower = true;
+    Audio::PlayMusic("Theme.wav");
 
 
 }
@@ -100,10 +101,17 @@ Renderer::~Renderer()
 	glDeleteVertexArrays(1, &m_vao_fbo);
 	glDeleteBuffers(1, &m_vbo_fbo_vertices);
 
-	delete m_geometric_object1;
-	delete m_geometric_object2;
-	delete m_geometric_object3;
-	delete m_geometric_object4;
+    delete m_terrain;
+    delete m_chest_object;
+    delete m_tower_object;
+    delete m_road_object;
+    delete m_green_tile;
+    for (int i=0; i< 6; i++)
+        delete m_skeleton_object[i];
+    delete m_cannonball_object;
+    //delete m_menu_object;
+    delete m_tower2_object;
+    delete m_rocket_object;
 }
 
 bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
@@ -197,19 +205,19 @@ void Renderer::Update(float dt)
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
 	// update meshes tranformations
-	m_geometric_object1_transformation_matrix = 
+    m_terrain_transformation_matrix =
 		glm::translate(glm::mat4(1.f), glm::vec3(9, 0, 9)) *
 		glm::scale(glm::mat4(1.f), glm::vec3(10.f));
-	m_geometric_object1_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object1_transformation_matrix))));
+    m_terrain_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_terrain_transformation_matrix))));
 
     glm::vec3 chest_position = glm::vec3(12, 0, 0);
     chest->setPosition(chest_position);
 
     //menu->SetPosition(m_camera_target_position);//set menu
 
-	m_geometric_object4_transformation_matrix = 
+    m_road_object_transformation_matrix =
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
-	m_geometric_object4_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_object4_transformation_matrix))));
+    m_road_object_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_road_object_transformation_matrix))));
 
     m_player_tile_transformation_matrix =
         glm::translate(glm::mat4(1.0), m_player_tile_position);
@@ -660,8 +668,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object1 = new GeometryNode();
-        m_geometric_object1->Init(mesh);
+        m_terrain = new GeometryNode();
+        m_terrain->Init(mesh);
     }
     else
         initialized = false;
@@ -683,13 +691,13 @@ bool Renderer::InitGeometricMeshes()
 #endif
     if (mesh != nullptr)
     {
-        m_geometric_object2 = new GeometryNode();
-        m_geometric_object2->Init(mesh);
+        m_chest_object = new GeometryNode();
+        m_chest_object->Init(mesh);
     }
     else
         initialized = false;
 
-    chest = new Chest(m_geometric_object2);
+    chest = new Chest(m_chest_object);
 
 
     /*
@@ -710,13 +718,13 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object10 = new GeometryNode();
-        m_geometric_object10->Init(mesh);
+        m_menu_object = new GeometryNode();
+        m_menu_object->Init(mesh);
     }
     else
         initialized = false;
 
-    menu = new Menu(m_geometric_object10);
+    menu = new Menu(m_menu_object);
 
 */
     // load tower1
@@ -736,8 +744,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object3 = new GeometryNode();
-        m_geometric_object3->Init(mesh);
+        m_tower_object = new GeometryNode();
+        m_tower_object->Init(mesh);
     }
     else
         initialized = false;
@@ -761,8 +769,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object11 = new GeometryNode();
-        m_geometric_object11->Init(mesh);
+        m_tower2_object = new GeometryNode();
+        m_tower2_object->Init(mesh);
     }
     else
         initialized = false;
@@ -786,7 +794,7 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object4 = new GeometryNode();
+        m_road_object = new GeometryNode();
 
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -801,7 +809,7 @@ bool Renderer::InitGeometricMeshes()
     // linux
         readRoad("Data/road.map");
 #endif
-        m_geometric_object4->Init(mesh);
+        m_road_object->Init(mesh);
     }
     else
         initialized = false;
@@ -824,8 +832,8 @@ bool Renderer::InitGeometricMeshes()
 #endif
     if (mesh != nullptr)
     {
-        m_geometric_object8 = new GeometryNode();
-        m_geometric_object8->Init(mesh);
+        m_cannonball_object = new GeometryNode();
+        m_cannonball_object->Init(mesh);
     }
     else
         initialized = false;
@@ -849,8 +857,8 @@ bool Renderer::InitGeometricMeshes()
 #endif
     if (mesh != nullptr)
     {
-        m_geometric_object12 = new GeometryNode();
-        m_geometric_object12->Init(mesh);
+        m_rocket_object = new GeometryNode();
+        m_rocket_object->Init(mesh);
     }
     else
         initialized = false;
@@ -921,8 +929,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object6[0] = new GeometryNode();
-        m_geometric_object6[0]->Init(mesh);
+        m_skeleton_object[0] = new GeometryNode();
+        m_skeleton_object[0]->Init(mesh);
     }
     else
         initialized = false;
@@ -943,8 +951,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object6[1] = new GeometryNode();
-        m_geometric_object6[1]->Init(mesh);
+        m_skeleton_object[1] = new GeometryNode();
+        m_skeleton_object[1]->Init(mesh);
     }
     else
         initialized = false;
@@ -965,8 +973,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object6[2] = new GeometryNode();
-        m_geometric_object6[2]->Init(mesh);
+        m_skeleton_object[2] = new GeometryNode();
+        m_skeleton_object[2]->Init(mesh);
     }
     else
         initialized = false;
@@ -987,8 +995,8 @@ bool Renderer::InitGeometricMeshes()
 
     if (mesh != nullptr)
     {
-        m_geometric_object6[3] = new GeometryNode();
-        m_geometric_object6[3]->Init(mesh);
+        m_skeleton_object[3] = new GeometryNode();
+        m_skeleton_object[3]->Init(mesh);
     }
     else
         initialized = false;
@@ -1010,8 +1018,8 @@ bool Renderer::InitGeometricMeshes()
 
 	if (mesh != nullptr)
 	{
-		m_geometric_object6[4] = new GeometryNode();
-		m_geometric_object6[4]->Init(mesh);
+        m_skeleton_object[4] = new GeometryNode();
+        m_skeleton_object[4]->Init(mesh);
 	}
 	else
 		initialized = false;
@@ -1033,22 +1041,22 @@ bool Renderer::InitGeometricMeshes()
 
 	if (mesh != nullptr)
 	{
-		m_geometric_object6[5] = new GeometryNode();
-		m_geometric_object6[5]->Init(mesh);
+        m_skeleton_object[5] = new GeometryNode();
+        m_skeleton_object[5]->Init(mesh);
 	}
 	else
 		initialized = false;
 
     m_pirate_position = glm::vec3(0, 0.1, 0);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
 	
     m_pirate_position = glm::vec3(0, 0.1, -2);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
 	
     m_pirate_position = glm::vec3(0, 0.1, -4);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
 
-    //m_skeletons.emplace_back(m_camera_target_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3);
+    //m_skeletons.emplace_back(m_camera_target_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
 
 
 	return initialized;
@@ -1104,7 +1112,7 @@ void Renderer::RenderShadowMaps()
 		glUniformMatrix4fv(m_spot_light_shadow_map_program["uniform_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_spotlight_node.GetViewMatrix()));
 
 		// draw the terrain object
-		DrawGeometryNodeToShadowMap(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
+        DrawGeometryNodeToShadowMap(m_terrain, m_terrain_transformation_matrix, m_terrain_transformation_normal_matrix);
 
 		// draw the treasure object
         if(!GAME_OVER){
@@ -1220,7 +1228,7 @@ void Renderer::RenderGeometry()
 	glActiveTexture(GL_TEXTURE0);
 
 	// draw the terrain object
-	DrawGeometryNode(m_geometric_object1, m_geometric_object1_transformation_matrix, m_geometric_object1_transformation_normal_matrix);
+    DrawGeometryNode(m_terrain, m_terrain_transformation_matrix, m_terrain_transformation_normal_matrix);
 
     //Draw menu
     //DrawGeometryNode(menu->getGeometricNode(), menu->getGeometricTransformationMatrix(), menu->getGeometricTransformationNormalMatrix());
@@ -1416,10 +1424,10 @@ void Renderer::PlaceTower() {
         m_new_tower_timer=0;
         if(m_default_tower)
         {
-           m_towers.emplace_back(m_player_tile_position, m_geometric_object3, 2, 1.0f, false);
+           m_towers.emplace_back(m_player_tile_position, m_tower_object, 2, 1.0f, false);
         }else
         {
-            m_towers.emplace_back(m_player_tile_position, m_geometric_object11, 2, 2.0f, true);
+            m_towers.emplace_back(m_player_tile_position, m_tower2_object, 2, 2.0f, true);
         }
 
 
@@ -1483,7 +1491,7 @@ bool Renderer::readRoad(const char *road)
     int x, z;
 
     while (in >> x >> z)
-        m_road.emplace_back(2, 2, glm::vec3(x, 0.01, z), m_geometric_object4);
+        m_road.emplace_back(2, 2, glm::vec3(x, 0.01, z), m_road_object);
     in.close();
     std::cout << "DONE reading the road file" << std::endl;
 
@@ -1503,7 +1511,7 @@ void Renderer::shoot(float dt)
         {
             if(!tower.is_following_target())
             {
-                m_cannonballs.emplace_back(tower.getPosition(), m_geometric_object8, target, 5.5f, m_skeletons[target].getPosition());
+                m_cannonballs.emplace_back(tower.getPosition(), m_cannonball_object, target, 5.5f, m_skeletons[target].getPosition());
                 #ifdef __APPLE__
                     // apple
                         Audio::PlayAudio("Cannon.wav");
@@ -1514,10 +1522,10 @@ void Renderer::shoot(float dt)
                 #endif
             }else
             {
-                m_rockets.emplace_back(tower.getPosition(), m_geometric_object12, target, 2.7f, m_skeletons[target].getPosition());
+                m_rockets.emplace_back(tower.getPosition(), m_rocket_object, target, 2.7f, m_skeletons[target].getPosition());
                 #ifdef __APPLE__
                     // apple
-                        Audio::PlayAudio("Rocket.wav");
+                        Audio::PlayAudio("rocket.wav");
                 #elif __linux__
                     // linux
                         Audio::PlayAudio("rocket.wav");
@@ -1535,7 +1543,7 @@ void Renderer::PawnNewSkeletons(int level)
     m_pirate_position = glm::vec3(0, -1.f, 0);
     for (int i=0; i<level+3; i++)
     {
-       m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_geometric_object6, 3+level);
+       m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3+level);
        m_pirate_position.z -= 2;
     }
 

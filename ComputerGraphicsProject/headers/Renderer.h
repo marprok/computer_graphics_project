@@ -95,50 +95,50 @@ protected:
     SpotLightNode m_menu_light;
 
 	// Meshes
-	class GeometryNode*								m_geometric_object1;
-	glm::mat4										m_geometric_object1_transformation_matrix;
-	glm::mat4										m_geometric_object1_transformation_normal_matrix;
+    class GeometryNode*								m_terrain;
+    glm::mat4										m_terrain_transformation_matrix;
+    glm::mat4										m_terrain_transformation_normal_matrix;
 	
-	class GeometryNode*								m_geometric_object2;
-	glm::mat4										m_geometric_object2_transformation_matrix;
-	glm::mat4										m_geometric_object2_transformation_normal_matrix;
+    class GeometryNode*								m_chest_object;
+    glm::mat4										m_chest_object_transformation_matrix;
+    glm::mat4										m_chest_object_transformation_normal_matrix;
 	
-	class GeometryNode*								m_geometric_object3;
-	glm::mat4										m_geometric_object3_transformation_matrix;
-	glm::mat4										m_geometric_object3_transformation_normal_matrix;
+    class GeometryNode*								m_tower_object;
+    glm::mat4										m_tower_object_transformation_matrix;
+    glm::mat4										m_tower_object_transformation_normal_matrix;
 	
-	class GeometryNode*								m_geometric_object4;
-	glm::mat4										m_geometric_object4_transformation_matrix;
-	glm::mat4										m_geometric_object4_transformation_normal_matrix;
+    class GeometryNode*								m_road_object;
+    glm::mat4										m_road_object_transformation_matrix;
+    glm::mat4										m_road_object_transformation_normal_matrix;
 	
     class GeometryNode*								m_green_tile;
     glm::mat4										m_player_tile_transformation_matrix;
     glm::mat4										m_player_tile_transformation_normal_matrix;
     glm::vec3										m_player_tile_position;
 
-	class GeometryNode*								m_geometric_object6[6];
-	glm::mat4										m_geometric_object6_transformation_matrix[6];
-	glm::mat4										m_geometric_object6_transformation_normal_matrix[6];
-	glm::vec3										m_geometric_object6_position[6];
+    class GeometryNode*								m_skeleton_object[6];
+    glm::mat4										m_skeleton_object_transformation_matrix[6];
+    glm::mat4										m_skeleton_object_transformation_normal_matrix[6];
+    glm::vec3										m_skeleton_object_position[6];
 	glm::vec3										m_pirate_position;
 
     glm::vec3										m_explosion_position;
 
-    class GeometryNode*								m_geometric_object8;
-    glm::mat4										m_geometric_object8_transformation_matrix;
-    glm::mat4                                       m_geometric_object8_transformation_normal_matrix;
+    class GeometryNode*								m_cannonball_object;
+    glm::mat4										m_cannonball_object_transformation_matrix;
+    glm::mat4                                       m_cannonball_object_transformation_normal_matrix;
 
-    class GeometryNode*								m_geometric_object10;
-    glm::mat4										m_geometric_object10_transformation_matrix;
-    glm::mat4                                       m_geometric_object10_transformation_normal_matrix;
+    class GeometryNode*								m_menu_object;
+    glm::mat4										m_menu_object_transformation_matrix;
+    glm::mat4                                       m_menu_object_transformation_normal_matrix;
 
-    class GeometryNode*								m_geometric_object11;
-    glm::mat4										m_geometric_object11_transformation_matrix;
-    glm::mat4                                       m_geometric_object11_transformation_normal_matrix;
+    class GeometryNode*								m_tower2_object;
+    glm::mat4										m_tower2_object_transformation_matrix;
+    glm::mat4                                       m_tower2_object_transformation_normal_matrix;
 
-    class GeometryNode*								m_geometric_object12;
-    glm::mat4										m_geometric_object12_transformation_matrix;
-    glm::mat4                                       m_geometric_object12_transformation_normal_matrix;
+    class GeometryNode*								m_rocket_object;
+    glm::mat4										m_rocket_object_transformation_matrix;
+    glm::mat4                                       m_rocket_object_transformation_normal_matrix;
 
     class GeometryNode*								m_red_tile;
 
