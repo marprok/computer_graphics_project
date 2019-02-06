@@ -3,9 +3,8 @@
 #ifdef _WIN32
 	//define something for Windows (32-bit and 64-bit, this part is common)
 	#ifdef _WIN64
-    #include "TargetConditionals.h"
-    #include "../glm/gtc/type_ptr.hpp"
-    #include "../glm/gtc/matrix_transform.hpp"
+    #include "glm/gtc/type_ptr.hpp"
+    #include "glm/gtc/matrix_transform.hpp"
     #include "GeometryNode.h"
     #include <vector>
     #include "AudioSystem.h"
@@ -13,7 +12,6 @@
     #endif
 #elif __APPLE__
 	// apple
-    #include "TargetConditionals.h"
     #include "../glm/gtc/type_ptr.hpp"
     #include "../glm/gtc/matrix_transform.hpp"
     #include "GeometryNode.h"
@@ -22,7 +20,6 @@
     #include "Skeleton.h"
 #elif __linux__
 	// linux
-    #include "TargetConditionals.h"
     #include "../glm/gtc/type_ptr.hpp"
     #include "../glm/gtc/matrix_transform.hpp"
     #include "GeometryNode.h"

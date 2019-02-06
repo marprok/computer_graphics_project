@@ -14,7 +14,6 @@
 	#include "SDL2/SDL.h"
 	#include <iostream>
     #include <chrono>
-    #include "SDL2/SDL_ttf.h"
     #include "inc/GLEW/glew.h"
 	#include "inc/headers/Renderer.h"
 #elif __linux__
@@ -74,11 +73,6 @@ bool init()
 	// use Double Buffering
 	if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) < 0)
 		cout << "Error: No double buffering" << endl;
-
-    //initiallize SDL_ttf
-    if (TTF_Init() < 0) {
-        printf( "SDL_mixer could not be initialized");
-    }
 
 	// set OpenGL Version (3.3)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
