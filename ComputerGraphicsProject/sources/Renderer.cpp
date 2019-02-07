@@ -78,7 +78,7 @@ Renderer::Renderer()
 
     m_tower_shoot_timer = 0.0f;
     m_skeletons_wave_timer=0.0f;
-    m_level=1;
+    m_level=0;
     m_new_tower_timer=10.0f;
     m_particles_timer=0;
     hit = false;
@@ -262,26 +262,11 @@ void Renderer::Update(float dt)
             if (m_skeletons[i].get_health() == -1)
             {
                 m_skeletons[i].render(false);
-                m_skeletons[i].set_health(-2);
                 //std::cout<<"MPHKA"<< std::endl;
                //m_skeletons.erase(m_skeletons.begin()+i);
             }
         }
     }
-
-    //Remove the non-rendered skeletons when there are no rockets traveling
-    for (size_t i = 0; i < m_skeletons.size(); i++)
-    {
-        if (m_skeletons[i].get_health() == -2 && m_rockets.size()==0)
-        {
-           m_skeletons.erase(m_skeletons.begin()+i);
-        }
-    }
-
-    //std::cout<<m_skeletons.size()<< " <-"<<std::endl;
-
-
-
 
     //End the game if the chest is empty
     if(chest->getCoinsLeft() == 0)
@@ -315,6 +300,11 @@ void Renderer::Update(float dt)
     m_particles_timer += dt;
     for (size_t i = 0; i < m_rockets.size();)
     {
+        if(m_skeletons[m_rockets[i].get_target()].get_health() <=0)
+        {
+            m_rockets.erase(m_rockets.begin()+i);
+            continue;
+        }
         if (!m_rockets[i].update(dt, m_skeletons))//
         {
             hit = true;
@@ -334,7 +324,7 @@ void Renderer::Update(float dt)
     }
 
 
-//
+    //
     for(int i=0; i<m_particle_emitters.size(); i++)
     {
         m_particle_emitters[i].Update(dt);
@@ -348,9 +338,7 @@ void Renderer::Update(float dt)
         }
     }
 
-    m_skeletons_wave_timer += dt;
     // place new and more powerfull skeletons every 20 secods
-
     //first find the last alive skeleton to prevent new waves from overlapping him
     m_last_alive_skeleton.set_health(0);
     for(int i=m_skeletons.size()-1; i>-1; i--)
@@ -361,40 +349,32 @@ void Renderer::Update(float dt)
             break;
         }
     }
-
-    //Now generate the new wave
-    if(m_skeletons_wave_timer >= 20 && (m_last_alive_skeleton.getPosition().z > 6 || m_last_alive_skeleton.get_health()==0))
-    {
-        PawnNewSkeletons(m_level);
-        m_level++;
-        m_skeletons_wave_timer=0;
-    }
-
-    //clean terrain from dead skeleton if there are more than 30 dead.
-    m_dead_skeletons = 0;
+    bool wave_clear = true;
     for(int i=0; i<m_skeletons.size(); i++)
     {
-        if(m_skeletons[i].get_health()==0)
+        if(m_skeletons[i].get_health()>0)
         {
-            m_dead_skeletons++;
+            wave_clear = false;
+            break;
         }
     }
-
-    //std::cout<<"dead: "<<m_dead_skeletons<<std::endl;
-    int j=0;
-    if(m_dead_skeletons > 30)
+    if(wave_clear)
     {
-        while(true)
+         m_skeletons_wave_timer += dt;
+    }
+
+    //Now generate the new wave
+    if(m_skeletons_wave_timer >= 3)
+    {
+
+        int j=0;
+        while(m_skeletons.size()>0)
         {
-            if(m_skeletons[j].get_health()==0)
-            {
-                m_skeletons.erase(m_skeletons.begin()+j);
-                m_dead_skeletons--;
-                if(m_dead_skeletons<=20)
-                    break;
-            }
-            j++;
+            m_skeletons.erase(m_skeletons.begin());
         }
+        m_skeletons_wave_timer=0;
+        m_level++;
+        PawnNewSkeletons(m_level);
     }
 
     //Towers are removed in style!
@@ -402,7 +382,6 @@ void Renderer::Update(float dt)
     {
         if(m_towers[i].to_be_removed())
         {
-            //m_towers.erase(m_towers.begin()+i);
             m_towers[i].Remove(dt);
             if(m_towers[i].getPosition().y < -3)
             {
@@ -412,7 +391,14 @@ void Renderer::Update(float dt)
 
     }
 
-
+    //erase skeletons that reached the chest
+    for (size_t i = 0; i < m_skeletons.size(); i++)
+    {
+        if (m_skeletons[i].get_health() == -1)
+        {
+           m_skeletons.erase(m_skeletons.begin()+i);
+        }
+    }
 }
 
 bool Renderer::InitCommonItems()
@@ -919,6 +905,31 @@ bool Renderer::InitGeometricMeshes()
     else
         initialized = false;
 
+
+    // load boss pirate
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        mesh = loader.load("../Assets/Pirate/pirate_body_boss.obj");
+    #endif
+#elif __APPLE__
+    // apple
+   mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Pirate/pirate_body_boss.obj");
+
+#elif __linux__
+    // linux
+    mesh = loader.load("Assets/Pirate/pirate_body_boss.obj");
+#endif
+
+    if (mesh != nullptr)
+    {
+        m_skeleton_boss_body = new GeometryNode();
+        m_skeleton_boss_body->Init(mesh);
+    }
+    else
+        initialized = false;
+
+
     // load pirate
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -1053,18 +1064,6 @@ bool Renderer::InitGeometricMeshes()
 	}
 	else
 		initialized = false;
-
-    m_pirate_position = glm::vec3(0, 0.1, 0);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
-	
-    m_pirate_position = glm::vec3(0, 0.1, -2);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
-	
-    m_pirate_position = glm::vec3(0, 0.1, -4);
-    m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
-
-    //m_skeletons.emplace_back(m_camera_target_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3);
-
 
 	return initialized;
 }
@@ -1282,7 +1281,17 @@ void Renderer::RenderGeometry()
             if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == skeleton.get_max_health() /*max_health*/))
 			{
                 if(skeleton.getPosition().z > -1 && skeleton.will_render())
-                    DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+                {
+                    std::cout<<m_level<<" <-"<<std::endl;
+                    if(m_level%3==0 && i==0)
+                    {
+                       DrawGeometryNode(m_skeleton_boss_body, skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+                    }else
+                    {
+                       DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+                    }
+                }
+
 			}
 		}
 	}
@@ -1522,7 +1531,7 @@ void Renderer::shoot(float dt)
 				Audio::PlayAudio("Cannon.wav");
             }else
             {
-                m_rockets.emplace_back(tower.getPosition(), m_rocket_object, target, 2.7f, m_skeletons[target].getPosition());
+                m_rockets.emplace_back(tower.getPosition(), m_rocket_object, target, 2.5f, m_skeletons[target].getPosition());
 				Audio::PlayAudio("rocket.wav");
             }
 
@@ -1533,11 +1542,19 @@ void Renderer::shoot(float dt)
 
 void Renderer::PawnNewSkeletons(int level)
 {
+    if(level==0)
+        return;
     m_pirate_position = glm::vec3(0, -1.f, 0);
-    for (int i=0; i<level+3; i++)
+    if(level%3==0)
     {
-       m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3+level);
-       m_pirate_position.z -= 2;
+        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6*level, 0.12f, 1.f);
+    }else
+    {
+        for (int i=0; i<m_road.size() && i<level+3; i++)
+        {
+           m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3+level, 0.06f, 2.f);
+           m_pirate_position.z -= 2;
+        }
     }
 
 }

@@ -7,7 +7,7 @@ Skeleton::Skeleton()
 {
 }
 
-Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node, int health)
+Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node, int health, float scaling_factor, float velocity)
 {
     setPosition(position, 0, 0);
     setGoal(goal);
@@ -15,7 +15,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_road = road;
     m_radius = 0.75f;
     m_rotation = 3.14f;
-    m_velocity = 2.f;
+    m_velocity = velocity;
     //m_randomNumber = ((float)rand() / RAND_MAX) * 2.0f;
     m_randomNumber = 0;
     m_geometric_node = g_node;
@@ -24,6 +24,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_max_health = health;
     m_is_dead=false;
     m_should_be_rendered=true;
+    m_scaling_factor = scaling_factor;
 
 }
 
@@ -37,7 +38,7 @@ void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_tim
 		glm::translate(glm::mat4(1.0f), m_position) *
         glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.05, 0)) *
 		glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0, 1, 0)) *
-        glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
+        glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
 
     // body
     m_geometric_transformation_matrix[0] = pirate_position;
@@ -107,26 +108,26 @@ void Skeleton::kill()
 
             glm::translate(glm::mat4(1.0), glm::vec3(0, 0.2f, 0) + random_position)*
             glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(1, 0, 0) ) *
-            glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
+            glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
     m_geometric_transformation_normal_matrix[0] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[0]))));
 
     // arm
     m_geometric_transformation_matrix[1] =
             glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 0.f, 0) + random_position)*
             glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(0, 0, 1)) *
-            glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
+            glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
     m_geometric_transformation_normal_matrix[1] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[1]))));
 
     // right foot
     m_geometric_transformation_matrix[2] =
             glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 0.f, 0) + random_position)*
-            glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
+            glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
     m_geometric_transformation_normal_matrix[2] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[2]))));
 
     // left foot
     m_geometric_transformation_matrix[3] =
             glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 0.f, 0) + random_position)*
-            glm::scale(glm::mat4(1.0), glm::vec3(0.06f));
+            glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
     m_geometric_transformation_normal_matrix[3] = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_geometric_transformation_matrix[3]))));
 }
 

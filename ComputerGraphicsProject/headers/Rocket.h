@@ -44,7 +44,9 @@ public:
 
 	glm::mat4 getGeometricTransformationMatrix();
 
-	glm::mat4 getGeometricTransformationNormalMatrix();
+    glm::mat4 getGeometricTransformationNormalMatrix();
+
+    int get_target();
 
 
 private:

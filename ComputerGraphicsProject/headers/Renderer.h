@@ -117,6 +117,7 @@ protected:
     glm::vec3										m_player_tile_position;
 
     class GeometryNode*								m_skeleton_object[6];
+    class GeometryNode*                             m_skeleton_boss_body;
     glm::mat4										m_skeleton_object_transformation_matrix[6];
     glm::mat4										m_skeleton_object_transformation_normal_matrix[6];
     glm::vec3										m_skeleton_object_position[6];

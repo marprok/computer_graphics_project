@@ -109,6 +109,11 @@ glm::mat4 Rocket::getGeometricTransformationNormalMatrix()
     return m_geometric_transformation_normal_matrix;
 }
 
+int Rocket::get_target()
+{
+    return m_target;
+}
+
 Rocket::~Rocket()
 {
 }

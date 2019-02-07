@@ -27,7 +27,7 @@ void Audio::PlayAudio(const char *filename)
 	chunk = Mix_LoadWAV(concatString);
 	if (chunk == NULL)
 	{
-		std::cout << "Null" << std::endl;
+        //std::cout << "Null" << std::endl;
 	}
 	Mix_PlayChannel(-1, chunk, 0);
 
