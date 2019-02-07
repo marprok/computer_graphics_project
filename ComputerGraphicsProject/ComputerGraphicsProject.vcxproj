@@ -20,13 +20,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sources\AudioSystem.cpp" />
     <ClCompile Include="sources\Cannonball.cpp" />
     <ClCompile Include="sources\Chest.cpp" />
     <ClCompile Include="sources\GeometricMesh.cpp" />
     <ClCompile Include="sources\GeometryNode.cpp" />
+    <ClCompile Include="sources\Menu.cpp" />
     <ClCompile Include="sources\OBJLoader.cpp" />
     <ClCompile Include="sources\ParticleSystem.cpp" />
     <ClCompile Include="sources\Renderer.cpp" />
+    <ClCompile Include="sources\Rocket.cpp" />
     <ClCompile Include="sources\ShaderProgram.cpp" />
     <ClCompile Include="sources\Skeleton.cpp" />
     <ClCompile Include="sources\SpotlightNode.cpp" />
@@ -36,13 +39,16 @@
     <ClCompile Include="sources\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\AudioSystem.h" />
     <ClInclude Include="headers\Cannonball.h" />
     <ClInclude Include="headers\Chest.h" />
     <ClInclude Include="headers\GeometricMesh.h" />
     <ClInclude Include="headers\GeometryNode.h" />
+    <ClInclude Include="headers\Menu.h" />
     <ClInclude Include="headers\OBJLoader.h" />
     <ClInclude Include="headers\ParticleSystem.h" />
     <ClInclude Include="headers\Renderer.h" />
+    <ClInclude Include="headers\Rocket.h" />
     <ClInclude Include="headers\ShaderProgram.h" />
     <ClInclude Include="headers\Skeleton.h" />
     <ClInclude Include="headers\SpotlightNode.h" />
@@ -123,14 +129,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(SolutionDir)3rdParty\bin\x64\*.dll" "$(OutDir)"
@@ -166,16 +172,16 @@ copy "$(SolutionDir)3rdParty\bin\x64\*.dll" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(SolutionDir)3rdParty\bin\x64\*.dll" "$(OutDir)"

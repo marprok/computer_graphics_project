@@ -71,16 +71,7 @@ void Chest::lose_coins()
     m_coins_left -= 10;
     if(m_coins_left>=0)
     {
-
-#ifdef __APPLE__
-    // apple
-        Audio::PlayAudio("Coins.wav");
-#elif __linux__
-    // linux
-        Audio::PlayAudio("Coins.wav");
-
-#endif
-
+		Audio::PlayAudio("Coins.wav");
     }
     std::cout<<"Coins left: "<< m_coins_left<<std::endl;
 }

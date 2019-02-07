@@ -52,6 +52,7 @@
 // RENDERER
 Renderer::Renderer()
 {
+	m_first_frame = true;
 
     GAME_OVER=false;
 	m_vbo_fbo_vertices = 0;
@@ -83,11 +84,8 @@ Renderer::Renderer()
     hit = false;
     exploded_cannonball_index=0;
     m_place_new_tower_time_limit=20;
-    //deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
     Mix_AllocateChannels(16);
     m_default_tower = true;
-    Audio::PlayMusic("Theme.wav");
-
 
 }
 
@@ -163,7 +161,11 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
-
+	if (m_first_frame)
+	{
+		Audio::PlayMusic("Theme.wav");
+		m_first_frame = false;
+	}
 
     m_new_tower_timer += dt;
     float movement_speed = 4.0f;
@@ -276,7 +278,7 @@ void Renderer::Update(float dt)
         }
     }
 
-    std::cout<<m_skeletons.size()<< " <-"<<std::endl;
+    //std::cout<<m_skeletons.size()<< " <-"<<std::endl;
 
 
 
@@ -856,7 +858,7 @@ bool Renderer::InitGeometricMeshes()
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #ifdef _WIN64
-        mesh = loader.load("../Assets/Various/tocket.obj");
+        mesh = loader.load("../Assets/Various/rocket.obj");
     #endif
 #elif __APPLE__
     // apple
@@ -1524,25 +1526,11 @@ void Renderer::shoot(float dt)
             if(!tower.is_following_target())
             {
                 m_cannonballs.emplace_back(tower.getPosition(), m_cannonball_object, target, 5.5f, m_skeletons[target].getPosition());
-                #ifdef __APPLE__
-                    // apple
-                        Audio::PlayAudio("Cannon.wav");
-                #elif __linux__
-                    // linux
-                        Audio::PlayAudio("Cannon.wav");
-
-                #endif
+				Audio::PlayAudio("Cannon.wav");
             }else
             {
                 m_rockets.emplace_back(tower.getPosition(), m_rocket_object, target, 2.7f, m_skeletons[target].getPosition());
-                #ifdef __APPLE__
-                    // apple
-                        Audio::PlayAudio("rocket.wav");
-                #elif __linux__
-                    // linux
-                        Audio::PlayAudio("rocket.wav");
-
-                #endif
+				Audio::PlayAudio("rocket.wav");
             }
 
         }

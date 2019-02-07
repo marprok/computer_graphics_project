@@ -162,6 +162,8 @@ protected:
     int                                             m_place_new_tower_time_limit;
     bool                                            m_default_tower;
 
+	bool											m_first_frame;
+
     ParticleEmitter                                 m_particle_emitter;
     ShaderProgram                                   m_particle_rendering_program;
 
