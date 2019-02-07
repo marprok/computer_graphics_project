@@ -249,24 +249,36 @@ void Renderer::Update(float dt)
         if (m_skeletons[i].get_health() == 0)
         {
             m_skeletons[i].kill();
-
-            //glm::vec3 menuposition = m_camera_target_position;
-            //m_skeletons[i].setPosition(menuposition, 0, 0);
         }
     }
 
-    //Remove the skeleton that reached the tresure(always the leader)
+    //Do not render the skeletons that reached the tresure(always the leader)
     if(chest->isReached(m_skeletons))
     {
         for (size_t i = 0; i < m_skeletons.size(); i++)
         {
             if (m_skeletons[i].get_health() == -1)
             {
+                m_skeletons[i].render(false);
+                m_skeletons[i].set_health(-2);
                 //std::cout<<"MPHKA"<< std::endl;
-               m_skeletons.erase(m_skeletons.begin()+i);
+               //m_skeletons.erase(m_skeletons.begin()+i);
             }
         }
     }
+
+    //Remove the non-rendered skeletons when there are no rockets traveling
+    for (size_t i = 0; i < m_skeletons.size(); i++)
+    {
+        if (m_skeletons[i].get_health() == -2 && m_rockets.size()==0)
+        {
+           m_skeletons.erase(m_skeletons.begin()+i);
+        }
+    }
+
+    std::cout<<m_skeletons.size()<< " <-"<<std::endl;
+
+
 
 
     //End the game if the chest is empty
@@ -1151,7 +1163,7 @@ void Renderer::RenderShadowMaps()
 			// Don' t render shadow map for the health bars
 			for (size_t i = 0; i < 4; i++)
 			{
-                if(skeleton.getPosition().z > -1)
+                if(skeleton.getPosition().z > -1 && skeleton.will_render())
                     DrawGeometryNodeToShadowMap(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
 			}
 		}
@@ -1274,7 +1286,7 @@ void Renderer::RenderGeometry()
 			// Don' t render the red health bar when skeleton has full health
             if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == skeleton.get_max_health() /*max_health*/))
 			{
-                if(skeleton.getPosition().z > -1)
+                if(skeleton.getPosition().z > -1 && skeleton.will_render())
                     DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
 			}
 		}

@@ -76,6 +76,10 @@ public:
 
     void set_radious(float radius);
 
+    bool will_render();
+
+    void render(bool flag);
+
 
 
 private:
@@ -95,6 +99,7 @@ private:
     float                   m_radius;
     float                   m_randomNumber;
     bool                    m_is_dead;
+    bool                    m_should_be_rendered;
 
 
 	std::vector<Tile>		m_road;

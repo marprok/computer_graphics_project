@@ -23,6 +23,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_health = health;
     m_max_health = health;
     m_is_dead=false;
+    m_should_be_rendered=true;
 
 }
 
@@ -273,6 +274,16 @@ void Skeleton::set_health(int health)
 void Skeleton::set_radious(float radius)
 {
     m_radius = radius;
+}
+
+bool Skeleton::will_render()
+{
+    return m_should_be_rendered;
+}
+
+void Skeleton::render(bool flag)
+{
+    m_should_be_rendered = flag;
 }
 
 int Skeleton::get_max_health() { return m_max_health; }

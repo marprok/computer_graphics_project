@@ -118,6 +118,7 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
 		{
             if(skeleton.get_health()>0)
             {
+                Audio::PlayAudio("explosion.wav");
                 skeleton.lose_health(2);
                 return false;
             }

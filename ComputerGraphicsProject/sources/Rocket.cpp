@@ -74,6 +74,7 @@ bool Rocket::update(float dt, std::vector<Skeleton> &skeletons)
             if (skeleton.get_health() > 0)
             {
                 skeleton.lose_health(4);
+                Audio::PlayAudio("explosion.wav");
             }
             else
             {

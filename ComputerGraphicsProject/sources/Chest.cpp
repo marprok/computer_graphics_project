@@ -28,7 +28,7 @@ bool Chest::isReached(std::vector<Skeleton> &skeletons)
     for(int i=0; i<size; i++)
     {
         float distance = skeletons[i].distance_from(m_position);
-        if(distance <= (m_radius + skeletons[i].getRadius()))
+        if(distance <= (m_radius + skeletons[i].getRadius()) && skeletons[i].get_health()!=-2)
         {
             skeletons[i].set_health(-1);
             lose_coins();
