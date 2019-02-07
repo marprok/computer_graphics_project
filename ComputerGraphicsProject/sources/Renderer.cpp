@@ -107,7 +107,7 @@ Renderer::~Renderer()
     for (int i=0; i< 6; i++)
         delete m_skeleton_object[i];
     delete m_cannonball_object;
-    //delete m_menu_object;
+    delete m_menu_object;
     delete m_tower2_object;
     delete m_rocket_object;
 }
@@ -197,14 +197,15 @@ void Renderer::Update(float dt)
 	rotation *= glm::rotate(glm::mat4(1.0), m_camera_look_angle_destination.y * angular_speed, right);
 	rotation *= glm::rotate(glm::mat4(1.0), -m_camera_look_angle_destination.x  * angular_speed, m_camera_up_vector);
 	m_camera_look_angle_destination = glm::vec2(0);
+
 	
 	// rotate the camera direction
 	direction = rotation * glm::vec4(direction, 0);
 	float dist = glm::distance(m_camera_position, m_camera_target_position);
-    m_camera_target_position = m_camera_position + direction * dist;//anti gia dist 2
+    m_camera_target_position = m_camera_position + direction * 2.f;//anti gia dist 2
 
 	// compute the view matrix
-	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
+    m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
 	// update meshes tranformations
     m_terrain_transformation_matrix =
@@ -215,7 +216,7 @@ void Renderer::Update(float dt)
     glm::vec3 chest_position = glm::vec3(12, 0, 0);
     chest->setPosition(chest_position);
 
-    //menu->SetPosition(m_camera_target_position);//set menu
+    //menu->SetPosition(rotation*glm::vec4(m_camera_position + glm::vec3(0,0,1),1));//set menu
 
     m_road_object_transformation_matrix =
 		glm::translate(glm::mat4(1.0), glm::vec3(2, 0.01, 0));
@@ -693,7 +694,7 @@ bool Renderer::InitGeometricMeshes()
     chest = new Chest(m_chest_object);
 
 
-    /*
+
     // load menu
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -706,7 +707,7 @@ bool Renderer::InitGeometricMeshes()
 
 #elif __linux__
     // linux
-    mesh = loader.load("Assets/Menu/menu.obj");
+    mesh = loader.load("Assets/Terrain/road.obj");
 #endif
 
     if (mesh != nullptr)
@@ -719,7 +720,6 @@ bool Renderer::InitGeometricMeshes()
 
     menu = new Menu(m_menu_object);
 
-*/
     // load tower1
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
