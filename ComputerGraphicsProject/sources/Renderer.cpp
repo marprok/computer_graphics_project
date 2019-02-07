@@ -648,13 +648,6 @@ bool Renderer::InitLightSources()
     m_spotlight_node.SetConeSize(200, 200);
     m_spotlight_node.CastShadow(true);
 
-    // Initialize the camera light
-    m_menu_light.SetPosition(glm::vec3(13, 18, 0));
-    m_menu_light.SetTarget(glm::vec3(10.4, 0, 16));
-    m_menu_light.SetColor(82.f * glm::vec3(200, 200, 200) / 255.f);
-    m_menu_light.SetConeSize(200, 200);
-    m_menu_light.CastShadow(false);
-
 	return true;
 }
 
