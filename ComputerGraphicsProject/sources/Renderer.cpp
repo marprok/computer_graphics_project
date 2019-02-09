@@ -693,8 +693,7 @@ bool Renderer::InitGeometricMeshes()
 
     chest = new Chest(m_chest_object);
 
-
-
+	/*
     // load menu
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -719,6 +718,7 @@ bool Renderer::InitGeometricMeshes()
         initialized = false;
 
     menu = new Menu(m_menu_object);
+	*/
 
     // load tower1
 #ifdef _WIN32
@@ -833,7 +833,7 @@ bool Renderer::InitGeometricMeshes()
 
 
 
-    // load rocketl
+    // load rocket
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #ifdef _WIN64
@@ -1532,7 +1532,7 @@ void Renderer::shoot(float dt)
             }else
             {
                 m_rockets.emplace_back(tower.getPosition(), m_rocket_object, target, 2.5f, m_skeletons[target].getPosition());
-				Audio::PlayAudio("rocket.wav");
+				Audio::PlayAudio("rocket2_low_pitch_fast.wav");
             }
 
         }

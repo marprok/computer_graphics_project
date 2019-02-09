@@ -97,6 +97,13 @@ void Skeleton::kill()
     if(!m_is_dead)
     {
 		Audio::PlayAudio("death.wav");
+		
+		int random = rand() % 100;
+		if (random <= 25)
+		{
+			// with a 25% probability play wilhelm scream
+			Audio::PlayAudio("wilhelm_scream.wav");
+		}
     }
     m_is_dead=true;
     m_radius = 0;
