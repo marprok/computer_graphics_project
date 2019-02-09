@@ -6,6 +6,12 @@ uniform sampler2D uniform_depth;
 uniform float uniform_time;
 uniform mat4 uniform_projection_inverse_matrix;
 
+uniform int game_over;
+uniform int place_mode;
+
+uniform int blue_towers;
+uniform int red_towers;
+
 in vec2 f_texcoord;
 
 #define DOF_RADIUS 4
@@ -48,7 +54,7 @@ void main(void)
 			if(lum > 1.0)
 				color += 1.2*gaussian(vec2(x,y)) * color2;
 		}
-	}	
+	}
 #endif	
 
 //#define BLOOM2
@@ -152,6 +158,60 @@ vec2 poissonDisk[16] = vec2[](
 	color /= sum;
 
 #endif
+	
+	if (game_over == 1) {
 		
-	out_color = vec4(color, 1.0);	
+		color = vec3(color.r + color.g + color.b) / 3.0;
+	
+	} else {
+		
+		// draw red rectangles
+		vec2 center = vec2(0.01, 0.025);
+		float offset = 0.02;
+		
+		vec2 circle_center = center;
+		vec2 pos;
+		
+		for (int i = 0; i < red_towers; i++) {
+			if (i != 0) {
+				center.x = center.x + offset - 0.0085;
+			}
+			pos = uv - center;
+			if (pos.x > center.x && pos.x < center.x + offset && pos.y > center.y && pos.y < center.y + offset) {
+				color = vec3(1, 0, 0);
+			}
+		}
+		
+		// draw blue rectangles
+		center = vec2(circle_center.x, circle_center.y - 0.015);
+		
+		for (int i = 0; i < blue_towers; i++) {
+			if (i != 0) {
+				center.x = center.x + offset - 0.0085;
+			}
+			pos = uv - center;
+			if (pos.x > center.x && pos.x < center.x + offset && pos.y > center.y && pos.y < center.y + offset) {
+				color = vec3(0, 0, 1);
+			}
+		}
+		
+		// draw the selection circle
+		float radius = offset / 2.3;
+		if (place_mode == 1) {
+			circle_center.y = center.y;
+		} else {
+			offset = 2 * offset - radius / 2;
+		}
+		
+		center = vec2(circle_center.x - 0.001, circle_center.y + offset);
+		
+		pos = uv - center;
+		float dist = sqrt(pos.x * pos.x + pos.y * pos.y);
+		if (dist < radius) {
+			color = vec3(0, 0.8, 0);
+		}
+	
+	}
+	
+	out_color = vec4(color, 1.0);
 }

@@ -36,7 +36,8 @@ void Audio::PlayAudio(const char *filename)
 
 void Audio::PlayMusic(const char *filename)
 {
-    const char *folder = "Audio/";
+
+	const char *folder = "Audio/";
 
     int bufferSize = strlen(folder) + strlen(filename) + 1;
 
@@ -50,7 +51,5 @@ void Audio::PlayMusic(const char *filename)
 	Mix_PlayMusic(music, -1);
 
     delete[] concatString;
-
-
 
 }

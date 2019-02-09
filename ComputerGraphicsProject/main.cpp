@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
                 }
                 else if (event.key.keysym.sym == SDLK_z)
                 {
-                    pause = !pause;
+					pause = !pause;
                 }
                 else if(event.key.keysym.sym == SDLK_r)
                 {

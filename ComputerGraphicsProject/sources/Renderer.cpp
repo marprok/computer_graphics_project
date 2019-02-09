@@ -11,6 +11,7 @@
         #include "glm/gtc/type_ptr.hpp"
         #include "glm/gtc/matrix_transform.hpp"
         #include "../headers/OBJLoader.h"
+        #include <SDL2/SDL.h>
         #include <iostream>
         #include <fstream>
 		#include <cstdlib>
@@ -53,6 +54,15 @@
 Renderer::Renderer()
 {
 	m_first_frame = true;
+	m_playing_defeat = false;
+
+	m_blue_tower_counter = 1;
+	m_red_tower_counter = 1;
+	
+	m_blue_tower_replace_counter = 0;
+	m_red_tower_replace_counter = 0;
+
+	m_skeleton_counter = 3;
 
     GAME_OVER=false;
 	m_vbo_fbo_vertices = 0;
@@ -76,15 +86,16 @@ Renderer::Renderer()
     //m_camera_target_position = glm::vec3(4.005, 12.634, -5.66336);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 
-    m_tower_shoot_timer = 0.0f;
+	m_blue_timer = 0.f;
+	m_red_timer = 0.f;
+    
     m_skeletons_wave_timer=0.0f;
     m_level=0;
-    m_new_tower_timer=10.0f;
     m_particles_timer=0;
     hit = false;
     exploded_cannonball_index=0;
     m_place_new_tower_time_limit=20;
-    Mix_AllocateChannels(16);
+    Mix_AllocateChannels(64);
     m_default_tower = true;
 
 }
@@ -167,7 +178,12 @@ void Renderer::Update(float dt)
 		m_first_frame = false;
 	}
 
-    m_new_tower_timer += dt;
+	if (GAME_OVER && !m_playing_defeat)
+	{
+		Audio::PlayMusic("Defeat.wav");
+		m_playing_defeat = true;
+	}
+
     float movement_speed = 4.0f;
 	// compute the direction of the camera
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
@@ -197,15 +213,19 @@ void Renderer::Update(float dt)
 	rotation *= glm::rotate(glm::mat4(1.0), m_camera_look_angle_destination.y * angular_speed, right);
 	rotation *= glm::rotate(glm::mat4(1.0), -m_camera_look_angle_destination.x  * angular_speed, m_camera_up_vector);
 	m_camera_look_angle_destination = glm::vec2(0);
-
 	
 	// rotate the camera direction
 	direction = rotation * glm::vec4(direction, 0);
 	float dist = glm::distance(m_camera_position, m_camera_target_position);
-    m_camera_target_position = m_camera_position + direction * 2.f;//anti gia dist 2
+    m_camera_target_position = m_camera_position + direction * 2.f; //anti gia dist 2
 
 	// compute the view matrix
     m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
+
+	// update heart(s) transformations
+	m_heart_object_transformation_matrix =
+		glm::translate(glm::mat4(1.f), glm::vec3(m_camera_position.x + 2, m_camera_position.y - 2, m_camera_position.z + 2));
+	m_heart_object_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_heart_object_transformation_matrix))));
 
 	// update meshes tranformations
     m_terrain_transformation_matrix =
@@ -228,23 +248,35 @@ void Renderer::Update(float dt)
 
 	MoveSkeleton(dt);
 
-    if(isValidTowerPos())
-    {
-        m_player_tile = m_green_tile;
-    }else
+	if (isValidTowerPos())
+	{
+		m_player_tile = m_green_tile;
+	}
+	else
     {
         m_player_tile = m_red_tile;
     }
 
 	m_continuous_time += dt;
-    m_tower_shoot_timer += dt;
-    //if (m_tower_shoot_timer >= 1.0f) // every 3 secs
-    //{
-        // The towers must shoot the closest skeletons
-        shoot(dt);
-        //std::cout << "1 sec" << std::endl;
-        m_tower_shoot_timer = 0.0f;
-    //}
+
+    shoot(dt);
+
+	m_blue_timer += dt;
+	m_red_timer += dt;
+
+	// every X seconds increase available blue towers
+	if (m_blue_timer > 40.f && m_blue_tower_counter <= 6)
+	{
+		m_blue_tower_counter++;
+		m_blue_timer = 0.f;
+	}
+
+	// every X seconds increase available red towers
+	if (m_red_timer > 1.5f * 60.f && m_red_tower_counter <= 6)
+	{
+		m_red_tower_counter++;
+		m_red_timer = 0.f;
+	}
 
     // show dead skeletons as dead
     for (size_t i = 0; i < m_skeletons.size(); i++)
@@ -306,7 +338,7 @@ void Renderer::Update(float dt)
             m_rockets.erase(m_rockets.begin()+i);
             continue;
         }
-        if (!m_rockets[i].update(dt, m_skeletons))//
+        if (!m_rockets[i].update(dt, m_skeletons))
         {
             hit = true;
             m_explosion_position = m_rockets[i].getPosition();
@@ -323,13 +355,11 @@ void Renderer::Update(float dt)
             i++;
         }
     }
-
-
-    //
-    for(int i=0; i<m_particle_emitters.size(); i++)
-    {
-        m_particle_emitters[i].Update(dt);
-    }
+	
+	for (int i = 0; i < m_particle_emitters.size(); i++)
+	{
+		m_particle_emitters[i].Update(dt);
+	}
 
     for(int i=0; i<m_particle_emitters.size(); i++)
     {
@@ -365,18 +395,16 @@ void Renderer::Update(float dt)
     }
 
     //Now generate the new wave
-    if(m_skeletons_wave_timer >= 3)
-    {
-
-        int j=0;
-        while(m_skeletons.size()>0)
-        {
-            m_skeletons.erase(m_skeletons.begin());
-        }
-        m_skeletons_wave_timer=0;
-        m_level++;
-        PawnNewSkeletons(m_level);
-    }
+	if (m_skeletons_wave_timer >= 3 && !GAME_OVER)
+	{
+		int j = 0;
+		while (m_skeletons.size() > 0)
+		{
+			m_skeletons.erase(m_skeletons.begin());
+		}
+		m_skeletons_wave_timer = 0;
+		SpawnNewSkeletons(++m_level);
+	}
 
     //Towers are removed in style!
     for(int i = 0; i<m_towers.size(); i++)
@@ -530,6 +558,12 @@ bool Renderer::InitRenderingTechniques()
     m_postprocess_program.LoadUniform("uniform_time");
     m_postprocess_program.LoadUniform("uniform_depth");
     m_postprocess_program.LoadUniform("uniform_projection_inverse_matrix");
+    
+	m_postprocess_program.LoadUniform("game_over");
+	m_postprocess_program.LoadUniform("place_mode");
+
+    m_postprocess_program.LoadUniform("blue_towers");
+    m_postprocess_program.LoadUniform("red_towers");
 
     // Shadow mapping Program
 #ifdef _WIN32
@@ -743,8 +777,6 @@ bool Renderer::InitGeometricMeshes()
     else
         initialized = false;
 
-
-
     // load tower2
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
@@ -767,8 +799,6 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
-
-
 
     // load tile
 #ifdef _WIN32
@@ -806,7 +836,6 @@ bool Renderer::InitGeometricMeshes()
     }
     else
         initialized = false;
-
 
     // load cannonball
 #ifdef _WIN32
@@ -1065,6 +1094,29 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
+	// load heart
+#ifdef _WIN32
+	//define something for Windows (32-bit and 64-bit, this part is common)
+#ifdef _WIN64
+	mesh = loader.load("../Assets/Various/heart.obj");
+#endif
+#elif __APPLE__
+	// apple
+	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/heart.obj");
+
+#elif __linux__
+	// linux
+	mesh = loader.load("Assets/Various/heart.obj");
+#endif
+
+	if (mesh != nullptr)
+	{
+		m_heart_object = new GeometryNode();
+		m_heart_object->Init(mesh);
+	}
+	else
+		initialized = false;
+
 	return initialized;
 }
 
@@ -1209,7 +1261,7 @@ void Renderer::RenderGeometry()
 	glUniformMatrix4fv(m_geometry_rendering_program["uniform_projection_matrix"], 1, GL_FALSE, glm::value_ptr(m_projection_matrix));
 	glUniformMatrix4fv(m_geometry_rendering_program["uniform_view_matrix"], 1, GL_FALSE, glm::value_ptr(m_view_matrix));
 	glUniform3f(m_geometry_rendering_program["uniform_camera_position"], m_camera_position.x, m_camera_position.y, m_camera_position.z);
-	
+
 	// pass the light source parameters to uniforms
     glm::vec3 light_position = m_spotlight_node.GetPosition();
     glm::vec3 light_direction = m_spotlight_node.GetDirection();
@@ -1222,16 +1274,19 @@ void Renderer::RenderGeometry()
     glUniform1f(m_geometry_rendering_program["uniform_light_umbra"], m_spotlight_node.GetUmbra());
     glUniform1f(m_geometry_rendering_program["uniform_light_penumbra"], m_spotlight_node.GetPenumbra());
     glUniform1i(m_geometry_rendering_program["uniform_cast_shadows"], (m_spotlight_node.GetCastShadowsStatus())? 1 : 0);
+
 	// Set the sampler2D uniform to use texture unit 1
 	glUniform1i(m_geometry_rendering_program["shadowmap_texture"], 1);
 	// Bind the shadow map texture to texture unit 1
 	glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, (m_spotlight_node.GetCastShadowsStatus()) ? m_spotlight_node.GetShadowMapDepthTexture() : 0);
-
 	
 	// Enable Texture Unit 0
 	glUniform1i(m_geometry_rendering_program["uniform_diffuse_texture"], 0);
 	glActiveTexture(GL_TEXTURE0);
+
+	// draw the heart(s) object
+	//DrawGeometryNode(m_heart_object, m_heart_object_transformation_matrix, m_heart_object_transformation_normal_matrix);
 
 	// draw the terrain object
     DrawGeometryNode(m_terrain, m_terrain_transformation_matrix, m_terrain_transformation_normal_matrix);
@@ -1282,7 +1337,7 @@ void Renderer::RenderGeometry()
 			{
                 if(skeleton.getPosition().z > -1 && skeleton.will_render())
                 {
-                    std::cout<<m_level<<" <-"<<std::endl;
+                    //std::cout<<m_level<<" <-"<<std::endl;
                     if(m_level%3==0 && i==0)
                     {
                        DrawGeometryNode(m_skeleton_boss_body, skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
@@ -1295,6 +1350,7 @@ void Renderer::RenderGeometry()
 			}
 		}
 	}
+
 	glBindVertexArray(0);
 	m_geometry_rendering_program.Unbind();
 
@@ -1311,7 +1367,6 @@ void Renderer::RenderGeometry()
     }
 
     m_particle_rendering_program.Unbind();
-
 
 	glDisable(GL_DEPTH_TEST);
 	if(m_rendering_mode != RENDERING_MODE::TRIANGLES)
@@ -1385,6 +1440,12 @@ void Renderer::RenderToOutFB()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_fbo_depth_texture);	
 	glUniform1i(m_postprocess_program["uniform_depth"], 1);
+	
+	glUniform1i(m_postprocess_program["game_over"], GAME_OVER ? 1 : 0);
+	glUniform1i(m_postprocess_program["place_mode"], m_default_tower ? 1 : 0);
+
+	glUniform1i(m_postprocess_program["blue_towers"], m_blue_tower_counter);
+	glUniform1i(m_postprocess_program["red_towers"], m_red_tower_counter);
 
 	glUniform1f(m_postprocess_program["uniform_time"], m_continuous_time);
 	glm::mat4 projection_inverse_matrix = glm::inverse(m_projection_matrix);
@@ -1432,21 +1493,21 @@ void Renderer::MovePlayer(int dx, int dz) {
     }
 }
 
-
 void Renderer::PlaceTower() {
-    if (isValidTowerPos() && (m_new_tower_timer >= m_place_new_tower_time_limit || m_towers.size()<2))//place towers every 10 seconds. Allow player to build two towers at first
+	if (isValidTowerPos() && !GAME_OVER) //place towers every 10 seconds. Allow player to build two towers at first
 	{
-        std::cout<<"can place tower now"<<std::endl;
-        m_new_tower_timer=0;
-        if(m_default_tower)
-        {
-           m_towers.emplace_back(m_player_tile_position, m_tower_object, 2, 1.0f, false);
-        }else
-        {
-            m_towers.emplace_back(m_player_tile_position, m_tower2_object, 2, 2.0f, true);
-        }
-
-
+		std::cout << "can place tower now" << std::endl;
+		
+		if (m_default_tower && m_blue_tower_counter > 0)
+		{
+			m_towers.emplace_back(m_player_tile_position, m_tower_object, 2, 1.0f, false);
+			m_blue_tower_counter--;
+		}
+		else if (!m_default_tower && m_red_tower_counter > 0)
+		{
+			m_towers.emplace_back(m_player_tile_position, m_tower2_object, 2, 2.0f, true);
+			m_red_tower_counter--;
+		}
 	}
 }
 
@@ -1511,10 +1572,7 @@ bool Renderer::readRoad(const char *road)
     in.close();
     std::cout << "DONE reading the road file" << std::endl;
 
-
-
     return true;
-
 }
 
 void Renderer::shoot(float dt)
@@ -1540,35 +1598,55 @@ void Renderer::shoot(float dt)
     }
 }
 
-void Renderer::PawnNewSkeletons(int level)
+void Renderer::SpawnNewSkeletons(int level)
 {
-    if(level==0)
-        return;
-    m_pirate_position = glm::vec3(0, -1.f, 0);
-    if(level%3==0)
+	m_pirate_position = glm::vec3(0, -1.f, 0);
+	
+	if (level % 3 == 0)
+	{
+		m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6 * level, 0.12f, 1.f);
+	}
+	else
     {
-        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6*level, 0.12f, 1.f);
-    }else
-    {
-        for (int i=0; i<m_road.size() && i<level+3; i++)
-        {
-           m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3+level, 0.06f, 2.f);
-           m_pirate_position.z -= 2;
-        }
+		m_skeleton_counter += ((level % 4 == 0) ? 1 : 0);
+		for (int i = 0; i < m_road.size() && i < m_skeleton_counter; i++)
+		{
+			m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 + level, 0.06f, 2.f);
+			m_pirate_position.z -= 2;
+		}
     }
 
 }
 
 void Renderer::RemoveTower()
 {
-    for(int i = 0; i<m_towers.size(); i++)
-    {
-        if(m_towers[i].getPosition() == m_player_tile_position)
-        {
-            m_new_tower_timer += m_place_new_tower_time_limit;
-            m_towers[i].set_to_be_removed(true);
-        }
-    }
+	if (!GAME_OVER)
+	{
+		for (int i = 0; i < m_towers.size(); i++)
+		{
+			if (m_towers[i].getPosition() == m_player_tile_position)
+			{
+				m_towers[i].set_to_be_removed(true);
+				
+				if (m_towers[i].is_following_target())
+				{
+					if (++m_red_tower_replace_counter == 2)
+					{
+						m_red_tower_replace_counter = 0;
+						m_red_tower_counter++;
+					}
+				}
+				else
+				{
+					if (++m_blue_tower_replace_counter == 2)
+					{
+						m_blue_tower_replace_counter = 0;
+						m_blue_tower_counter++;
+					}
+				}
+			}
+		}
+	}
 }
 
 void Renderer::DrawText(const char *text, int length, int x, int y)
@@ -1593,6 +1671,3 @@ void Renderer::DrawText(const char *text, int length, int x, int y)
     glLoadMatrixd(matrix);
     glMatrixMode(GL_MODELVIEW);
 }
-
-
-

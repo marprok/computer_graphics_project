@@ -141,6 +141,10 @@ protected:
     glm::mat4										m_rocket_object_transformation_matrix;
     glm::mat4                                       m_rocket_object_transformation_normal_matrix;
 
+	class GeometryNode*								m_heart_object;
+	glm::mat4										m_heart_object_transformation_matrix;
+	glm::mat4                                       m_heart_object_transformation_normal_matrix;
+
     class GeometryNode*								m_red_tile;
 
     class GeometryNode*								m_player_tile;
@@ -151,9 +155,7 @@ protected:
 	std::vector<Tile>								m_road;
 	std::vector<Skeleton>							m_skeletons;
     std::vector<ParticleEmitter>                    m_particle_emitters;
-    float                                           m_tower_shoot_timer;
     float                                           m_skeletons_wave_timer;
-    float                                           m_new_tower_timer;
     float                                           m_particles_timer;
     int                                             m_level;
     bool                                            hit;
@@ -164,6 +166,17 @@ protected:
     bool                                            m_default_tower;
 
 	bool											m_first_frame;
+
+	int												m_blue_tower_counter;
+	int												m_red_tower_counter;
+
+	int												m_blue_tower_replace_counter;
+	int												m_red_tower_replace_counter;
+
+	int												m_skeleton_counter;
+
+	float											m_blue_timer;
+	float											m_red_timer;
 
     ParticleEmitter                                 m_particle_emitter;
     ShaderProgram                                   m_particle_rendering_program;
@@ -194,6 +207,7 @@ public:
 	bool										ReloadShaders();
 	void										Render();
     bool                                        GAME_OVER;
+	bool										m_playing_defeat;
 
 	// Passes
 	void										RenderShadowMaps();
@@ -217,7 +231,7 @@ public:
 
 	void MoveSkeleton(float dt);
 
-    void PawnNewSkeletons(int level);
+    void SpawnNewSkeletons(int level);
 
 	void RemoveSkeleton();
 

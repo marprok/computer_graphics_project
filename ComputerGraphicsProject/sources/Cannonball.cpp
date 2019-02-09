@@ -116,12 +116,12 @@ bool Cannonball::update(float dt, std::vector<Skeleton> &skeletons, float gravit
 		float distance = skeleton.distance_from(m_center_of_sphere);
         if (distance <= (m_radius + skeleton.getRadius()))
 		{
-            if(skeleton.get_health()>0)
-            {
-                Audio::PlayAudio("explosion.wav");
-                skeleton.lose_health(2);
-                return false;
-            }
+			if (skeleton.get_health() > 0)
+			{
+				Audio::PlayAudio("explosion.wav");
+				skeleton.lose_health(1);
+				return false;
+			}
 		}
 	}
     return true;
