@@ -129,11 +129,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);$(SolutionDir)3rdParty\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -172,13 +172,13 @@ copy "$(SolutionDir)3rdParty\bin\x64\*.dll" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(SolutionDir)3rdParty\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);F:\ANGELOS\Computer Graphics\Project\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\lib\$(PlatformName);$(SolutionDir)3rdParty\External Libraries\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(PlatformName)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>SDL2_image.lib;glew32.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
