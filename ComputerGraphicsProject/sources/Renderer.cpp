@@ -187,7 +187,13 @@ void Renderer::Update(float dt)
 		m_playing_defeat = true;
 	}
 
-    float movement_speed = 4.0f;
+	float movement_speed = 4.0f;
+
+	if (GAME_OVER)
+	{
+		movement_speed /= 2;
+	}
+
 	// compute the direction of the camera
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 

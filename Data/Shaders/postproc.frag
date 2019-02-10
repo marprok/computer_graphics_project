@@ -166,14 +166,22 @@ vec2 poissonDisk[16] = vec2[](
 	if (lose_coins_effect == 1) {
 		vec2 pos2 = uv - vec2(0.5, 0.5);
 		float dist2 = sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
-		if (dist2 >= 0.5) {
-			color = vec3(1 - 0.48 / dist2, 0, 0);
+		float max_dist = sqrt(0.5);
+		float min_dist = sqrt(0.1);
+		if (dist2 > min_dist) {
+			color += ((dist2 - min_dist) / max_dist) * vec3(0.3, 0, 0);
 		}
 	}
 	
 	if (game_over == 1) {
 		
+		// grayscale
 		color = vec3(color.r + color.g + color.b) / 3.0;
+		
+		vec2 pos3 = uv - vec2(0.5, 0.5);
+		float dist3 = sqrt(pos3.x * pos3.x + pos3.y * pos3.y);
+		float mask = 1.0 - dist3 * 1.5;
+		color = color * mask;
 	
 	} else {
 
