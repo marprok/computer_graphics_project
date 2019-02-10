@@ -567,6 +567,8 @@ bool Renderer::InitRenderingTechniques()
 
     m_postprocess_program.LoadUniform("blue_towers");
     m_postprocess_program.LoadUniform("red_towers");
+    m_postprocess_program.LoadUniform("coins_left");
+
 
     // Shadow mapping Program
 #ifdef _WIN32
@@ -1426,6 +1428,7 @@ void Renderer::RenderToOutFB()
 
 	glUniform1i(m_postprocess_program["blue_towers"], m_blue_tower_counter);
 	glUniform1i(m_postprocess_program["red_towers"], m_red_tower_counter);
+    glUniform1i(m_postprocess_program["coins_left"], chest->getCoinsLeft());
 
 	glUniform1f(m_postprocess_program["uniform_time"], m_continuous_time);
 	glm::mat4 projection_inverse_matrix = glm::inverse(m_projection_matrix);

@@ -179,11 +179,11 @@ int main(int argc, char *argv[])
 				{
 					renderer->CameraMoveForward(true);
 				}
-                else if (event.key.keysym.sym == SDLK_1)
+                else if (event.key.keysym.sym == SDLK_h)
                 {
                     renderer->setDefaultTower(true);
                 }
-                else if (event.key.keysym.sym == SDLK_2)
+                else if (event.key.keysym.sym == SDLK_y)
                 {
                     renderer->setDefaultTower(false);
                 }

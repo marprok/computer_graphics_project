@@ -60,7 +60,7 @@ float shadow_pcf2x2(vec3 light_space_xyz)
 float shadow_nearest(vec3 light_space_xyz)
 {
 	// sample shadow map
-	float shadow_map_z = texture2D(shadowmap_texture, light_space_xyz.xy).r;
+	float shadow_map_z = texture(shadowmap_texture, light_space_xyz.xy).r;
 
 	// + shaded -> 0.0 
 	// - lit -> 1.0

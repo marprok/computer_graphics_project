@@ -11,6 +11,7 @@ uniform int place_mode;
 
 uniform int blue_towers;
 uniform int red_towers;
+uniform int coins_left;
 
 in vec2 f_texcoord;
 
@@ -37,7 +38,7 @@ float gaussian(vec2 uv, float sigma)
 void main(void)
 {
 	
-	vec3 color = texture2D(uniform_texture, f_texcoord).rgb;
+	vec3 color = texture(uniform_texture, f_texcoord).rgb;
 	vec2 uv = f_texcoord;
 	
 //#define BLOOM
@@ -165,7 +166,7 @@ vec2 poissonDisk[16] = vec2[](
 		color = vec3(color.r + color.g + color.b) / 3.0;
 	
 	} else {
-		
+
 		float start_x	=	0.025;
 		float start_y	=	0.02;
 		
@@ -174,6 +175,32 @@ vec2 poissonDisk[16] = vec2[](
 		
 		float offset	=	0.005;
 		
+		float radius = height / 2.5;
+		vec2 center;
+		center.x = start_x / 2;
+
+
+		vec2 pos;
+		
+		int number_of_loops = coins_left / 10;
+		center.y = 1 - start_y;
+		center.x = start_x;
+		float dist;
+		for (int i=0; i<number_of_loops; i++)
+		{
+			pos = uv - center;
+			dist = sqrt(pos.x * pos.x + pos.y * pos.y);
+			if (dist < radius) 
+			{
+				color = vec3(0.92f, 0.83f, 0.f);
+			}
+		center.x += offset + 2*radius;
+		}
+		
+		
+
+
+
 		// draw blue rectangles
 		float x_start_blue = start_x;
 		float y_start_blue = start_y;
@@ -199,9 +226,8 @@ vec2 poissonDisk[16] = vec2[](
 		}
 		
 		// draw the selection circle
-		float radius = height / 2.5;
-		
-		vec2 center;
+		radius = height / 2.5;
+
 		center.x = start_x / 2;
 		
 		if (place_mode == 1) {
@@ -212,8 +238,8 @@ vec2 poissonDisk[16] = vec2[](
 		
 		center.y += height / 2;
 		
-		vec2 pos = uv - center;
-		float dist = sqrt(pos.x * pos.x + pos.y * pos.y);
+		pos = uv - center;
+		dist = sqrt(pos.x * pos.x + pos.y * pos.y);
 		if (dist < radius) {
 			color = vec3(0.5);
 		}
