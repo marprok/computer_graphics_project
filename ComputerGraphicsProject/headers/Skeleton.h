@@ -33,7 +33,7 @@ class Skeleton
 {
 public:
 	Skeleton();
-    Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode** g_node, int health, float scaling_factor, float velocity);
+    Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode** g_node, int health, float scaling_factor, float velocity, bool boss);
 	~Skeleton();
 	
     void setPosition(glm::vec3 position, float rotation, float dt);
@@ -101,7 +101,7 @@ private:
     bool                    m_is_dead;
     bool                    m_should_be_rendered;
     float                   m_scaling_factor;
-
+	bool					m_boss;
 
 	std::vector<Tile>		m_road;
 };

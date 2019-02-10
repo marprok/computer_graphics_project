@@ -223,6 +223,10 @@ int main(int argc, char *argv[])
 				{
 					renderer->MovePlayer(-2, 0);
 				}
+				else if (event.key.keysym.sym == SDLK_SPACE)
+				{
+					renderer->ReloadShaders();
+				}
 			}
 			else if (event.type == SDL_KEYUP)
 			{

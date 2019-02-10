@@ -95,7 +95,7 @@ Renderer::Renderer()
     hit = false;
     exploded_cannonball_index=0;
     m_place_new_tower_time_limit=20;
-    Mix_AllocateChannels(64);
+    Mix_AllocateChannels(16);
     m_default_tower = true;
 
 }
@@ -1604,14 +1604,14 @@ void Renderer::SpawnNewSkeletons(int level)
 	
 	if (level % 3 == 0)
 	{
-		m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6 * level, 0.12f, 1.f);
+		m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6 * level, 0.12f, 1.f, true);
 	}
 	else
     {
 		m_skeleton_counter += ((level % 4 == 0) ? 1 : 0);
 		for (int i = 0; i < m_road.size() && i < m_skeleton_counter; i++)
 		{
-			m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 + level, 0.06f, 2.f);
+			m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 + level, 0.06f, 2.f, false);
 			m_pirate_position.z -= 2;
 		}
     }

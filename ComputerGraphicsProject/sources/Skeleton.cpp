@@ -7,7 +7,7 @@ Skeleton::Skeleton()
 {
 }
 
-Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node, int health, float scaling_factor, float velocity)
+Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std::vector<Tile> &road, GeometryNode ** g_node, int health, float scaling_factor, float velocity, bool boss)
 {
     setPosition(position, 0, 0);
     setGoal(goal);
@@ -25,7 +25,7 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_is_dead=false;
     m_should_be_rendered=true;
     m_scaling_factor = scaling_factor;
-
+	m_boss = boss;
 }
 
 void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_time) {
@@ -96,13 +96,20 @@ void Skeleton::kill()
 {
     if(!m_is_dead)
     {
-		Audio::PlayAudio("death.wav");
 		
-		int random = rand() % 100;
-		if (random <= 25)
+		if (m_boss)
 		{
-			// with a 25% probability play wilhelm scream
-			Audio::PlayAudio("wilhelm_scream.wav");
+			Audio::PlayAudio("boss_death.wav");
+		}
+		else
+		{
+			Audio::PlayAudio("death.wav");
+			int random = rand() % 100;
+			if (random <= 25)
+			{
+				// with a 25% probability play wilhelm scream
+				Audio::PlayAudio("wilhelm_scream.wav");
+			}
 		}
     }
     m_is_dead=true;

@@ -36,6 +36,7 @@ float gaussian(vec2 uv, float sigma)
 
 void main(void)
 {
+	
 	vec3 color = texture2D(uniform_texture, f_texcoord).rgb;
 	vec2 uv = f_texcoord;
 	
@@ -165,53 +166,60 @@ vec2 poissonDisk[16] = vec2[](
 	
 	} else {
 		
-		// draw red rectangles
-		vec2 center = vec2(0.01, 0.025);
-		float offset = 0.02;
+		float start_x	=	0.025;
+		float start_y	=	0.02;
 		
-		vec2 circle_center = center;
-		vec2 pos;
+		float width		=	0.02;
+		float height	=	0.02;
 		
-		for (int i = 0; i < red_towers; i++) {
-			if (i != 0) {
-				center.x = center.x + offset - 0.0085;
-			}
-			pos = uv - center;
-			if (pos.x > center.x && pos.x < center.x + offset && pos.y > center.y && pos.y < center.y + offset) {
-				color = vec3(1, 0, 0);
-			}
-		}
+		float offset	=	0.005;
 		
 		// draw blue rectangles
-		center = vec2(circle_center.x, circle_center.y - 0.015);
+		float x_start_blue = start_x;
+		float y_start_blue = start_y;
 		
 		for (int i = 0; i < blue_towers; i++) {
-			if (i != 0) {
-				center.x = center.x + offset - 0.0085;
-			}
-			pos = uv - center;
-			if (pos.x > center.x && pos.x < center.x + offset && pos.y > center.y && pos.y < center.y + offset) {
+			if ((uv.x > x_start_blue) && (uv.x < x_start_blue + width) && (uv.y > y_start_blue) && (uv.y < y_start_blue + height)) {
 				color = vec3(0, 0, 1);
 			}
+			x_start_blue += width + offset;
+		}
+		
+		// draw red rectangles
+		float x_start_red = start_x;
+		float y_start_red = start_y;
+		
+		y_start_red += height + 0.01;	// y offset from blue
+		
+		for (int i = 0; i < red_towers; i++) {
+			if ((uv.x > x_start_red) && (uv.x < x_start_red + width) && (uv.y > y_start_red) && (uv.y < y_start_red + height)) {
+				color = vec3(1, 0, 0);
+			}
+			x_start_red += width + offset;
 		}
 		
 		// draw the selection circle
-		float radius = offset / 2.3;
+		float radius = height / 2.5;
+		
+		vec2 center;
+		center.x = start_x / 2;
+		
 		if (place_mode == 1) {
-			circle_center.y = center.y;
+			center.y = y_start_blue;
 		} else {
-			offset = 2 * offset - radius / 2;
+			center.y = y_start_red;
 		}
 		
-		center = vec2(circle_center.x - 0.001, circle_center.y + offset);
+		center.y += height / 2;
 		
-		pos = uv - center;
+		vec2 pos = uv - center;
 		float dist = sqrt(pos.x * pos.x + pos.y * pos.y);
 		if (dist < radius) {
-			color = vec3(0, 0.8, 0);
+			color = vec3(0.5);
 		}
-	
+		
 	}
 	
 	out_color = vec4(color, 1.0);
+
 }
