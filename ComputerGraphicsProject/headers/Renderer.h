@@ -166,6 +166,7 @@ protected:
     bool                                            m_default_tower;
 
 	bool											m_first_frame;
+    bool                                            m_path_has_changed;
 
 	int												m_blue_tower_counter;
 	int												m_red_tower_counter;
@@ -231,7 +232,7 @@ public:
 
 	void MoveSkeleton(float dt);
 
-    void SpawnNewSkeletons(int level);
+    void SpawnNewSkeletons();
 
 	void RemoveSkeleton();
 
@@ -244,6 +245,8 @@ public:
     void DrawText(const char *text, int length, int x, int y);
 
     void setDefaultTower(bool flag);
+
+    void InitiallizeNextPath();
 
 };
 

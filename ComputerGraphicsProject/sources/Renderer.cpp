@@ -97,6 +97,7 @@ Renderer::Renderer()
     m_place_new_tower_time_limit=20;
     Mix_AllocateChannels(16);
     m_default_tower = true;
+    m_path_has_changed=false;
 
 }
 
@@ -404,7 +405,8 @@ void Renderer::Update(float dt)
 			m_skeletons.erase(m_skeletons.begin());
 		}
 		m_skeletons_wave_timer = 0;
-		SpawnNewSkeletons(++m_level);
+        m_level++;
+        SpawnNewSkeletons();
 	}
 
     //Towers are removed in style!
@@ -1576,21 +1578,39 @@ void Renderer::shoot(float dt)
     }
 }
 
-void Renderer::SpawnNewSkeletons(int level)
+void Renderer::SpawnNewSkeletons()
 {
 	m_pirate_position = glm::vec3(0, -1.f, 0);
+    if(m_level == 10 && !m_path_has_changed)
+    {
+        m_path_has_changed=true;
+        InitiallizeNextPath();
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        readRoad("../Data/road2.map");
+    #endif
+#elif __APPLE__
+    // apple
+        readRoad("/Users/dimitrisstaratzis/Desktop/CG_Project/Data/road2.map");
+
+#elif __linux__
+    // linux
+        readRoad("Data/road2.map");
+#endif
+    }
 	
-	if (level % 3 == 0)
+    if (m_level % 3 == 0)
 	{
-        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 12 * level, 0.12f, 1.f, true);
+        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 12 * m_level, 0.12f, 1.f, true);
 	}
 	else
     {
-        m_skeleton_counter +=((level % 2 == 0) ? 1 : 0);
+        m_skeleton_counter +=((m_level % 2 == 0) ? 1 : 0);
 		for (int i = 0; i < m_road.size() && i < m_skeleton_counter; i++)
 		{
-            std::cout<<level<<std::endl;
-            m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 * level, 0.06f, 2.f, false);
+            //std::cout<<level<<std::endl;
+            m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 * m_level, 0.06f, 2.f, false);
 			m_pirate_position.z -= 2;
 		}
     }
@@ -1649,4 +1669,17 @@ void Renderer::DrawText(const char *text, int length, int x, int y)
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixd(matrix);
     glMatrixMode(GL_MODELVIEW);
+}
+
+void Renderer::InitiallizeNextPath()
+{
+    m_blue_timer = 0.f;
+    m_red_timer = 0.f;
+    m_road.clear();
+    m_level=1;
+    m_skeletons.clear();
+    m_towers.clear();
+    m_blue_tower_counter = 2;
+    m_red_tower_counter = 1;
+    chest->add_coins(100);
 }
