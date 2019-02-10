@@ -168,6 +168,8 @@ protected:
 	bool											m_first_frame;
     bool                                            m_path_has_changed;
 
+    int												m_lose_coins_effect;
+
 	int												m_blue_tower_counter;
 	int												m_red_tower_counter;
 

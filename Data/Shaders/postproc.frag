@@ -13,6 +13,8 @@ uniform int blue_towers;
 uniform int red_towers;
 uniform int coins_left;
 
+uniform int lose_coins_effect;
+
 in vec2 f_texcoord;
 
 #define DOF_RADIUS 4
@@ -161,6 +163,14 @@ vec2 poissonDisk[16] = vec2[](
 
 #endif
 	
+	if (lose_coins_effect == 1) {
+		vec2 pos2 = uv - vec2(0.5, 0.5);
+		float dist2 = sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
+		if (dist2 >= 0.5) {
+			color = vec3(1 - 0.48 / dist2, 0, 0);
+		}
+	}
+	
 	if (game_over == 1) {
 		
 		color = vec3(color.r + color.g + color.b) / 3.0;
@@ -194,13 +204,37 @@ vec2 poissonDisk[16] = vec2[](
 			{
 				color = vec3(0.92f, 0.83f, 0.f);
 			}
-		center.x += offset + 2*radius;
+			center.x += offset + 2*radius;
+		}
+
+		// draw container
+		start_x			=	0.003;
+		start_y			=	0.01;
+		
+		width			=	0.173;
+		height			=	0.07;
+		
+		float shadow_x	=	0.0025;
+		float shadow_y	=	0.0025;
+		
+		if ((uv.x > start_x - shadow_x) && (uv.x < start_x + width + shadow_x) && (uv.y > start_y - shadow_y) && (uv.y < start_y + height + shadow_y)) {
+			color = vec3(0.4);
 		}
 		
+		if ((uv.x > start_x) && (uv.x < start_x + width) && (uv.y > start_y) && (uv.y < start_y + height)) {
+			color = vec3(0.5);
+		}
 		
-
-
-
+		// loading rectangles dimensions
+		float x_offset	=	0.005;
+		float y_offset	=	0.01;
+		
+		start_x			=	0.025;
+		start_y			=	0.02;
+		
+		width			=	0.02;
+		height			=	(height - 3 * y_offset) / 2;
+		
 		// draw blue rectangles
 		float x_start_blue = start_x;
 		float y_start_blue = start_y;
@@ -209,25 +243,25 @@ vec2 poissonDisk[16] = vec2[](
 			if ((uv.x > x_start_blue) && (uv.x < x_start_blue + width) && (uv.y > y_start_blue) && (uv.y < y_start_blue + height)) {
 				color = vec3(0, 0, 1);
 			}
-			x_start_blue += width + offset;
+			x_start_blue += width + x_offset;
 		}
 		
 		// draw red rectangles
 		float x_start_red = start_x;
 		float y_start_red = start_y;
 		
-		y_start_red += height + 0.01;	// y offset from blue
+		y_start_red += height + y_offset;
 		
 		for (int i = 0; i < red_towers; i++) {
 			if ((uv.x > x_start_red) && (uv.x < x_start_red + width) && (uv.y > y_start_red) && (uv.y < y_start_red + height)) {
 				color = vec3(1, 0, 0);
 			}
-			x_start_red += width + offset;
+			x_start_red += width + x_offset;
 		}
 		
 		// draw the selection circle
 		radius = height / 2.5;
-
+		
 		center.x = start_x / 2;
 		
 		if (place_mode == 1) {
@@ -241,7 +275,7 @@ vec2 poissonDisk[16] = vec2[](
 		pos = uv - center;
 		dist = sqrt(pos.x * pos.x + pos.y * pos.y);
 		if (dist < radius) {
-			color = vec3(0.5);
+			color = vec3(0);
 		}
 		
 	}

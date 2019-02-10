@@ -173,6 +173,8 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
+	m_lose_coins_effect = 0;
+
 	if (m_first_frame)
 	{
 		Audio::PlayMusic("Theme.wav");
@@ -267,14 +269,14 @@ void Renderer::Update(float dt)
 	m_red_timer += dt;
 
 	// every X seconds increase available blue towers
-    if (m_blue_timer > 30.f && m_blue_tower_counter <= 6)
+    if (m_blue_timer > 30.f && m_blue_tower_counter <= 5)
 	{
 		m_blue_tower_counter++;
 		m_blue_timer = 0.f;
 	}
 
 	// every X seconds increase available red towers
-    if (m_red_timer > 1.f * 60.f && m_red_tower_counter <= 6)
+    if (m_red_timer > 1.f * 60.f && m_red_tower_counter <= 5)
 	{
 		m_red_tower_counter++;
 		m_red_timer = 0.f;
@@ -292,22 +294,23 @@ void Renderer::Update(float dt)
     //Do not render the skeletons that reached the tresure(always the leader)
     if(chest->isReached(m_skeletons))
     {
+		m_lose_coins_effect = 1;
         for (size_t i = 0; i < m_skeletons.size(); i++)
         {
             if (m_skeletons[i].get_health() == -1)
             {
                 m_skeletons[i].render(false);
                 //std::cout<<"MPHKA"<< std::endl;
-               //m_skeletons.erase(m_skeletons.begin()+i);
+				//m_skeletons.erase(m_skeletons.begin()+i);
             }
         }
     }
 
     //End the game if the chest is empty
-    if(chest->getCoinsLeft() == 0)
-    {
-        GAME_OVER = true;
-    }
+	if (chest->getCoinsLeft() == 0)
+	{
+		GAME_OVER = true;
+	}
 
     //throw cannonballs
     m_particles_timer += dt;
@@ -335,21 +338,18 @@ void Renderer::Update(float dt)
     m_particles_timer += dt;
     for (size_t i = 0; i < m_rockets.size();)
     {
-        if(m_skeletons[m_rockets[i].get_target()].get_health() <=0)
-        {
-            m_rockets.erase(m_rockets.begin()+i);
-            continue;
-        }
+		if (m_skeletons[m_rockets[i].get_target()].get_health() <= 0)
+		{
+			m_rockets.erase(m_rockets.begin() + i);
+			continue;
+		}
         if (!m_rockets[i].update(dt, m_skeletons))
         {
             hit = true;
             m_explosion_position = m_rockets[i].getPosition();
-            if(!(m_explosion_position.x > 19.5 || m_explosion_position.x < -1.0f || m_explosion_position.z > 19.5 || m_explosion_position.z < -1.0f))//when ball reached the end of the board
-            {
-                m_particle_emitters.emplace_back(m_explosion_position);
-                m_particle_emitters[m_particle_emitters.size()-1].Init();
-                m_particles_timer = 0;
-            }
+            m_particle_emitters.emplace_back(m_explosion_position);
+            m_particle_emitters[m_particle_emitters.size()-1].Init();
+            m_particles_timer = 0;
             m_rockets.erase(m_rockets.begin() + i);
         }
         else
@@ -363,13 +363,13 @@ void Renderer::Update(float dt)
 		m_particle_emitters[i].Update(dt);
 	}
 
-    for(int i=0; i<m_particle_emitters.size(); i++)
-    {
-        if(m_particle_emitters[i].get_continuous_time() > 0.2)//delete particles after 0.2 seconds
-        {
-            m_particle_emitters.erase(m_particle_emitters.begin()+i);
-        }
-    }
+	for (int i = 0; i < m_particle_emitters.size(); i++)
+	{
+		if (m_particle_emitters[i].get_continuous_time() > 0.2) //delete particles after 0.2 seconds
+		{
+			m_particle_emitters.erase(m_particle_emitters.begin() + i);
+		}
+	}
 
     // place new and more powerfull skeletons every 20 secods
     //first find the last alive skeleton to prevent new waves from overlapping him
@@ -421,15 +421,6 @@ void Renderer::Update(float dt)
             }
         }
 
-    }
-
-    //erase skeletons that reached the chest
-    for (size_t i = 0; i < m_skeletons.size(); i++)
-    {
-        if (m_skeletons[i].get_health() == -1)
-        {
-           m_skeletons.erase(m_skeletons.begin()+i);
-        }
     }
 }
 
@@ -569,6 +560,8 @@ bool Renderer::InitRenderingTechniques()
     m_postprocess_program.LoadUniform("red_towers");
     m_postprocess_program.LoadUniform("coins_left");
 
+    m_postprocess_program.LoadUniform("lose_coins_effect");
+
 
     // Shadow mapping Program
 #ifdef _WIN32
@@ -668,10 +661,10 @@ bool Renderer::ResizeBuffers(int width, int height)
 bool Renderer::InitLightSources()
 {
     // Initialize the spot light
-    m_spotlight_node.SetPosition(glm::vec3(13, 18, 0));
-    m_spotlight_node.SetTarget(glm::vec3(10.4, 0, 16));
-    m_spotlight_node.SetColor(82.f * glm::vec3(200, 200, 200) / 255.f);
-    m_spotlight_node.SetConeSize(200, 200);
+    m_spotlight_node.SetPosition(glm::vec3(11, 18, 2));
+    m_spotlight_node.SetTarget(glm::vec3(10, 0, 10));
+    m_spotlight_node.SetColor(100.f * glm::vec3(140, 140, 140) / 255.f);
+    m_spotlight_node.SetConeSize(88, 88);
     m_spotlight_node.CastShadow(true);
 
 	return true;
@@ -1315,20 +1308,27 @@ void Renderer::RenderGeometry()
 		{
 			// Don' t render the health bar when skeleton is dead
 			// Don' t render the red health bar when skeleton has full health
-            if (!((i == 4 || i == 5) && (skeleton.get_health() == 0)) && !(i == 5 && skeleton.get_health() == skeleton.get_max_health() /*max_health*/))
+			if (i == 5 && skeleton.get_health() == skeleton.get_max_health())
 			{
-                if(skeleton.getPosition().z > -1 && skeleton.will_render())
-                {
-                    //std::cout<<m_level<<" <-"<<std::endl;
-                    if(m_level%3==0 && i==0)
-                    {
-                       DrawGeometryNode(m_skeleton_boss_body, skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
-                    }else
-                    {
-                       DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
-                    }
-                }
+				continue;
+			}
 
+			if (skeleton.get_health() == 0 && (i == 5 || i == 4))
+			{
+				continue;
+			}
+            
+			if (skeleton.getPosition().z > -1 && skeleton.will_render())
+			{
+				//std::cout<<m_level<<" <-"<<std::endl;
+				if (m_level % 3 == 0 && i == 0)
+				{
+					DrawGeometryNode(m_skeleton_boss_body, skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+				}
+				else
+				{
+					DrawGeometryNode(skeleton.getGeometricNode()[i], skeleton.getGeometricTransformationMatrix()[i], skeleton.getGeometricTransformationNormalMatrix()[i]);
+				}
 			}
 		}
 	}
@@ -1429,6 +1429,7 @@ void Renderer::RenderToOutFB()
 	glUniform1i(m_postprocess_program["blue_towers"], m_blue_tower_counter);
 	glUniform1i(m_postprocess_program["red_towers"], m_red_tower_counter);
     glUniform1i(m_postprocess_program["coins_left"], chest->getCoinsLeft());
+    glUniform1i(m_postprocess_program["lose_coins_effect"], m_lose_coins_effect);
 
 	glUniform1f(m_postprocess_program["uniform_time"], m_continuous_time);
 	glm::mat4 projection_inverse_matrix = glm::inverse(m_projection_matrix);
@@ -1609,7 +1610,7 @@ void Renderer::SpawnNewSkeletons()
 	}
 	else
     {
-        m_skeleton_counter +=((m_level % 2 == 0) ? 1 : 0);
+		m_skeleton_counter +=((m_level % 2 == 0) ? 1 : 0);
 		for (int i = 0; i < m_road.size() && i < m_skeleton_counter; i++)
 		{
             //std::cout<<level<<std::endl;

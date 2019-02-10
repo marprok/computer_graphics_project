@@ -306,7 +306,7 @@ int main(int argc, char *argv[])
 
 
 
-        cap_fps(60, dt);
+        cap_fps(30, dt);
 	}
 
 	//Clean up
