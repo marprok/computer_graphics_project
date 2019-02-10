@@ -223,10 +223,11 @@ void Renderer::Update(float dt)
     m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
 	// update heart(s) transformations
+    /*
 	m_heart_object_transformation_matrix =
 		glm::translate(glm::mat4(1.f), glm::vec3(m_camera_position.x + 2, m_camera_position.y - 2, m_camera_position.z + 2));
 	m_heart_object_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_heart_object_transformation_matrix))));
-
+*/
 	// update meshes tranformations
     m_terrain_transformation_matrix =
 		glm::translate(glm::mat4(1.f), glm::vec3(9, 0, 9)) *
@@ -265,14 +266,14 @@ void Renderer::Update(float dt)
 	m_red_timer += dt;
 
 	// every X seconds increase available blue towers
-	if (m_blue_timer > 40.f && m_blue_tower_counter <= 6)
+    if (m_blue_timer > 30.f && m_blue_tower_counter <= 6)
 	{
 		m_blue_tower_counter++;
 		m_blue_timer = 0.f;
 	}
 
 	// every X seconds increase available red towers
-	if (m_red_timer > 1.5f * 60.f && m_red_tower_counter <= 6)
+    if (m_red_timer > 1.f * 60.f && m_red_tower_counter <= 6)
 	{
 		m_red_tower_counter++;
 		m_red_timer = 0.f;
@@ -1094,29 +1095,6 @@ bool Renderer::InitGeometricMeshes()
 	else
 		initialized = false;
 
-	// load heart
-#ifdef _WIN32
-	//define something for Windows (32-bit and 64-bit, this part is common)
-#ifdef _WIN64
-	mesh = loader.load("../Assets/Various/heart.obj");
-#endif
-#elif __APPLE__
-	// apple
-	mesh = loader.load("/Users/dimitrisstaratzis/Desktop/CG_Project/Assets/Various/heart.obj");
-
-#elif __linux__
-	// linux
-	mesh = loader.load("Assets/Various/heart.obj");
-#endif
-
-	if (mesh != nullptr)
-	{
-		m_heart_object = new GeometryNode();
-		m_heart_object->Init(mesh);
-	}
-	else
-		initialized = false;
-
 	return initialized;
 }
 
@@ -1604,14 +1582,15 @@ void Renderer::SpawnNewSkeletons(int level)
 	
 	if (level % 3 == 0)
 	{
-		m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 6 * level, 0.12f, 1.f, true);
+        m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 12 * level, 0.12f, 1.f, true);
 	}
 	else
     {
-		m_skeleton_counter += ((level % 4 == 0) ? 1 : 0);
+        m_skeleton_counter +=((level % 2 == 0) ? 1 : 0);
 		for (int i = 0; i < m_road.size() && i < m_skeleton_counter; i++)
 		{
-			m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 + level, 0.06f, 2.f, false);
+            std::cout<<level<<std::endl;
+            m_skeletons.emplace_back(m_pirate_position, 1, (float)rand() / RAND_MAX, m_road, m_skeleton_object, 3 * level, 0.06f, 2.f, false);
 			m_pirate_position.z -= 2;
 		}
     }
