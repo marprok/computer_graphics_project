@@ -176,10 +176,13 @@ protected:
 	int												m_blue_tower_replace_counter;
 	int												m_red_tower_replace_counter;
 
-	int												m_skeleton_counter;
+    int												m_skeleton_counter;
+    int                                             MichaelJacksonCounter;
+    int                                             themeCounter;
 
 	float											m_blue_timer;
 	float											m_red_timer;
+    float                                           m_highscore;
 
     ParticleEmitter                                 m_particle_emitter;
     ShaderProgram                                   m_particle_rendering_program;
@@ -211,6 +214,7 @@ public:
 	void										Render();
     bool                                        GAME_OVER;
 	bool										m_playing_defeat;
+    bool                                        MichaelJacksonMode;
 
 	// Passes
 	void										RenderShadowMaps();
@@ -244,11 +248,13 @@ public:
 
     void shoot(float dt);
 
-    void DrawText(const char *text, int length, int x, int y);
-
     void setDefaultTower(bool flag);
 
     void InitiallizeNextPath();
+
+    void setMichaelJacksonMode(bool flag);
+
+    bool getMichaelJacksonMode();
 
 };
 

@@ -26,18 +26,23 @@ Skeleton::Skeleton(glm::vec3 position, int goal, float hand_start_rotation, std:
     m_should_be_rendered=true;
     m_scaling_factor = scaling_factor;
 	m_boss = boss;
+    MichaelJacksonMode=false;
 }
 
 void Skeleton::setPosition(glm::vec3 position, float angle, float continuous_time) {
     m_position = position;
 	m_rotation = angle;
     m_position.y = 0.002f;
+    if(MichaelJacksonMode)
+    {
+        m_rotation+=PI;
+    }
 
 	glm::mat4 pirate_position;
 	pirate_position =
 		glm::translate(glm::mat4(1.0f), m_position) *
         glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.05, 0)) *
-		glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0, 1, 0)) *
+        glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0, 1, 0)) *
         glm::scale(glm::mat4(1.0), glm::vec3(m_scaling_factor));
 
     // body
@@ -288,6 +293,11 @@ bool Skeleton::will_render()
 void Skeleton::render(bool flag)
 {
     m_should_be_rendered = flag;
+}
+
+void Skeleton::setMichaelJacksonMode(bool flag)
+{
+    MichaelJacksonMode=flag;
 }
 
 int Skeleton::get_max_health() { return m_max_health; }

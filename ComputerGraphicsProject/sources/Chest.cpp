@@ -73,7 +73,6 @@ void Chest::lose_coins()
     {
 		Audio::PlayAudio("Coins.wav");
     }
-    std::cout<<"Coins left: "<< m_coins_left<<std::endl;
 }
 
 int Chest::getCoinsLeft()

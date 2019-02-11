@@ -80,6 +80,8 @@ public:
 
     void render(bool flag);
 
+    void setMichaelJacksonMode(bool flag);
+
 
 
 private:
@@ -102,6 +104,7 @@ private:
     bool                    m_should_be_rendered;
     float                   m_scaling_factor;
 	bool					m_boss;
+    bool                    MichaelJacksonMode;
 
 	std::vector<Tile>		m_road;
 };

@@ -98,6 +98,10 @@ Renderer::Renderer()
     Mix_AllocateChannels(16);
     m_default_tower = true;
     m_path_has_changed=false;
+    MichaelJacksonMode=false;
+    MichaelJacksonCounter=0;
+    themeCounter=0;
+    m_highscore=0.f;
 
 }
 
@@ -231,13 +235,6 @@ void Renderer::Update(float dt)
 	// compute the view matrix
     m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
-	// update heart(s) transformations
-    /*
-	m_heart_object_transformation_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(m_camera_position.x + 2, m_camera_position.y - 2, m_camera_position.z + 2));
-	m_heart_object_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_heart_object_transformation_matrix))));
-*/
-	// update meshes tranformations
     m_terrain_transformation_matrix =
 		glm::translate(glm::mat4(1.f), glm::vec3(9, 0, 9)) *
 		glm::scale(glm::mat4(1.f), glm::vec3(10.f));
@@ -257,6 +254,35 @@ void Renderer::Update(float dt)
     m_player_tile_transformation_normal_matrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(m_player_tile_transformation_matrix))));
 
 	MoveSkeleton(dt);
+    //Michael Jackson Mode
+    if(MichaelJacksonMode)
+    {
+        if(MichaelJacksonCounter==0)
+        {
+            Audio::PlayMusic("MJ.wav");
+            MichaelJacksonCounter++;
+            themeCounter=0;
+        }
+        for (size_t i = 0; i < m_skeletons.size(); i++)
+        {
+            if(m_skeletons[i].get_health() > 0)
+                m_skeletons[i].setMichaelJacksonMode(true);
+        }
+    }else
+    {
+        if(themeCounter==0)
+        {
+            Audio::PlayMusic("theme.wav");
+            MichaelJacksonCounter=0;
+            themeCounter++;
+        }
+        for (size_t i = 0; i < m_skeletons.size(); i++)
+        {
+            if(m_skeletons[i].get_health() > 0)
+                m_skeletons[i].setMichaelJacksonMode(false);
+        }
+    }
+
 
 	if (isValidTowerPos())
 	{
@@ -306,17 +332,19 @@ void Renderer::Update(float dt)
             if (m_skeletons[i].get_health() == -1)
             {
                 m_skeletons[i].render(false);
-                //std::cout<<"MPHKA"<< std::endl;
-				//m_skeletons.erase(m_skeletons.begin()+i);
             }
         }
     }
 
     //End the game if the chest is empty
-	if (chest->getCoinsLeft() == 0)
+    if (chest->getCoinsLeft() == 0 && !GAME_OVER)
 	{
 		GAME_OVER = true;
-	}
+        std::cout<<"Highscore = " << m_highscore<< " seconds" <<std::endl;
+    }else
+    {
+        m_highscore += dt;
+    }
 
     //throw cannonballs
     m_particles_timer += dt;
@@ -1486,7 +1514,6 @@ void Renderer::MovePlayer(int dx, int dz) {
 void Renderer::PlaceTower() {
 	if (isValidTowerPos() && !GAME_OVER) //place towers every 10 seconds. Allow player to build two towers at first
 	{
-		std::cout << "can place tower now" << std::endl;
 		
 		if (m_default_tower && m_blue_tower_counter > 0)
 		{
@@ -1658,28 +1685,6 @@ void Renderer::RemoveTower()
 	}
 }
 
-void Renderer::DrawText(const char *text, int length, int x, int y)
-{
-
-    glMatrixMode(GL_PROJECTION);
-    double *matrix = new double[16];
-    glGetDoublev(GL_PROJECTION_MATRIX, matrix);
-    glLoadIdentity();
-    glOrtho(0, 800, 0, 600, -5, 5);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
-    glLoadIdentity();
-    glRasterPos2i(x, y);
-    for(int i=0; i<length; i++)
-    {
-        //glutBitmapCharacter(GLUT_BITMAP_9_BY_15 , (int)text[i]);
-    }
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(matrix);
-    glMatrixMode(GL_MODELVIEW);
-}
 
 void Renderer::InitiallizeNextPath()
 {
@@ -1692,4 +1697,14 @@ void Renderer::InitiallizeNextPath()
     m_blue_tower_counter = 2;
     m_red_tower_counter = 1;
     chest->add_coins(100);
+}
+
+void Renderer::setMichaelJacksonMode(bool flag)
+{
+    MichaelJacksonMode=flag;
+}
+
+bool Renderer::getMichaelJacksonMode()
+{
+    return MichaelJacksonMode;
 }
