@@ -88,8 +88,8 @@ float shadow(vec3 pwcs)
 
 	
 	// sample shadow map
-	//return shadow_nearest(plcs.xyz);
-	return shadow_pcf2x2(plcs.xyz);
+	return shadow_nearest(plcs.xyz);
+	//return shadow_pcf2x2(plcs.xyz);
 }
 
 float compute_spotlight(vec3 vertex_to_light_direction)

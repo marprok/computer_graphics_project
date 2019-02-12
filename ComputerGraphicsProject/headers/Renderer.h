@@ -169,6 +169,8 @@ protected:
     bool                                            m_path_has_changed;
 
     int												m_lose_coins_effect;
+    int												m_lose_coins_effect_frame;
+    int												m_lose_coins_effect_duration;
 
 	int												m_blue_tower_counter;
 	int												m_red_tower_counter;

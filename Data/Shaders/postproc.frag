@@ -14,6 +14,8 @@ uniform int red_towers;
 uniform int coins_left;
 
 uniform int lose_coins_effect;
+uniform int lose_coins_effect_frame;
+uniform int lose_coins_effect_duration;
 
 in vec2 f_texcoord;
 
@@ -163,13 +165,16 @@ vec2 poissonDisk[16] = vec2[](
 
 #endif
 	
+	// lose coins hit effect
+	int effect_middle_frame = (lose_coins_effect_duration + 1) / 2;
+	
 	if (lose_coins_effect == 1) {
 		vec2 pos2 = uv - vec2(0.5, 0.5);
 		float dist2 = sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
 		float max_dist = sqrt(0.5);
-		float min_dist = sqrt(0.1);
+		float min_dist = sqrt(0.05 + 0.5 * (abs(effect_middle_frame - lose_coins_effect_frame) / float(effect_middle_frame - 1)));
 		if (dist2 > min_dist) {
-			color += ((dist2 - min_dist) / max_dist) * vec3(0.3, 0, 0);
+			color += ((dist2 - min_dist) / max_dist) * vec3(0.5, 0, 0);
 		}
 	}
 	
@@ -178,6 +183,7 @@ vec2 poissonDisk[16] = vec2[](
 		// grayscale
 		color = vec3(color.r + color.g + color.b) / 3.0;
 		
+		// vignette
 		vec2 pos3 = uv - vec2(0.5, 0.5);
 		float dist3 = sqrt(pos3.x * pos3.x + pos3.y * pos3.y);
 		float mask = 1.0 - dist3 * 1.5;
@@ -197,14 +203,13 @@ vec2 poissonDisk[16] = vec2[](
 		vec2 center;
 		center.x = start_x / 2;
 
-
 		vec2 pos;
 		
 		int number_of_loops = coins_left / 10;
 		center.y = 1 - start_y;
 		center.x = start_x;
 		float dist;
-		for (int i=0; i<number_of_loops; i++)
+		for (int i = 0; i < number_of_loops; i++)
 		{
 			pos = uv - center;
 			dist = sqrt(pos.x * pos.x + pos.y * pos.y);
@@ -212,11 +217,11 @@ vec2 poissonDisk[16] = vec2[](
 			{
 				color = vec3(0.92f, 0.83f, 0.f);
 			}
-			center.x += offset + 2*radius;
+			center.x += offset + 2 * radius;
 		}
 
 		// draw container
-		start_x			=	0.003;
+		start_x			=	0.0075;
 		start_y			=	0.01;
 		
 		width			=	0.173;
@@ -237,8 +242,8 @@ vec2 poissonDisk[16] = vec2[](
 		float x_offset	=	0.005;
 		float y_offset	=	0.01;
 		
-		start_x			=	0.025;
-		start_y			=	0.02;
+		start_x			=	start_x + 0.022;
+		start_y			=	start_y + 0.01;
 		
 		width			=	0.02;
 		height			=	(height - 3 * y_offset) / 2;
@@ -270,7 +275,7 @@ vec2 poissonDisk[16] = vec2[](
 		// draw the selection circle
 		radius = height / 2.5;
 		
-		center.x = start_x / 2;
+		center.x = start_x - 0.0125;
 		
 		if (place_mode == 1) {
 			center.y = y_start_blue;

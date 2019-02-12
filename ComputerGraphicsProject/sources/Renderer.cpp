@@ -58,18 +58,22 @@ Renderer::Renderer()
 
 	m_blue_tower_counter = 1;
 	m_red_tower_counter = 1;
-	
+
 	m_blue_tower_replace_counter = 0;
 	m_red_tower_replace_counter = 0;
 
+	m_lose_coins_effect = 0;
+	m_lose_coins_effect_frame = 0;
+	m_lose_coins_effect_duration = 15;	// duration in frames, better odd numbers
+
 	m_skeleton_counter = 3;
 
-    GAME_OVER=false;
+	GAME_OVER = false;
 	m_vbo_fbo_vertices = 0;
 	m_vao_fbo = 0;
-	
-    m_terrain = nullptr;
-    m_chest_object = nullptr;
+
+	m_terrain = nullptr;
+	m_chest_object = nullptr;
 
 	m_fbo = 0;
 	m_fbo_texture = 0;
@@ -78,30 +82,30 @@ Renderer::Renderer()
 	m_continuous_time = 0.0;
 
 	// initialize the camera parameters
-    m_camera_position = glm::vec3(1, 12, -7);
-    m_camera_position_temp = m_camera_position;
-    //m_camera_position = glm::vec3(0.720552, 18.1377, -11.3135);
+	m_camera_position = glm::vec3(1, 12, -7);
+	m_camera_position_temp = m_camera_position;
+	//m_camera_position = glm::vec3(0.720552, 18.1377, -11.3135);
 
-    m_camera_target_position = glm::vec3(6, 0, 4);
-    //m_camera_target_position = glm::vec3(4.005, 12.634, -5.66336);
+	m_camera_target_position = glm::vec3(6, 0, 4);
+	//m_camera_target_position = glm::vec3(4.005, 12.634, -5.66336);
 	m_camera_up_vector = glm::vec3(0, 1, 0);
 
 	m_blue_timer = 0.f;
 	m_red_timer = 0.f;
-    
-    m_skeletons_wave_timer=0.0f;
-    m_level=0;
-    m_particles_timer=0;
-    hit = false;
-    exploded_cannonball_index=0;
-    m_place_new_tower_time_limit=20;
-    Mix_AllocateChannels(16);
-    m_default_tower = true;
-    m_path_has_changed=false;
-    MichaelJacksonMode=false;
-    MichaelJacksonCounter=0;
-    themeCounter=0;
-    m_highscore=0.f;
+
+	m_skeletons_wave_timer = 0.0f;
+	m_level = 0;
+	m_particles_timer = 0;
+	hit = false;
+	exploded_cannonball_index = 0;
+	m_place_new_tower_time_limit = 20;
+	Mix_AllocateChannels(16);
+	m_default_tower = true;
+	m_path_has_changed = false;
+	MichaelJacksonMode = false;
+	MichaelJacksonCounter = 0;
+	themeCounter = 0;
+	m_highscore = 0.f;
 
 }
 
@@ -177,7 +181,6 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
-	m_lose_coins_effect = 0;
 
 	if (m_first_frame)
 	{
@@ -519,7 +522,8 @@ bool Renderer::InitRenderingTechniques()
     m_geometry_rendering_program.LoadUniform("uniform_has_texture");
     m_geometry_rendering_program.LoadUniform("diffuse_texture");
     m_geometry_rendering_program.LoadUniform("uniform_camera_position");
-    // Light Source Uniforms
+    
+	// Light Source Uniforms
     m_geometry_rendering_program.LoadUniform("uniform_light_projection_matrix");
     m_geometry_rendering_program.LoadUniform("uniform_light_view_matrix");
     m_geometry_rendering_program.LoadUniform("uniform_light_position");
@@ -531,9 +535,6 @@ bool Renderer::InitRenderingTechniques()
     m_geometry_rendering_program.LoadUniform("shadowmap_texture");
 
     // Create and Compile Particle Shader
-
-
-
 #ifdef _WIN32
     vertex_shader_path = "../Data/Shaders/particle_rendering.vert";
     fragment_shader_path = "../Data/Shaders/particle_rendering.frag";
@@ -595,6 +596,8 @@ bool Renderer::InitRenderingTechniques()
     m_postprocess_program.LoadUniform("coins_left");
 
     m_postprocess_program.LoadUniform("lose_coins_effect");
+    m_postprocess_program.LoadUniform("lose_coins_effect_frame");
+    m_postprocess_program.LoadUniform("lose_coins_effect_duration");
 
 
     // Shadow mapping Program
@@ -1463,7 +1466,22 @@ void Renderer::RenderToOutFB()
 	glUniform1i(m_postprocess_program["blue_towers"], m_blue_tower_counter);
 	glUniform1i(m_postprocess_program["red_towers"], m_red_tower_counter);
     glUniform1i(m_postprocess_program["coins_left"], chest->getCoinsLeft());
+
+	if (m_lose_coins_effect == 1)
+	{
+		if (m_lose_coins_effect_frame == m_lose_coins_effect_duration)
+		{
+			m_lose_coins_effect = 0;
+			m_lose_coins_effect_frame = 0;
+		}
+		else
+		{
+			m_lose_coins_effect_frame++;
+		}
+	}
     glUniform1i(m_postprocess_program["lose_coins_effect"], m_lose_coins_effect);
+    glUniform1i(m_postprocess_program["lose_coins_effect_frame"], m_lose_coins_effect_frame);
+    glUniform1i(m_postprocess_program["lose_coins_effect_duration"], m_lose_coins_effect_duration);
 
 	glUniform1f(m_postprocess_program["uniform_time"], m_continuous_time);
 	glm::mat4 projection_inverse_matrix = glm::inverse(m_projection_matrix);
