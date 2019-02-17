@@ -1,4 +1,4 @@
-# Computer Graphigs 3D Game
+# Computer Graphics 3D Game
 ---
 ![alt text](https://github.com/marprok/computer_graphics_project/blob/master/Assets/MarkdownImages/1.png)
 
